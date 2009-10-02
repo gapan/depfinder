@@ -1,3 +1,6 @@
+version 1.1.0 (2009-10-02)
+  * Added localization support
+
 version 1.0.2 (2009-08-30)
   * Bugfixes for the OR statement when outputing to comma separated
     list.

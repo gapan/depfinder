@@ -1,0 +1,82 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-10-02 21:47+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: depfinder:38
+#, sh-format
+msgid ""
+"depfinder: finds the dependencies of Slackware packages\n"
+"\n"
+"usage: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>\n"
+"\n"
+"OPTIONS:\n"
+"    -f,          Output dependencies to a file instead of stdout.\n"
+"                 By default it creates a .dep file. See also -s.\n"
+"    -s,          Outputs dependencies with version information. If\n"
+"                 combined with -f, it creates a slack-required file\n"
+"    -a,          Checks all files in the directory tree instead of\n"
+"                 following the FHS\n"
+"    -j [jobs],   The number of parallel depfinder jobs to run. Faster\n"
+"                 if it matches the number of your CPUs/cores\n"
+"                 (default: 1)\n"
+"    -v,          Show version information\n"
+"    -h,          This help message\n"
+"\t\n"
+"ENVIRONMENT VARIABLES:\n"
+"  You can set these to a comma or space separated list of dependencies\n"
+"  to add or exclude from the list depfinder reports (only package names,\n"
+"  no version information):\n"
+"    ADD\n"
+"    EXCLUDE"
+msgstr ""
+
+#: depfinder:67
+#, sh-format
+msgid ""
+"depfinder version $VERSION (c) 2009 George Vlahavas\n"
+"Run \"depfinder -h\" for help information"
+msgstr ""
+
+#: depfinder:106
+#, sh-format
+msgid "ERROR: No arguments found."
+msgstr ""
+
+#: depfinder:141
+#, sh-format
+msgid "ERROR: Number of jobs must be greater than one"
+msgstr ""
+
+#: depfinder:159
+#, sh-format
+msgid "ERROR: Too many arguments"
+msgstr ""
+
+#: depfinder:166
+#, sh-format
+msgid "ERROR: $arg not found"
+msgstr ""
+
+#: depfinder:177
+#, sh-format
+msgid "ERROR: $arg is not a package file or a directory!"
+msgstr ""
+
+#: depfinder:237
+#, sh-format
+msgid "ERROR: package requires libraries not found in the system"
+msgstr ""
