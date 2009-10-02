@@ -1,0 +1,311 @@
+#!/bin/bash
+#
+# depfinder - a script that finds slackware package dependencies.
+#
+# Written by George Vlahavas 
+# (vlahavas~at~gmail~dot~com)
+#
+# Licensed under the GPL v3
+
+VERSION=1.0.2
+
+CWD=`pwd`
+
+# Set default settings
+CREATEDEPFILE=0
+CHECKALLFILES=0
+VERSIONINFO=0
+JOBS=1
+STARTDIR=""
+DEPVER=""
+DEPFINDERSEARCH="/usr/libexec/depfinder-search"
+LIBDIRSUFFIX=""
+
+# help message
+help_msg()
+{
+cat << ENDHELP
+depfinder: finds the dependencies of Slackware packages
+
+usage: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>
+
+OPTIONS:
+    -f,          Output dependencies to a file instead of stdout.
+                 By default it creates a .dep file. See also -s.
+    -s,          Outputs dependencies with version information. If
+                 combined with -f, it creates a slack-required file
+    -a,          Checks all files in the directory tree instead of
+                 following the FHS
+    -j [jobs],   The number of parallel depfinder jobs to run. Faster
+                 if it matches the number of your CPUs/cores
+                 (default: 1)
+    -v,          Show version information
+    -h,          This help message
+	
+ENVIRONMENT VARIABLES:
+  You can set these to a comma or space separated list of dependencies
+  to add or exclude from the list depfinder reports (only package names,
+  no version information):
+    ADD
+    EXCLUDE
+	
+ENDHELP
+}
+
+# version message
+ver_msg()
+{
+cat << ENDVER
+depfinder version $VERSION (c) 2009 George Vlahavas
+Run 'depfinder -h' for help information
+ENDVER
+}
+
+# Routine to find out where each dependency comes from and output to
+# a file. The C++ code "borrowed" from zpm makes all the difference
+# compared to requiredbuilder here.
+depfind()
+{
+	touch DEPS$1
+	for i in `cat LIBS$1`; do
+		$DEPFINDERSEARCH  $i $$ | grep -v "^${PKGNAME}$" | \
+		grep -v "^aaa_elflibs$" > TMP$1
+		if [ `cat TMP$1 | wc -l` -gt 1 ];then
+			cat TMP$1 | tr '\n' ' ' | \
+			sed "s/ /|/g" | sed "s/|$//" >> DEPS$1
+			echo "" >> DEPS$1
+		else
+			cat TMP$1 >> DEPS$1
+		fi
+	done
+}
+
+# routine to clean up temp files
+cleanup()
+{
+	rm -rf /tmp/depfinder.$$
+}
+
+# routine to cleanly exit on error (just to be sure)
+err()
+{
+	cleanup
+	exit 1
+}
+
+# If no arguments are passed, show an error message
+if [ $# -eq 0 ]; then
+	help_msg
+	echo "ERROR: No arguments found." >&2
+	err
+fi
+
+# check which switches are used
+while getopts  ":hvfsaj:" flag
+do
+	# if switch is unknown or if asking for help
+	if [ $flag = "?" ] || [ $flag = "h" ]; then
+		help_msg
+		err
+	fi
+	if [ $flag = "v" ]; then
+		ver_msg
+		err
+	fi
+	if [ $flag = "f" ]; then
+		CREATEDEPFILE=1
+	fi
+	if [ $flag = "s" ]; then
+		VERSIONINFO=1
+	fi
+	if [ $flag = "a" ]; then
+		CHECKALLFILES=1
+	fi
+	if [ $flag = "j" ]; then
+		# we check if it's a number
+		if [ `echo $OPTARG` -eq `echo $OPTARG` 2> /dev/null ]; then 
+			# and if it's in range (positive number)
+			if [ $OPTARG -ge 1 2> /dev/null ]; then
+			# and only then change the default value
+			JOBS=$OPTARG
+			# if it's out of range show help
+			else
+				help_msg
+				echo "ERROR: Number of jobs must be greater than one" >&2
+				err
+			fi
+		# if it's not a number show help
+		else
+			help_msg
+			err
+		fi
+	fi
+done
+
+# we shift positions in $@ so that we discard all previous switches
+# and leave only files as additional arguments
+shift $((OPTIND-1))
+
+# Only one package at a time!
+if [ $# -gt 1 ]; then
+	help_msg
+	echo "ERROR: Too many arguments" >&2
+	err
+fi
+
+# test if the package file is there
+if [ ! -d $1 ] && [ ! -f $1 ] ; then
+	echo -e "ERROR: $1 not found\n" >&2
+	err
+fi
+
+# test if the files is actually a directory...
+if [ -d $1 ]; then
+	STARTDIR=`readlink -f $1`/
+else
+	# ... or has the .tgz|tbz|tlz extension (is a package file)
+	if [ ! `echo $1 | grep "\.t[gblx]z$"` ]; then
+		echo -e "ERROR: $1 is not a package file or a directory!\n" >&2
+		err
+	fi
+fi
+
+# Cleanup any leftover files before really doing anything
+cleanup
+
+# Create temp dir and extract package
+mkdir -p /tmp/depfinder.$$
+ls /var/log/packages > /tmp/depfinder.$$/pkglist.log
+
+# Extract only if argument is not a directory
+if [ `echo $1 | grep "\.t[gb]z$"` ]; then
+	[ -z $STARTDIR ] && tar xf $1 -C /tmp/depfinder.$$
+elif [ `echo $1 | grep "\.t[lx]z$"` ]; then
+	lzma -d -c $1 | tar xf - -C /tmp/depfinder.$$
+fi
+cd /tmp/depfinder.$$
+
+PKGNAME=`echo $1 | sed "s/\(.*\)\.t[gblx]z/\1/"`
+
+# Find all binaries and libs in the package
+touch FILES
+if [ $CHECKALLFILES -eq 0 ]; then
+	# usually only in standard locations
+	[ -z $STARTDIR ] || cd $STARTDIR
+	find \
+	{sbin,usr/sbin,usr/bin,bin,usr/lib${LIBDIRSUFFIX},lib${LIBDIRSUFFIX},usr/libexec} \
+	-type f -exec bash -c \
+	"[ -x {} ] && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
+else
+	# or anywhere in the package if -a is specified
+	[ -z $STARTDIR ] || cd $STARTDIR
+	find ./ \
+	-type f -exec bash -c \
+	"[ -x {} ] && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
+fi
+cd /tmp/depfinder.$$
+
+# Dump the dependencies to a file
+touch LIBSM
+for i in `cat FILES`; do
+	ldd ${STARTDIR}${i} 2> /dev/null \
+	| grep "=>" \
+	| sed "s/\(.*\) => \/\(.*\) \(.*\)/\2/" >> LIBSM
+done
+
+# linux-gate.so.1 is always a dead-end so we don't look for that at all
+sort LIBSM | uniq | grep -v "linux-gate\.so" > LIBS
+
+# Find which libraries are included in the package
+find $STARTDIR | grep "\.so" | \
+sed "s/\(.*\)\/\(.*\)\.so\(.*\)/\2\.so/" >> INCLUDED
+
+# Exclude the included libs from the search list
+[ -f INCLUDED ] && for i in `cat INCLUDED`; do sed -i "/$i/d" LIBS; done
+
+# Check if any dependencies are not found and bail out if they are
+if [[ `grep "=> not found" LIBS` ]]; then
+	echo "ERROR: package requires libraries not found in the system" >&2
+	grep "=> not found" LIBS >&2
+	err
+fi
+
+# Maximum file number should be $JOBS-1, split starts counting from 0
+MAXFILENO=`python -c "print($JOBS-1)"`
+
+# Split the libraries list in parts for running multiple jobs
+LINES=`wc -l LIBS | sed "s/\(.*\) \(.*\)/\1/"`
+LINES=`python -c "print(($LINES/$JOBS)+1)"`
+if [ $LINES -gt 1 ]; then
+	split -d -l $LINES LIBS LIBS
+else
+	for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
+		touch LIBS$i
+	done
+fi
+
+# Find the dependencies (run multiple jobs if -j # is set)
+for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
+	depfind $i &
+done
+wait
+
+# Put all dependencies in a single file
+touch DEPS
+for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
+	cat DEPS$i >> DEPS
+done
+
+# Add any extra deps provided with the ADD variable
+if [ ! -z "$ADD" ]; then
+	echo -e "\n$ADD" | sed "s/,/ /g" | sed "s/  / /g" | tr " " "\n" >> DEPS
+fi
+if [ $VERSIONINFO -eq 1 ]; then
+	sort DEPS | uniq | \
+	sed ':a;s/\([^ \|]\+\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/\1 >= \2/g;ta' \
+	> DEPSNAMES
+	for i in `echo $ADD | sed "s/,/ /g"`; do
+		DEPVER=`ls /var/log/packages/$i-* | sed "s|/var/log/packages/$i-||" | grep "^[^\-]*\-[^\-]*\-[^\-]*$"`
+		sed -i "s/^$i$/$i >= $DEPVER/" DEPSNAMES
+	done
+else
+	sort DEPS | uniq | \
+	sed ':a;s/\([^ \|]\+\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/\1/g;ta'  \
+	> DEPSNAMES
+
+fi
+
+# Exclude any deps provided with the EXCLUDE variable
+if [ -n "$EXCLUDE" ]; then
+	EXCLUDE=`echo $EXCLUDE | sed "s/,/ /g"`
+	for i in $EXCLUDE; do
+		sed -i "/^${i}\$\|^\(${i}\) \(=\|>=\|=<\|<\|>\) */d" DEPSNAMES
+	done
+fi
+
+DEPS=`cat DEPSNAMES`
+
+# Output dependencies list
+if [ $VERSIONINFO -eq 1 ]; then
+	# If requesting version info, output the deps to a
+	# slack-required file or to stdout
+	if [ $CREATEDEPFILE -eq 1 ]; then
+		cp DEPSNAMES $CWD/slack-required
+	else
+		cat DEPSNAMES
+	fi
+else
+	# If not requesting version info, output the deps to a
+	# .dep file or to stdout
+	if [ $CREATEDEPFILE -eq 1 ]; then
+		BASENAME=`basename "$PKGNAME"`
+		DEPFILENAME=`echo $BASENAME | sed "s/\.t[xgbl]z$//"`
+		echo $DEPS | sed "s/ /,/g" > $CWD/$DEPFILENAME.dep
+	else
+		echo $DEPS | sed "s/ /,/g"
+	fi
+fi
+
+# Clean up before exit
+cleanup
+

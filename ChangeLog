@@ -1,0 +1,84 @@
+version 1.0.2 (2009-08-30)
+  * Bugfixes for the OR statement when outputing to comma separated
+    list.
+
+version 1.0.1 (2009-08-30)
+  * Bugfixes for the OR statement combined with the -s switch
+
+version 1.0.0 (2009-08-29)
+  * Placed the pkglist.log file in a different directory per process, so
+    there is no need for any lock files anymore (thanks for the idea
+    Dimitar Stankov)
+  * Added support for x86_64 arch, by passing the -64 switch to
+    install.sh
+  * Added support for OR statements using the "|" operator in dependency
+    lists.
+  * aaa_elflibs is never listed as a dependency
+
+versjkon 0.9.2 (2009-06-12)
+  * Removed some unneeded lowercasing (thanks for the patch Dimitar
+    Stankov)
+
+version 0.9.1 (2009-06-12)
+  * Fixed use of EXCLUDE environment variable that was broken since
+    the addition of -s (thanks for the patch Dimitar Stankov)
+  * The ADD environment variable works properly now combined with -s
+  * ADD now takes priority over EXCLUDE
+
+version 0.9 (2009-06-11)
+  * Added -s option to include version information in dependencies
+    list. Creates a slack-required file if combined with -f.
+
+version 0.8.1 (2009-06-09)
+  * Apply lock to removing /tmp/depfinder-pkglist.log too
+  * Used LOCKFILE variable for the lock file location (thanks for the
+    patch Dimitar Stankov)
+  * /var/lock/depfinder/ with write priviliges for everyone is
+    installed by default
+  * Used basename for the DEPFILENAME (thanks for the patch Dimitar
+    Stankov)
+
+version 0.8 (2009-06-09)
+  * Apply lock to /tmp/depfinder-pkglist.log, so there is no chance of
+    overwritting the file while reading it (thanks for the idea
+    Dimitar Stankov!). flock is used for that, so depfinder now also
+    needs util-linux-ng to be installed.
+
+version 0.7.1 (2009-05-10)
+  * Fixed receiving a directory as an argument
+
+version 0.7 (2009-05-09)
+  * Added support for txz packages
+  * Changed a Zenwalk specific error message to something more general
+
+version 0.6 (2009-04-15)
+  * Added support for tbz and tlz packages
+
+version 0.5 (2009-03-06)
+  * Don't search for dependencies that are included in the same package
+
+version 0.4.1 (2009-01-31)
+  * Outputs error messages to stderr instead of stdout
+
+version 0.4 (2009-01-27)
+  * Can now use a directory with the package structure directly
+  * Fix bad dependency calculation for "not found" libraries, a proper error
+    message is shown instead
+  * Removed testing for root user priviliges, can now be run as a
+    non-priviliged user
+  * Added support for ADD and EXCLUDE environment variables for adding or
+    excluding deps respectively
+
+version 0.3.1 (2009-01-26)
+
+  * Replaced bc with python for calculations
+  * Fixed error when ldd mistakes a script for a dynamic executable
+
+version 0.3 (2009-01-25)
+
+  * Added support for multiple jobs with the -j# switch
+  * Many small performance enhancements
+
+version 0.2 (2009-01-23)
+
+  * Initial public release
