@@ -234,8 +234,10 @@ sed "s/\(.*\)\/\(.*\)\.so\(.*\)/\2\.so/" >> INCLUDED
 
 # Check if any dependencies are not found and bail out if they are
 if [[ `grep "=> not found" LIBS` ]]; then
-	echo "`eval_gettext 'ERROR: package requires libraries not found in the system'`" >&2
-	grep "=> not found" LIBS >&2
+	echo "`eval_gettext 'ERROR: package requires libraries not found in the system:'`" >&2
+	grep "=> not found" LIBS |\
+	sed "s/=> not found//" |\
+	sed "s/\t/ /" >&2
 	err
 fi
 
