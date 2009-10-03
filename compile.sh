@@ -14,7 +14,7 @@ fi
 if [ "$1" == "-64" ];then
 	sed -i "s/^LIBDIRSUFFIX=.*/LIBDIRSUFFIX=\"64\"/" depfinder
 else
-	sed -i "s/^LIBDIRSUFFIX=.*/LIBDIRSUFFIX=\"\"" depfinder
+	sed -i "s/^LIBDIRSUFFIX=.*/LIBDIRSUFFIX=\"\"/" depfinder
 fi
 
 # compile depfinder-search
