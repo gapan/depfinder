@@ -82,7 +82,7 @@ msgstr "ΣΦΑΛΜΑ: Δεν βρέθηκαν παράμετροι"
 #: depfinder:141
 #, sh-format
 msgid "ERROR: Number of jobs must be greater than one"
-msgstr "ΣΦΑΛΜΑ: Οι παράμετροι πρέπει να είναι περισσότερες από μία"
+msgstr "ΣΦΑΛΜΑ: Ο αριθμός των εργασιών (jobs) πρέπει να είναι ίσος ή μεγαλύτερος του 1"
 
 #: depfinder:159
 #, sh-format
