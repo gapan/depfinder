@@ -1,6 +1,7 @@
 version 1.1.0 (2009-10-02)
   * Added localization support
   * Nicer "libraries not found" error message.
+  * Changed the way the compile.sh and install.sh scripts work.
 
 version 1.0.2 (2009-08-30)
   * Bugfixes for the OR statement when outputing to comma separated

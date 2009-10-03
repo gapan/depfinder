@@ -3,22 +3,26 @@ Installation
 
 To install, just run:
 
+ ./compile.sh
+
+followed by:
+
  ./install.sh
 
 as root. You can set DESTDIR to change the installation target:
 
  DESTDIR=/my/custom/installation/target ./install.sh
 
-If you want to install on a x86_64 system, run:
+If you want to install on a x86_64 system, run compile.sh:
 
- ./install.sh -64
+ ./compile.sh -64
 
 Actually, what the above command does is just change a single line in
-the /usr/bin/depfinder file. There is a
+the depfinder executable. There is a
 LIBDIRSUFFIX=""
 line at the top of that file, that for x86_64 systems should become:
 LIBDIRSUFFIX="64"
-So you can change it after installation too.
+So you can change it anytime after installation too.
 
 Uninstallation
 --------------
@@ -26,3 +30,4 @@ To remove, you can just:
 
  rm /usr/bin/depfinder
  rm /usr/libexec/depfinder-search
+ rm /usr/share/locale/*/LC_MESSAGES/depfinder.mo
