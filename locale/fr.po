@@ -59,7 +59,7 @@ msgstr ""
 "\t\n"
 "VARIABLES D'ENVIRONNEMENT :\n"
 "  Vous pouvez spécifier via une liste d'entrées, séparées par des virgules ou des espaces,\n"
-"  les dépendances à ajouter ou bien à exclure des rapports de depfinder (noms de paquets 
+"  les dépendances à ajouter ou bien à exclure des rapports de depfinder (noms de paquets\n"
 "  uniquement, sans la version) :\n"
 "    ADD\n"
 "    EXCLUDE"
