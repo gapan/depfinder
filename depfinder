@@ -189,8 +189,10 @@ ls /var/log/packages > /tmp/depfinder.$$/pkglist.log
 # Extract only if argument is not a directory
 if [ `echo $1 | grep "\.t[gb]z$"` ]; then
 	[ -z $STARTDIR ] && tar xf $1 -C /tmp/depfinder.$$
-elif [ `echo $1 | grep "\.t[lx]z$"` ]; then
+elif [ `echo $1 | grep "\.t[l]z$"` ]; then
 	lzma -d -c $1 | tar xf - -C /tmp/depfinder.$$
+elif [ `echo $1 | grep "\.t[x]z$"` ]; then
+	xz -d -c $1 | tar xf - -C /tmp/depfinder.$$
 fi
 cd /tmp/depfinder.$$
 
