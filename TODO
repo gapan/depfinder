@@ -1,2 +1,4 @@
 * Rewrite depfinder-search from scratch in C (don't hold your breath)
+* EXCLUDE does not work properly with cases like openssl|openssl-solibs
+  with or without version information
 

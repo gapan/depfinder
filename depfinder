@@ -289,7 +289,6 @@ else
 	sort DEPS | uniq | \
 	sed ':a;s/\([^ \|]\+\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/\1/g;ta'  \
 	> DEPSNAMES
-
 fi
 
 # Exclude any deps provided with the EXCLUDE variable or in the
