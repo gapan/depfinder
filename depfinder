@@ -293,8 +293,11 @@ else
 fi
 
 # Exclude any deps provided with the EXCLUDE variable or in the
-# EXCLUDE_DEFAULT list
-EXCLUDE="${EXCLUDE_DEFAULT} `echo $PKGNAME | sed "s/\(.*\)-\(.*\)-\(.*\)-\(.*\)/\1/"` $( echo $EXCLUDE | sed "s/,/ /g" )"
+# EXCLUDE_DEFAULT list.
+# Also exclude the present package, no sense in making a dependency to
+# itself.
+THISPKG=$( basename `echo $PKGNAME | sed "s/\(.*\)-\(.*\)-\(.*\)-\(.*\)/\1/"` )
+EXCLUDE="${EXCLUDE_DEFAULT} ${THISPKG} $( echo $EXCLUDE | sed "s/,/ /g" )"
 for i in $EXCLUDE; do
 	sed -i "/^${i}\$\|^\(${i}\) \(=\|>=\|=<\|<\|>\) */d" DEPSNAMES
 done
