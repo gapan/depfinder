@@ -30,6 +30,7 @@ STARTDIR=""
 DEPVER=""
 DEPFINDERSEARCH="/usr/libexec/depfinder-search"
 LIBDIRSUFFIX=""
+EXCLUDE_DEFAULT="aaa_elflibs glibc glibc-solibs"
 
 # help message
 help_msg()
@@ -75,8 +76,11 @@ depfind()
 {
 	touch DEPS$1
 	for i in `cat LIBS$1`; do
-		$DEPFINDERSEARCH  $i $$ | grep -v "^${PKGNAME}$" | \
-		grep -v "^aaa_elflibs$" > TMP$1
+		$DEPFINDERSEARCH  $i $$ > TMP$1
+		if [[ `cat TMP$1` = "" ]];then
+			LINKLOCATION="$( dirname /$i )/$( ls -l /$i | sed "s/.* -> \(.*\)/\1/" )"
+			$DEPFINDERSEARCH $LINKLOCATION $$ > TMP$1
+		fi
 		if [ `cat TMP$1 | wc -l` -gt 1 ];then
 			cat TMP$1 | tr '\n' ' ' | \
 			sed "s/ /|/g" | sed "s/|$//" >> DEPS$1
@@ -288,13 +292,12 @@ else
 
 fi
 
-# Exclude any deps provided with the EXCLUDE variable
-if [ -n "$EXCLUDE" ]; then
-	EXCLUDE=`echo $EXCLUDE | sed "s/,/ /g"`
-	for i in $EXCLUDE; do
-		sed -i "/^${i}\$\|^\(${i}\) \(=\|>=\|=<\|<\|>\) */d" DEPSNAMES
-	done
-fi
+# Exclude any deps provided with the EXCLUDE variable or in the
+# EXCLUDE_DEFAULT list
+EXCLUDE="${EXCLUDE_DEFAULT} `echo $PKGNAME | sed "s/\(.*\)-\(.*\)-\(.*\)-\(.*\)/\1/"` $( echo $EXCLUDE | sed "s/,/ /g" )"
+for i in $EXCLUDE; do
+	sed -i "/^${i}\$\|^\(${i}\) \(=\|>=\|=<\|<\|>\) */d" DEPSNAMES
+done
 
 DEPS=`cat DEPSNAMES`
 
