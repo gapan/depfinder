@@ -1,3 +1,11 @@
+version 1.2.0 (2009-12-08)
+  * Fixed not detecting dependencies when ldd pointed to a symlink to
+    the actual library and the symlink was not included in the package
+    contents in /var/log/packages/
+  * Changed the way EXCLUDE works internally
+  * Made it possible to launch the installation scripts from a different
+    directory
+
 version 1.1.4 (2009-12-05)
   * Fixed extraction of txz packages that was broken with xz-4.999.9beta
 
