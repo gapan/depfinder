@@ -51,14 +51,7 @@ OPTIONS:
                  if it matches the number of your CPUs/cores
                  (default: 1)
     -v,          Show version information
-    -h,          This help message
-	
-ENVIRONMENT VARIABLES:
-  You can set these to a comma or space separated list of dependencies
-  to add or exclude from the list depfinder reports (only package names,
-  no version information):
-    ADD
-    EXCLUDE'`"
+    -h,          This help message'`"
 }
 
 # version message
@@ -270,10 +263,6 @@ for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
 	cat DEPS$i >> DEPS
 done
 
-# Add any extra deps provided with the ADD variable
-if [ ! -z "$ADD" ]; then
-	echo -e "\n$ADD" | sed "s/,/ /g" | sed "s/  / /g" | tr " " "\n" >> DEPS
-fi
 if [ $VERSIONINFO -eq 1 ]; then
 	sort DEPS | uniq | \
 	sed ':a;s/\([^ \|]\+\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/\1 >= \2/g;ta' \
@@ -288,12 +277,10 @@ else
 	> DEPSNAMES
 fi
 
-# Exclude any deps provided with the EXCLUDE variable or in the
-# EXCLUDE_DEFAULT list.
-# Also exclude the present package, no sense in making a dependency to
-# itself.
+# Exclude certain dependencies, set in the EXCLUDE in the top of this
+# script and also the present package
 THISPKG=$( basename `echo $PKGNAME | sed "s/\(.*\)-\(.*\)-\(.*\)-\(.*\)/\1/"` )
-EXCLUDE="${EXCLUDE_DEFAULT} ${THISPKG} $( echo $EXCLUDE | sed "s/,/ /g" )"
+EXCLUDE="${EXCLUDE} ${THISPKG}"
 for i in $EXCLUDE; do
 	sed -i "/^${i}\$\|^\(${i}\) \(=\|>=\|=<\|<\|>\) */d" DEPSNAMES
 done

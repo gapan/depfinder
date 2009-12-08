@@ -12,15 +12,6 @@ which package each individual library is included. That C++ code is
 depfinder also has support for running multiple jobs in parallel that
 makes it a lot faster when used with multiple CPUs/cores.
 
-The ADD and EXCLUDE environment variables can be set to add or exclude
-packages from the dependency list respectively. Either one can be set
-to a comma or space separated list of package names that can be either
-added or excluded from the dependency list depfinder creates
-respectively. If a package name appears in both ADD and EXCLUDE, then
-ADD takes priority and the package will be added to the dependency
-list. Note that you will have to make sure yourself that the package
-names you put in ADD or EXCLUDE are correct.
-
 The dependency list is by default being output in a comma separated
 list, without version information, but there are options to output
 dependencies with version information and to a file: a .dep file

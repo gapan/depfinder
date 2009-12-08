@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-02 22:20+0300\n"
+"POT-Creation-Date: 2009-12-08 23:55+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: George Vlahavas <vlahavas~at~gmail~dot~com>\n"
 "Language-Team: \n"
@@ -13,7 +13,7 @@ msgstr ""
 "X-Poedit-Country: GERMANY\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: depfinder:38
+#: ../depfinder:39
 #, sh-format
 msgid ""
 "depfinder: finds the dependencies of Slackware packages\n"
@@ -31,14 +31,7 @@ msgid ""
 "                 if it matches the number of your CPUs/cores\n"
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
-"    -h,          This help message\n"
-"\t\n"
-"ENVIRONMENT VARIABLES:\n"
-"  You can set these to a comma or space separated list of dependencies\n"
-"  to add or exclude from the list depfinder reports (only package names,\n"
-"  no version information):\n"
-"    ADD\n"
-"    EXCLUDE"
+"    -h,          This help message"
 msgstr ""
 "depfinder: Findet Abhängigkeiten von Slackware-Paketen\n"
 "\n"
@@ -55,16 +48,9 @@ msgstr ""
 "                 falls es der Anzahl Ihrer CPUs/Cores entspricht.\n"
 "                 (Standard: 1)\n"
 "    -v,          Versions-Informationen anzeigen.\n"
-"    -h,          Diese Hilfe anzeigen.\n"
-"\t\n"
-"UMGEBUNGS-VARIABLEN:\n"
-"  Sie können eine Komma- oder Leerzeichen-separierte Liste mit\n"
-"  Abhängigkeiten als Ergänzung oder Ausschluß angeben (Nur Paket-Namen,\n"
-"  keine Versions-Informationen):\n"
-"    ADD\n"
-"    EXCLUDE"
+"    -h,          Diese Hilfe anzeigen."
 
-#: depfinder:67
+#: ../depfinder:61
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
@@ -73,32 +59,32 @@ msgstr ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "\"depfinder -h\" für Hilfe eingeben"
 
-#: depfinder:106
+#: ../depfinder:100
 #, sh-format
 msgid "ERROR: No arguments found."
 msgstr "FEHLER: Keine Argumente gefunden."
 
-#: depfinder:141
+#: ../depfinder:135
 #, sh-format
 msgid "ERROR: Number of jobs must be greater than one"
 msgstr "FEHLER: Anzahl der Prozesse(Jobs) muß größer als 1 sein."
 
-#: depfinder:159
+#: ../depfinder:153
 #, sh-format
 msgid "ERROR: Too many arguments"
 msgstr "FEHLER: Zuviele Argumente"
 
-#: depfinder:166
+#: ../depfinder:160
 #, sh-format
 msgid "ERROR: $arg not found"
 msgstr "FEHLER: $arg nicht gefunden"
 
-#: depfinder:177
+#: ../depfinder:171
 #, sh-format
 msgid "ERROR: $arg is not a package file or a directory!"
 msgstr "FEHLER: $arg ist weder ein Paket noch Verzeichnis!"
 
-#: depfinder:237
+#: ../depfinder:233
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "FEHLER: Paket erfordert Bibliotheken, welche im System fehlen:"

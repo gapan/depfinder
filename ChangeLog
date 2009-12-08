@@ -1,8 +1,10 @@
 version 1.2.0 (2009-12-08)
+  * Removed support for the ADD and EXCLUDE environment variables. It's
+    easy enough to do this with standard tools like sed. No reason to
+    keep complicating depfinder for it, lets keep things simple.
   * Fixed not detecting dependencies when ldd pointed to a symlink to
     the actual library and the symlink was not included in the package
     contents in /var/log/packages/
-  * Changed the way EXCLUDE works internally
   * Made it possible to launch the installation scripts from a different
     directory
 
