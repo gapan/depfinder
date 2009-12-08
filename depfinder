@@ -76,11 +76,8 @@ depfind()
 {
 	touch DEPS$1
 	for i in `cat LIBS$1`; do
+		[ -h /$i ] && i=`readlink -e /$i`
 		$DEPFINDERSEARCH  $i $$ > TMP$1
-		if [[ `cat TMP$1` = "" ]];then
-			LINKLOCATION="$( dirname /$i )/$( ls -l /$i | sed "s/.* -> \(.*\)/\1/" )"
-			$DEPFINDERSEARCH $LINKLOCATION $$ > TMP$1
-		fi
 		if [ `cat TMP$1 | wc -l` -gt 1 ];then
 			cat TMP$1 | tr '\n' ' ' | \
 			sed "s/ /|/g" | sed "s/|$//" >> DEPS$1
