@@ -5,6 +5,8 @@ name="depfinder-search"	# Name of the executable.
 bindir="bin"	# Directory where temporary binary objects are stored.
 classes="CWhatProvides"
 
+cd $(dirname $0)
+
 if [ "$1" == "-64" ];then
 	export CXXFLAGS=${CXXFLAGS:="-O3 -fPIC -fomit-frame-pointer"}
 else
