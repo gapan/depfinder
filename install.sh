@@ -6,6 +6,8 @@ install -d -m 755 $DESTDIR/usr/bin
 install -d -m 755 $DESTDIR/usr/libexec
 install -m 755 depfinder $DESTDIR/usr/bin/
 install -m 755 depfinder-search/depfinder-search $DESTDIR/usr/libexec/
+install -d -m 755 $DESTDIR/usr/man/man1
+install -m 644 man/depfinder.man $DESTDIR/usr/man/man1/depfinder.1
 
 for i in `ls locale/*.mo`; do
                 install -d -m 755 \
