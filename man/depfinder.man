@@ -91,6 +91,10 @@ Shows version information for depfinder and exits.
 Prints a usage message briefly summarizing all command\-line options
 and exits.
 
+.SH WEBSITE
+.P
+http://depfinder.sourceforge.net/
+
 .SH AUTHORS
 .P
 depfinder was written by George Vlahavas <vlahavas~at~gmail~dot~com>
