@@ -16,9 +16,9 @@ depfinder - a tool that finds dependencies of slackware packages
 
 **depfinder** is a tool that finds the dependencies of Slackware packages.
 It examines binary files in the packages and the libraries they link to and
-reports the packages these libraries belong to in a dependency list. 
-This dependency list is by default being output to a comma separated
-list, without version information, but there are options to output
+reports the packages these libraries belong to in a dependency list.
+The dependencies are by default being output to a comma separated
+list without version information, but there are options to output
 dependencies with version information and to a file: a .dep file
 with a comma separated list without version information, or a
 //slack-required// file that includes version information.
@@ -29,22 +29,22 @@ but you can also point it to a packaging directory where you have the
 package contents extracted.
 
 **depfinder** uses **ldd** for discovering dependencies, so it will only find
-dependencies of binary files, scripts (bash,
+dependencies of binary files. Scripts (bash,
 python, etc) are not supported in any way.
 
 If a certain library is included in more than one packages, then all
-packages that include it will be listed in one entry, using an "or"
+packages that include it will be listed in one entry using an "or"
 statement (which is expressed with the pipe symbol: "|"). For example a
 dependency for a library that is included in both //openssl// and
 //openssl-solibs// packages will be output as:
-//openssl|openssl-solibs//
+//openssl|openssl-solibs//.
 
 You need to have all required dependencies for any package you run
 **depfinder** on installed in your system. That will of course always be
 the case when you are building your own packages. In case there is a
 library that is required by a package you run **depfinder** on that is
-missing from your system, depfinder will report that library and will
-not provide a dependency list. 
+missing from your system, **depfinder** will report the missing library
+and will not generate a dependency list.
 
 **depfinder** also has support for running multiple jobs which makes it
 a **lot** faster on PCs with multiple CPUs/cores.
@@ -60,20 +60,20 @@ information. See also **-s**.
 **-s**,
 %comment
 Outputs dependencies including version information. Dependencies will be
-listed in the format following this example: "zlib >= 1.2.3-i486-2". If 
+listed in the format following this example: "zlib >= 1.2.3-i486-2". If
 combined with **-f**, it creates a slack-required file which can be
-placed inside the package under the //install// directory. 
+placed inside the package under the //install// directory.
 
 **-a**,
 %comment
 Checks all files in the directory tree instead of following the FHS. If
 **-a** is not used then depfinder looks for binary files only under
-///sbin// ,///usr/sbin//, ///usr/bin//, //bin//, ///usr/libexec// and
+///sbin// ,///usr/sbin//, ///usr/bin//, ///bin//, ///usr/libexec// and
 ///usr/lib//, ///lib// or ///usr/lib64//, ///lib64// for 32-bit and
 64-bit architectures respectively. If **-a** is used, then depfinder
 searches for files dynamically linking to libraries anywhere inside the
-package. It could be usefull if the installation scripts puts binaries in
-a non-standard location.
+package. This option could be usefull if the installation scripts put
+binaries in a non-standard location.
 
 **-j** //jobs//,
 %comment
