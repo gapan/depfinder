@@ -27,7 +27,9 @@ a new libxyz version. Also the check will fail if someone has
 libxyz packages might really be identical otherwise. Using
 "libxyz = 1.0-i486-2gv" is not a solution, since the check will
 always fail with any subsequent libxyz packages, prompting for
-a package rebuild, which would be completely unnecessary.
+a package rebuild, which would be completely unnecessary. But this is
+the format used as standard for slack-required files that are used by
+many slackware-based projects, so I added support for it anyway.
 
 I also don't personally agree with slack-required files being
 inside packages, which I think is a very poor and inefficient design.
@@ -37,12 +39,23 @@ But that's really a whole different matter and I'll stop my ranting
 now, since everyone can do whatever he wants with the dependency list
 he gets with depfinder.
 
-depfinder will only find dependencies of binary files, scripts are not
-supported in any way.
+depfinder will only find dependencies of binary files, scripts (bash,
+python, perl etc)are not supported in any way. It is impossible for
+*any* tool to provide a full list of dependencies when it comes to
+scripts; for example it would be easy to check the header of a script
+for something like #!/usr/bin/python to determine if it's a python
+script, but what happens if this python script imports a python library
+that is not included in the standard python package, like pil (python
+imaging library)? There is no easy way to discover that dependency and
+adding code that would work with only a limited number of cases, but
+otherwise giving the impression that it will work is not something I
+would like to have. It's better to create the dependency file manually
+in those cases. Packagers usually have an idea of what those kind of
+packages require to install and work anyway.
 
 Apart from basic shell commands, like ls, sed, touch etc, depfinder
 requires python and util-linux-ng to be installed. You also need to
 have the gcc-g++ compiler, so that depfinder-search can be compiled.
 
 A huge thanks goes to Nigel Bosch for creating the original code for his
-great package manager and making it available in the first place.
+zpm package manager and making it available in the first place.

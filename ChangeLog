@@ -1,3 +1,6 @@
+version 1.2.1 (2009-12-13)
+  * Added manpage
+
 version 1.2.0 (2009-12-08)
   * Removed support for the ADD and EXCLUDE environment variables. It's
     easy enough to do this with standard tools like sed, or by editing
