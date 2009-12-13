@@ -2,6 +2,7 @@ depfinder
 George Vlahavas
 %%mtime(%m/%d/%Y)
 
+%!target: man
 %!encoding: utf-8
 
 = NAME =
