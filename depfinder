@@ -7,7 +7,7 @@
 #
 # Licensed under the GPL v3
 
-VERSION=1.2.1
+VERSION=1.2.2
 
 # Translations only work with utf8 locales
 if [ ! `echo $LANG | grep -i utf` ]; then
