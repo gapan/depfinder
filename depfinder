@@ -30,7 +30,7 @@ STARTDIR=""
 DEPVER=""
 DEPFINDERSEARCH="/usr/libexec/depfinder-search"
 LIBDIRSUFFIX=""
-EXCLUDE_DEFAULT="aaa_elflibs glibc glibc-solibs"
+EXCLUDE="aaa_elflibs glibc glibc-solibs"
 
 # help message
 help_msg()
