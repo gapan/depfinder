@@ -237,19 +237,22 @@ if [[ `grep "=> not found" LIBS` ]]; then
 	err
 fi
 
+# Get the total number of libraries in the package 
+TOTALLINES=`wc -l LIBS | sed "s/\(.*\) \(.*\)/\1/"`
+
+# The number of jobs can not exceed the number of libraries present in
+# the package
+[ $JOBS -gt $TOTALLINES ] && JOBS=$TOTALLINES
+
 # Maximum file number should be $JOBS-1, split starts counting from 0
 MAXFILENO=`python -c "print($JOBS-1)"`
 
 # Split the libraries list in parts for running multiple jobs
-LINES=`wc -l LIBS | sed "s/\(.*\) \(.*\)/\1/"`
-LINES=`python -c "print(($LINES/$JOBS)+1)"`
-if [ $LINES -gt 1 ]; then
-	split -d -l $LINES LIBS LIBS
-else
-	for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
-		touch LIBS$i
-	done
-fi
+LINES=`python -c "print(($TOTALLINES/$JOBS)+1)"`
+split -d -l $LINES LIBS LIBS
+for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
+	touch LIBS$i
+done
 
 # Find the dependencies (run multiple jobs if -j # is set)
 for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
