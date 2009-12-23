@@ -245,10 +245,10 @@ TOTALLINES=`wc -l LIBS | sed "s/\(.*\) \(.*\)/\1/"`
 [ $JOBS -gt $TOTALLINES ] && JOBS=$TOTALLINES
 
 # Maximum file number should be $JOBS-1, split starts counting from 0
-MAXFILENO=`python -c "print($JOBS-1)"`
+let MAXFILENO=$JOBS-1
 
 # Split the libraries list in parts for running multiple jobs
-LINES=`python -c "print(($TOTALLINES/$JOBS)+1)"`
+let LINES=($TOTALLINES/$JOBS)+1
 split -d -l $LINES LIBS LIBS
 for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
 	touch LIBS$i
