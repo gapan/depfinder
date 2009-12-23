@@ -1,3 +1,10 @@
+version 1.2.2 (2009-12-24)
+  * Fixed a bug where no dependencies were displayed when the number of
+    jobs was larger than the number of libraries included in the
+    package
+  * Fixed a bug with not splitting the jobs properly resulting to an
+    error message
+
 version 1.2.1 (2009-12-13)
   * Added manpage
 
