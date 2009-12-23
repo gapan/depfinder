@@ -4,6 +4,7 @@ version 1.2.2 (2009-12-24)
     package
   * Fixed a bug with not splitting the jobs properly resulting to an
     error message
+  * Speed optimizations by removing the dependency on python
 
 version 1.2.1 (2009-12-13)
   * Added manpage
