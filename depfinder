@@ -29,6 +29,7 @@ PYTHONDEPS=0
 JOBS=1
 STARTDIR=""
 DEPVER=""
+DEBUG=${DEBUG:-0}
 DEPFINDERSEARCH="/usr/libexec/depfinder-search"
 PYTHONDIR=$( echo `python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_lib()"|sed "s|/site-packages||"` )
 LIBDIRSUFFIX=""
@@ -86,7 +87,9 @@ depfind()
 # routine to clean up temp files
 cleanup()
 {
-	rm -rf /tmp/depfinder.$$
+	if [ $DEBUG -eq 0 ]; then
+		rm -rf /tmp/depfinder.$$
+	fi
 }
 
 # routine to cleanly exit on error (just to be sure)
@@ -221,13 +224,14 @@ if [ $PYTHONDEPS -eq 1 ]; then
 		find \
 		{sbin,usr/sbin,usr/bin,bin,usr/lib${LIBDIRSUFFIX},lib${LIBDIRSUFFIX},usr/libexec} \
 		-type f -exec bash -c \
-		"file {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfider.$$/PYTHONFILES" \
+		"file {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfinder.$$/PYTHONFILES"
+		\; \
 		2> /dev/null
 	else
 		# or anywhere in the package if -a is specified
 		find ./ \
 		-type f -exec bash -c \
-		"file {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfinder.$$/PYTHONFILES" \
+		"file {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfinder.$$/PYTHONFILES" \; \
 		2> /dev/null
 	fi
 fi
