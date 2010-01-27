@@ -216,9 +216,10 @@ else
 	"[ -x {} ] && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
 fi
 
-# Find all python scripts in the package
+# Handle python dependencies
 if [ $PYTHONDEPS -eq 1 ]; then
 	touch /tmp/depfinder.$$/PYTHONFILES
+	# Find all python scripts in the package
 	if [ $CHECKALLFILES -eq 0 ]; then
 		# usually only in standard locations
 		find \
@@ -234,6 +235,22 @@ if [ $PYTHONDEPS -eq 1 ]; then
 		"file {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfinder.$$/PYTHONFILES" \; \
 		2> /dev/null
 	fi
+
+	# Determine which python modules are imported (used)
+	touch /tmp/depfinder.$$/PYTHONMODULES
+	for i in `cat /tmp/depfinder.$$/PYTHONFILES`; do
+		grep "^ *import \|^ *from .* import " $i | \
+		grep -v " *#.*import" | \
+		sed "s/from \(.*\) import .*/\1/" | \
+		sed "s/^ *import \(.*\)/\1/" | \
+		sed "s/\(.*\) as .*/\1/"  | \
+		sed "s/, /\n/" | \
+		sed "s/^ *//" | \
+		sed "s/\./@MODULESEPARATOR@/" | \
+		sed "s/\(.*\)@MODULESEPARATOR@.*/\1/" >> /tmp/depfinder.$$/PYTHONMODULES
+	done
+
+	PYTHONMODULESLIST=`sort /tmp/depfinder.$$/PYTHONMODULES | uniq`
 fi
 
 cd /tmp/depfinder.$$
