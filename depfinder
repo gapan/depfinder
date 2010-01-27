@@ -25,10 +25,12 @@ CWD=`pwd`
 CREATEDEPFILE=0
 CHECKALLFILES=0
 VERSIONINFO=0
+PYTHONDEPS=0
 JOBS=1
 STARTDIR=""
 DEPVER=""
 DEPFINDERSEARCH="/usr/libexec/depfinder-search"
+PYTHONDIR=$( echo `python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_lib()"|sed "s|/site-packages||"` )
 LIBDIRSUFFIX=""
 EXCLUDE="aaa_elflibs glibc glibc-solibs"
 
@@ -102,7 +104,7 @@ if [ $# -eq 0 ]; then
 fi
 
 # check which switches are used
-while getopts  ":hvfsaj:" flag
+while getopts  ":hvfsapj:" flag
 do
 	# if switch is unknown or if asking for help
 	if [ $flag = "?" ] || [ $flag = "h" ]; then
@@ -121,6 +123,9 @@ do
 	fi
 	if [ $flag = "a" ]; then
 		CHECKALLFILES=1
+	fi
+	if [ $flag = "p" ]; then
+		PYTHONDEPS=1
 	fi
 	if [ $flag = "j" ]; then
 		# we check if it's a number
@@ -193,21 +198,40 @@ cd /tmp/depfinder.$$
 PKGNAME=`echo $1 | sed "s/\(.*\)\.t[gblx]z/\1/"`
 
 # Find all binaries and libs in the package
-touch FILES
+[ -z $STARTDIR ] || cd $STARTDIR
+touch /tmp/depfinder.$$/FILES
 if [ $CHECKALLFILES -eq 0 ]; then
 	# usually only in standard locations
-	[ -z $STARTDIR ] || cd $STARTDIR
 	find \
 	{sbin,usr/sbin,usr/bin,bin,usr/lib${LIBDIRSUFFIX},lib${LIBDIRSUFFIX},usr/libexec} \
 	-type f -exec bash -c \
 	"[ -x {} ] && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
 else
 	# or anywhere in the package if -a is specified
-	[ -z $STARTDIR ] || cd $STARTDIR
 	find ./ \
 	-type f -exec bash -c \
 	"[ -x {} ] && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
 fi
+
+# Find all python scripts in the package
+if [ $PYTHONDEPS -eq 1 ]; then
+	touch /tmp/depfinder.$$/PYTHONFILES
+	if [ $CHECKALLFILES -eq 0 ]; then
+		# usually only in standard locations
+		find \
+		{sbin,usr/sbin,usr/bin,bin,usr/lib${LIBDIRSUFFIX},lib${LIBDIRSUFFIX},usr/libexec} \
+		-type f -exec bash -c \
+		"file {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfider.$$/PYTHONFILES" \
+		2> /dev/null
+	else
+		# or anywhere in the package if -a is specified
+		find ./ \
+		-type f -exec bash -c \
+		"file {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfinder.$$/PYTHONFILES" \
+		2> /dev/null
+	fi
+fi
+
 cd /tmp/depfinder.$$
 
 # Dump the dependencies to a file
