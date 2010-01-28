@@ -227,7 +227,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	# are usually all over the place, we're looking everywhere
 	# anyway
 	touch /tmp/depfinder.$$/PYTHONFILES
-	find ./ \
+	LANG=C find ./ \
 	-type f -exec bash -c \
 	"file {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfinder.$$/PYTHONFILES" \; \
 	2> /dev/null
