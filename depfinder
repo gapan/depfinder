@@ -107,6 +107,7 @@ parsepython()
 	grep "^ *import \|^ *from .* import " | \
 	sed "s/#/@COMMENT@/" | \
 	sed "s/\(.*\)@COMMENT@.*/\1/" | \
+	sed "s/.*__import__('\(.*\)').*/import \1/" | \
 	sed "s/from \(.*\) import .*/\1/" | \
 	sed "s/^ *import \(.*\)/\1/" | \
 	sed "s/\(.*\) as .*/\1/"  | \
