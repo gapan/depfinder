@@ -240,6 +240,8 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	for i in `cat /tmp/depfinder.$$/PYTHONFILES`; do
 		grep "^ *import \|^ *from .* import " $i | \
 		grep -v " *#.*import" | \
+		sed "s/#/@COMMENT@/"| \
+		sed "s/\(.*\)@COMMENT@.*/\1/" | \
 		sed "s/from \(.*\) import .*/\1/" | \
 		sed "s/^ *import \(.*\)/\1/" | \
 		sed "s/\(.*\) as .*/\1/"  | \
