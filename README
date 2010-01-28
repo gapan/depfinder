@@ -39,22 +39,23 @@ But that's really a whole different matter and I'll stop my ranting
 now, since everyone can do whatever he wants with the dependency list
 he gets with depfinder.
 
-depfinder will only find dependencies of binary files, scripts (bash,
-python, perl etc)are not supported in any way. It is impossible for
-*any* tool to provide a full list of dependencies when it comes to
-scripts; for example it would be easy to check the header of a script
-for something like #!/usr/bin/python to determine if it's a python
-script, but what happens if this python script imports a python library
-that is not included in the standard python package, like pil (python
-imaging library)? There is no easy way to discover that dependency and
-adding code that would work with only a limited number of cases, but
-otherwise giving the impression that it will work is not something I
-would like to have. It's better to create the dependency file manually
-in those cases. Packagers usually have an idea of what those kind of
-packages require to install and work anyway.
+depfinder is perfectly accurate when detecting dependencies of binary
+files. Since version 1.3.0, support for detecting python dependencies
+was added. However, the list of reported python dependencies might not
+be final. It will work perfect with some packages and might not work at
+all with others. The reason is that not all python scripts can be
+recognized as such by the file command, I have seen many cases where the
+appropriate shebang is totally missing and parsing every single text
+file in the package for the "import" keyword is really not a good idea,
+you'll get all kinds of garbage output like that. I don't think there is
+any better way to handle this. If you take a look at the code and you
+think you know of one, patches are certainly welcome. Detecting shell
+scripts or perl dependencies is not supported, but perl dependencies
+might be a target for a future version (I need to learn how perl works
+internally in order to do that and at the moment I'm completely clueless).
 
 Apart from basic shell commands, like ls, sed, touch etc, depfinder
-requires python and util-linux-ng to be installed. You also need to
+requires python in order to detect python dependencies. You also need to
 have the gcc-g++ compiler, so that depfinder-search can be compiled.
 
 A huge thanks goes to Nigel Bosch for creating the original code for his
