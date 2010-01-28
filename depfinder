@@ -84,6 +84,26 @@ depfind()
 	done
 }
 
+# Routine to parse python scripts for modules that it imports
+parsepython()
+{
+	sed "s/;/\n/g" $1 | \
+	sed -e :a -e '/\\$/N; s/\\\n//; ta' | \
+	sed "s/[ \t]\+/ /g" | \
+	grep "^ *import \|^ *from .* import " | \
+	sed "s/#/@COMMENT@/" | \
+	sed "s/\(.*\)@COMMENT@.*/\1/" | \
+	sed "s/from \(.*\) import .*/\1/" | \
+	sed "s/^ *import \(.*\)/\1/" | \
+	sed "s/\(.*\) as .*/\1/"  | \
+	sed "s/^[ \t]*//;s/[ \t]*$//" | \
+	sed "/ [^,]\+ /d" | \
+	sed "s/,/\n/g" | \
+	sed "s/^[ \t]*//" | \
+	sed "s/\./@MODULESEPARATOR@/" | \
+	sed "s/\(.*\)@MODULESEPARATOR@.*/\1/" 
+}
+
 # routine to clean up temp files
 cleanup()
 {
@@ -238,22 +258,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	# Determine which python modules are imported (used)
 	touch /tmp/depfinder.$$/PYTHONMODULESRAW
 	for i in `cat /tmp/depfinder.$$/PYTHONFILES`; do
-		sed "s/;/\n/g" $i | \
-		sed -e :a -e '/\\$/N; s/\\\n//; ta' | \
-		sed "s/[ \t]\+/ /g" | \
-		grep "^ *import \|^ *from .* import " | \
-		sed "s/#/@COMMENT@/" | \
-		sed "s/\(.*\)@COMMENT@.*/\1/" | \
-		sed "s/from \(.*\) import .*/\1/" | \
-		sed "s/^ *import \(.*\)/\1/" | \
-		sed "s/\(.*\) as .*/\1/"  | \
-		sed "s/^[ \t]*//;s/[ \t]*$//" | \
-		sed "/ [^,]\+ /d" | \
-		sed "s/,/\n/g" | \
-		sed "s/^[ \t]*//" | \
-		sed "s/\./@MODULESEPARATOR@/" | \
-		sed "s/\(.*\)@MODULESEPARATOR@.*/\1/" | \
-		sed "s/^M$//" >> /tmp/depfinder.$$/PYTHONMODULESRAW
+		parsepython $i >> /tmp/depfinder.$$/PYTHONMODULESRAW
 	done
 
 	# Sort and clean modules list
