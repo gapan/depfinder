@@ -230,7 +230,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	touch /tmp/depfinder.$$/PYTHONFILES
 	LANG=C find ./ \
 	-type f -exec bash -c \
-	"file {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfinder.$$/PYTHONFILES" \; \
+	"file -b {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfinder.$$/PYTHONFILES" \; \
 	2> /dev/null
 
 	# Determine which python modules are imported (used)
