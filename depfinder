@@ -247,6 +247,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 		sed "s/^M$//" >> /tmp/depfinder.$$/PYTHONMODULESRAW
 	done
 
+	# Sort and clean modules list
 	cat -A /tmp/depfinder.$$/PYTHONMODULESRAW | \
 	sort | sed 's/\^M\$\|\$//' | \
 	uniq > /tmp/depfinder.$$/PYTHONMODULESSORTED
@@ -326,6 +327,8 @@ if [[ `grep "=> not found" LIBS` ]]; then
 	err
 fi
 
+# Append the list of python modules to the list of libraries that are
+# external dependencies
 if [ $PYTHONDEPS -eq 1 ]; then
 	cat PYTHONNEEDEDMODULES >> LIBS
 fi
