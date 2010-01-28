@@ -1,1 +1,2 @@
 * Rewrite depfinder-search from scratch in C (don't hold your breath)
+* Perhaps add support for detecting perl dependencies
