@@ -216,7 +216,7 @@ else
 	"[ -x {} ] && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
 fi
 
-# Handle python dependencies
+# Look for python dependencies
 if [ $PYTHONDEPS -eq 1 ]; then
 
 	# Determine in which directories python looks for modules
