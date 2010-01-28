@@ -238,8 +238,8 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	# Determine which python modules are imported (used)
 	touch /tmp/depfinder.$$/PYTHONMODULESRAW
 	for i in `cat /tmp/depfinder.$$/PYTHONFILES`; do
-		grep "^ *import \|^ *from .* import " $i | \
-		grep -v " *#.*import" | \
+		sed "s/;/\n/g" $i | \
+		grep "^ *import \|^ *from .* import " | \
 		sed "s/#/@COMMENT@/"| \
 		sed "s/\(.*\)@COMMENT@.*/\1/" | \
 		sed "s/from \(.*\) import .*/\1/" | \
