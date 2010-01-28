@@ -84,6 +84,20 @@ depfind()
 	done
 }
 
+# Routine to find python files in the current directory, where the
+# current directory is always the packaging directory here. Since
+# python scripts could be all over the place, we're looking everywhere
+# in the package by default.
+findpython()
+{
+	LANG=C find ./ \
+	-type f -exec bash -c \
+	"file -b {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfinder.$$/PYTHONFILES" \; \
+	2> /dev/null
+	find ./ \
+	-type f -name "*.py"
+}
+
 # Routine to parse python scripts for modules that it imports
 parsepython()
 {
@@ -238,22 +252,14 @@ fi
 
 # Look for python dependencies
 if [ $PYTHONDEPS -eq 1 ]; then
-
 	# Determine in which directories python looks for modules
 	python -c "import sys; print(sys.path)" | \
 	sed "s/'\|,\|\[\|\]//g" | \
 	sed "s/ /\n/g" > /tmp/depfinder.$$/PYTHONDIRS
 
-	# Find all python scripts in the package. Since python scripts
-	# are usually all over the place, we're looking everywhere
-	# anyway
+	# Find all python scripts in the package
 	touch /tmp/depfinder.$$/PYTHONFILES
-	LANG=C find ./ \
-	-type f -exec bash -c \
-	"file -b {} | grep \"python script text executable\" 1>/dev/null && echo {} >> /tmp/depfinder.$$/PYTHONFILES" \; \
-	2> /dev/null
-	find ./ \
-	-type f -name "*.py" >> /tmp/depfinder.$$/PYTHONFILES
+	findpython >> /tmp/depfinder.$$/PYTHONFILES
 
 	# Determine which python modules are imported (used)
 	touch /tmp/depfinder.$$/PYTHONMODULESRAW
