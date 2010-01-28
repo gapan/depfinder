@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-08 23:55+0200\n"
+"POT-Creation-Date: 2010-01-28 13:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../depfinder:39
+#: ../depfinder:41
 #, sh-format
 msgid ""
 "depfinder: finds the dependencies of Slackware packages\n"
@@ -30,6 +30,7 @@ msgid ""
 "                 combined with -f, it creates a slack-required file\n"
 "    -a,          Checks all files in the directory tree instead of\n"
 "                 following the FHS\n"
+"    -p,          Attempts to detect python dependencies.\n"
 "    -j [jobs],   The number of parallel depfinder jobs to run. Faster\n"
 "                 if it matches the number of your CPUs/cores\n"
 "                 (default: 1)\n"
@@ -37,39 +38,44 @@ msgid ""
 "    -h,          This help message"
 msgstr ""
 
-#: ../depfinder:61
+#: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
 msgstr ""
 
-#: ../depfinder:100
+#: ../depfinder:105
 #, sh-format
 msgid "ERROR: No arguments found."
 msgstr ""
 
-#: ../depfinder:135
+#: ../depfinder:143
 #, sh-format
 msgid "ERROR: Number of jobs must be greater than one"
 msgstr ""
 
-#: ../depfinder:153
+#: ../depfinder:161
 #, sh-format
 msgid "ERROR: Too many arguments"
 msgstr ""
 
-#: ../depfinder:160
+#: ../depfinder:168
 #, sh-format
 msgid "ERROR: $arg not found"
 msgstr ""
 
-#: ../depfinder:171
+#: ../depfinder:179
 #, sh-format
 msgid "ERROR: $arg is not a package file or a directory!"
 msgstr ""
 
-#: ../depfinder:233
+#: ../depfinder:300
+#, sh-format
+msgid "WARNING: python module $i not found."
+msgstr ""
+
+#: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr ""

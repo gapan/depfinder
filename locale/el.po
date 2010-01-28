@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: depfinder 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-08 23:55+0200\n"
+"POT-Creation-Date: 2010-01-28 13:19+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: George Vlahavas <vlahavas~at~gmail~dot~com>\n"
 "Language-Team: \n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Poedit-Country: GREECE\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: ../depfinder:39
+#: ../depfinder:41
 #, sh-format
 msgid ""
 "depfinder: finds the dependencies of Slackware packages\n"
@@ -28,6 +28,7 @@ msgid ""
 "                 combined with -f, it creates a slack-required file\n"
 "    -a,          Checks all files in the directory tree instead of\n"
 "                 following the FHS\n"
+"    -p,          Attempts to detect python dependencies.\n"
 "    -j [jobs],   The number of parallel depfinder jobs to run. Faster\n"
 "                 if it matches the number of your CPUs/cores\n"
 "                 (default: 1)\n"
@@ -45,13 +46,14 @@ msgstr ""
 "                 συνδυαστεί με το -f, δημιουργεί ένα αρχείο slack-required\n"
 "    -a,          Ελέγχει όλα τα αρχεία για εξαρτήσεις, αντί να\n"
 "                 ακολουθεί το FHS\n"
+"    -p,          Προσπάθεια για εντοπισμό εξαρτήσεων python\n"
 "    -j [jobs],   Ο αριθμός των παράλληλων εργασιών που θα εκτελεί το depfinder.\n"
 "                 Γρηγορότερο όταν είναι ίσο με τον αριθμό των CPUs/cores\n"
 "                 (εξ ορισμού τιμή: 1)\n"
 "    -v,          Εμφάνιση πληροφοριών έκδοσης\n"
 "    -h,          Το παρόν μήνυμα βοήθειας"
 
-#: ../depfinder:61
+#: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
@@ -60,32 +62,37 @@ msgstr ""
 "depfinder έκδοση $VERSION (c) 2009 George Vlahavas\n"
 "Εκτελέστε \"depfinder -h\" για βοήθεια"
 
-#: ../depfinder:100
+#: ../depfinder:105
 #, sh-format
 msgid "ERROR: No arguments found."
 msgstr "ΣΦΑΛΜΑ: Δεν βρέθηκαν παράμετροι"
 
-#: ../depfinder:135
+#: ../depfinder:143
 #, sh-format
 msgid "ERROR: Number of jobs must be greater than one"
 msgstr "ΣΦΑΛΜΑ: Ο αριθμός των εργασιών (jobs) πρέπει να είναι ίσος ή μεγαλύτερος του 1"
 
-#: ../depfinder:153
+#: ../depfinder:161
 #, sh-format
 msgid "ERROR: Too many arguments"
 msgstr "ΣΦΑΛΜΑ: Μεγάλος αριθμός παραμέτρων"
 
-#: ../depfinder:160
+#: ../depfinder:168
 #, sh-format
 msgid "ERROR: $arg not found"
 msgstr "ΣΦΑΛΜΑ: Το $arg δεν βρέθηκε"
 
-#: ../depfinder:171
+#: ../depfinder:179
 #, sh-format
 msgid "ERROR: $arg is not a package file or a directory!"
 msgstr "ΣΦΑΛΜΑ: Το $arg δεν είναι πακέτο ή κατάλογος!"
 
-#: ../depfinder:233
+#: ../depfinder:300
+#, sh-format
+msgid "WARNING: python module $i not found."
+msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: το αντικείμενο python $i δεν βρέθηκε"
+
+#: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "ΣΦΑΛΜΑ: Το πακέτο απαιτεί βιβλιοθήκες που δεν υπάρχουν στο σύστημα:"
