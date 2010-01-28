@@ -243,7 +243,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 		sed "s/from \(.*\) import .*/\1/" | \
 		sed "s/^ *import \(.*\)/\1/" | \
 		sed "s/\(.*\) as .*/\1/"  | \
-		sed "s/, /\n/g" | \
+		sed "s/,/\n/g" | \
 		sed "s/^ *//" | \
 		sed "s/\./@MODULESEPARATOR@/" | \
 		sed "s/\(.*\)@MODULESEPARATOR@.*/\1/" | \
