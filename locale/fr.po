@@ -64,7 +64,7 @@ msgstr ""
 #: ../depfinder:105
 #, sh-format
 msgid "ERROR: No arguments found."
-msgstr "ERREUR :Aucun argument"
+msgstr "ERREUR : Aucun argument"
 
 #: ../depfinder:143
 #, sh-format
@@ -89,10 +89,10 @@ msgstr "ERREUR : $arg n'est pas un paquet ou un répertoire d'empaquetage !"
 #: ../depfinder:300
 #, sh-format
 msgid "WARNING: python module $i not found."
-msgstr ""
+msgstr "ATTENTION: Le module python $i n'a pas été trouvé"
 
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
-msgstr "ERREUR :le paquet nécessite des bibliothèques introuvables sur votre système :"
+msgstr "ERREUR : le paquet nécessite des bibliothèques introuvables sur votre système :"
 
