@@ -49,7 +49,17 @@ and will not generate a dependency list.
 
 If a python module that is needed by a package is not present in the
 system, a warning will be displayed instead of an error and the
-dependency list will be generated.
+dependency list will be generated. Consider these warnings as hints for
+missing dependencies, optional or not. If your python application doesn't
+work, it's probably because of one or more of those reported missing
+modules. If your application seems to work fine, but you still get some
+warnings, it might mean that your application might acquire some extra
+functionality by installing some of the reported modules. And as the
+python code parsing cannot be perfectly accurate, there might be some
+false positives in these warnings. A line that only reads "import foo"
+for example, that is inside a block quote in a python file. is going to be
+parsed anyway and "foo" will be reported as a missing module, even
+though it's inside a block quote and will never be executed by python.
 
 **depfinder** also has support for running multiple jobs which makes it
 a **lot** faster on PCs with multiple CPUs/cores.
@@ -83,22 +93,20 @@ binaries in a non-standard location.
 **-p**,
 %comment
 Attempts to discover python dependencies. Using this switch, depfinder
-searches for all files that can be recognized as python scripts in the
-package using the //file// command. All python files that are detected
-are parsed for modules that they import and depfinder ultimately reports
-which packages these modules belong to along with all other
-detected dependencies. The list of reported python dependencies might
-not be final. This is because there are cases with python scripts that
-cannot be recognized as such by the //file// command, when these python
-scripts don't include a valid python shebang. So, there could be cases
-where some python dependencies are not reported. Also, some python
+searches for all files that can be recognized as python scripts.
+All python files that are detected are parsed for modules that they
+import and depfinder ultimately reports which packages these modules
+belong to along with all other detected dependencies. The list of
+reported python dependencies might not be final. Some python
 packages might be reported as dependencies, while actually being
 optional dependencies. This is because an //import// command in python
 might be executed after a conditional statement. For example a python
 module might only be providing extra functionality to an application and
 it may be imported only after it has been established that it is
 present in the system. If it isn't, it won't be imported at all, so the
-application will work anyway.
+application will work without it anyway. It's up to the packager to
+determine which of the reported dependencies are actually dependencies
+and which ones should merely be suggested packages.
 
 **-j** //jobs//,
 %comment
