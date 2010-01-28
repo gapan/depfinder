@@ -34,25 +34,32 @@ many slackware-based projects, so I added support for it anyway.
 I also don't personally agree with slack-required files being
 inside packages, which I think is a very poor and inefficient design.
 A simple change in the dependency list, which would otherwise require
-the editing of a text file only, requires rebuilding the package.
+the editing of a text file only, requires rebuilding the package, which
+then requires reuploading and redistributing the package, for the users
+only to upgrade to a version that in terms of functionality is identical
+to the one they have with the previously installed package. Lots of
+work, time and bandwidth can be completely wasted that way.
 But that's really a whole different matter and I'll stop my ranting
 now, since everyone can do whatever he wants with the dependency list
 he gets with depfinder.
 
 depfinder is perfectly accurate when detecting dependencies of binary
-files. Since version 1.3.0, support for detecting python dependencies
-was added. However, the list of reported python dependencies might not
-be final. It will work perfect with some packages and might not work at
-all with others. The reason is that not all python scripts can be
-recognized as such by the file command, I have seen many cases where the
-appropriate shebang is totally missing and parsing every single text
-file in the package for the "import" keyword is really not a good idea,
-you'll get all kinds of garbage output like that. I don't think there is
-any better way to handle this. If you take a look at the code and you
-think you know of one, patches are certainly welcome. Detecting shell
-scripts or perl dependencies is not supported, but perl dependencies
-might be a target for a future version (I need to learn how perl works
-internally in order to do that and at the moment I'm completely clueless).
+files. I didn't want to implement support for detecting python
+dependencies until I was sure I could do it in a way that would really
+work. I didn't want to go the way requiredbuilder went and "pretend" to
+have support for detecting python dependencies. Detecting python as a
+dependency and detecting python dependencies is not at all the same
+thing. The way it works now in depfinder I think is the best way it can
+be done. All python files in a package are parsed for modules that they
+import (or try to import). In most cases there is going to be some extra
+output in the form of warnings and the packager might need to do some
+manual work to sort out which python dependencies are optional and which
+are not, but at least there is no chance that a python dependency will
+not be reported (I think). Python dependency checking is going to make
+depfinder run a bit slower, it needs to do a lot of work, probing every
+single file in the package and parsing all python scripts for certain
+keywords, but it's not really that bad in terms of speed. Support for
+detecting perl dependencies might be a possibility for the future.
 
 Apart from basic shell commands, like ls, sed, touch etc, depfinder
 requires python in order to detect python dependencies. You also need to
