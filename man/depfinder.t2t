@@ -68,20 +68,20 @@ a **lot** faster on PCs with multiple CPUs/cores.
 
 **-f**,
 %comment
-Output dependencies to a file instead of stdout. By default it creates a
+outputs dependencies to a file instead of stdout. By default it creates a
 .dep file with a comma separated list of dependencies without version
 information. See also **-s**.
 
 **-s**,
 %comment
-Outputs dependencies including version information. Dependencies will be
+outputs dependencies including version information. Dependencies will be
 listed in the format following this example: "zlib >= 1.2.3-i486-2". If
 combined with **-f**, it creates a slack-required file which can be
 placed inside the package under the //install// directory.
 
 **-a**,
 %comment
-Checks all files in the directory tree instead of following the FHS. If
+checks all files in the directory tree instead of following the FHS. If
 **-a** is not used then depfinder looks for binary files only under
 ///sbin// ,///usr/sbin//, ///usr/bin//, ///bin//, ///usr/libexec// and
 ///usr/lib//, ///lib// or ///usr/lib64//, ///lib64// for 32-bit and
@@ -92,7 +92,7 @@ binaries in a non-standard location.
 
 **-p**,
 %comment
-Attempts to discover python dependencies. Using this switch, depfinder
+attempts to discover python dependencies. Using this switch, depfinder
 searches for all files that can be recognized as python scripts.
 All python files that are detected are parsed for modules that they
 import and depfinder ultimately reports which packages these modules
@@ -100,29 +100,31 @@ belong to along with all other detected dependencies. The list of
 reported python dependencies might not be final. Some python
 packages might be reported as dependencies, while actually being
 optional dependencies. This is because an //import// command in python
-might be executed after a conditional statement. For example a python
+might be executed after a conditional statement, or only after some
+certain action is taken by the end user etc. For example, a python
 module might only be providing extra functionality to an application and
 it may be imported only after it has been established that it is
 present in the system. If it isn't, it won't be imported at all, so the
-application will work without it anyway. It's up to the packager to
-determine which of the reported dependencies are actually dependencies
-and which ones should merely be suggested packages.
+application will work without it anyway, albeit with some missing
+functionality perhaps. It's up to the packager to determine which of
+the reported python dependencies are actually dependencies and which
+ones should merely be suggested packages.
 
 **-j** //jobs//,
 %comment
-The number of parallel depfinder jobs to run. depfinder will finish
-considerably faster if this matches exactly the number of your
+specifies the number of parallel depfinder jobs to run. depfinder will
+finish considerably faster if this matches exactly the number of your
 CPUs/cores (default number of jobs: 1)
 
 = GENERAL OPTIONS =
 
 **-v**,
 %comment
-Shows version information for depfinder and exits.
+shows version information for depfinder and exits.
 
 **-h**,
 %comment
-Prints a usage message briefly summarizing all command-line options
+prints a usage message briefly summarizing all command-line options
 and exits.
 
 = WEBSITE =
@@ -135,4 +137,4 @@ depfinder was written by George Vlahavas <vlahavas~at~gmail~dot~com>
 
 = SEE ALSO =
 
-***file**(1), *ldd**(1)
+*ldd**(1)
