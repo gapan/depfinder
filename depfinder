@@ -326,7 +326,8 @@ touch LIBSM
 for i in `cat FILES`; do
 	LANG=C ldd ${STARTDIR}${i} 2> /dev/null \
 	| grep "=>" \
-	| sed "s/\(.*\) => \/\(.*\) \(.*\)/\2/" >> LIBSM
+	| sed "s/\(.*\) => \/\(.*\) \(.*\)/\2/" \
+        | grep -v "=>" >> LIBSM
 done
 
 # linux-gate.so.1 is always a dead-end so we don't look for that at all
