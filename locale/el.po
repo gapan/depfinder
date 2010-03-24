@@ -1,3 +1,4 @@
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder 1.1.0\n"
@@ -11,8 +12,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: 1\n"
 "X-Poedit-Language: Greek\n"
-"X-Poedit-Country: GREECE\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Country: GREECE\n"
 
 #: ../depfinder:41
 #, sh-format
@@ -90,10 +91,9 @@ msgstr "ΣΦΑΛΜΑ: Το $arg δεν είναι πακέτο ή κατάλογ
 #: ../depfinder:300
 #, sh-format
 msgid "WARNING: python module $i not found."
-msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: το αντικείμενο python $i δεν βρέθηκε"
+msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: το άρθρωμα python $i δεν βρέθηκε"
 
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "ΣΦΑΛΜΑ: Το πακέτο απαιτεί βιβλιοθήκες που δεν υπάρχουν στο σύστημα:"
-
