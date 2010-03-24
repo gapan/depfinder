@@ -383,6 +383,16 @@ for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
 	cat DEPS$i >> DEPS
 done
 
+# Exclude certain dependencies, set in the EXCLUDE in the top of this
+# script and also the present package
+THISPKG=$( basename `echo $PKGNAME | sed "s/\(.*\)-\(.*\)-\(.*\)-\(.*\)/\1/"` )
+EXCLUDE="${EXCLUDE} ${THISPKG}"
+for i in $EXCLUDE; do
+	sed -i ":a;s/|\(${i}\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)//g;ta" DEPS
+	sed -i ":a;s/\(${i}\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)|//g;ta" DEPS
+	sed -i ":a;s/\(${i}\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)//g;ta" DEPS
+done
+
 if [ $VERSIONINFO -eq 1 ]; then
 	sort DEPS | uniq | \
 	sed ':a;s/\([^ \|]\+\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/\1 >= \2/g;ta' \
@@ -396,16 +406,6 @@ else
 	sed ':a;s/\([^ \|]\+\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/\1/g;ta'  \
 	> DEPSNAMES
 fi
-
-# Exclude certain dependencies, set in the EXCLUDE in the top of this
-# script and also the present package
-THISPKG=$( basename `echo $PKGNAME | sed "s/\(.*\)-\(.*\)-\(.*\)-\(.*\)/\1/"` )
-EXCLUDE="${EXCLUDE} ${THISPKG}"
-for i in $EXCLUDE; do
-	sed -i "/^${i}\$\|^\(${i}\) \(=\|>=\|=<\|<\|>\) */d" DEPSNAMES
-done
-
-DEPS=`cat DEPSNAMES`
 
 # Output dependencies list
 if [ $VERSIONINFO -eq 1 ]; then
@@ -422,9 +422,9 @@ else
 	if [ $CREATEDEPFILE -eq 1 ]; then
 		BASENAME=`basename "$PKGNAME"`
 		DEPFILENAME=`echo $BASENAME | sed "s/\.t[xgbl]z$//"`
-		echo $DEPS | sed "s/ /,/g" > $CWD/$DEPFILENAME.dep
+		sed "s/ /,/g" DEPSNAMES > $CWD/$DEPFILENAME.dep
 	else
-		echo $DEPS | sed "s/ /,/g"
+		sed "s/ /,/g" DEPSNAMES
 	fi
 fi
 
