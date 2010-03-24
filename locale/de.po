@@ -1,3 +1,4 @@
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
@@ -10,8 +11,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: German\n"
-"X-Poedit-Country: GERMANY\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Country: GERMANY\n"
 
 #: ../depfinder:41
 #, sh-format
@@ -89,10 +90,9 @@ msgstr "FEHLER: $arg ist weder ein Paket noch Verzeichnis!"
 #: ../depfinder:300
 #, sh-format
 msgid "WARNING: python module $i not found."
-msgstr "WARNUNG: Python Modul $i nicht gefunden."
+msgstr "WARNUNG: Python Modul $i nicht gefunden"
 
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "FEHLER: Paket erfordert Bibliotheken, welche im System fehlen:"
-
