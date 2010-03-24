@@ -422,9 +422,15 @@ else
 	if [ $CREATEDEPFILE -eq 1 ]; then
 		BASENAME=`basename "$PKGNAME"`
 		DEPFILENAME=`echo $BASENAME | sed "s/\.t[xgbl]z$//"`
-		sed "s/ /,/g" DEPSNAMES > $CWD/$DEPFILENAME.dep
+		cat DEPSNAMES | \
+		tr "\n" " " | \
+		sed "s/ /,/g" | \
+		sed "s/,$/\n/" > $CWD/$DEPFILENAME.dep
 	else
-		sed "s/ /,/g" DEPSNAMES
+		cat DEPSNAMES | \
+		tr "\n" " " | \
+		sed "s/ /,/g" | \
+		sed "s/,$/\n/"
 	fi
 fi
 
