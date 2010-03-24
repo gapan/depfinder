@@ -1,7 +1,7 @@
 # translation of depfinder-pt_BR.po to Português do Brasil
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Phantom X <megaphantomx at bol.com.br>, 2010.
 msgid ""
 msgstr ""
@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: KBabel 1.11.4\n"
-"Plural-Forms:  nplurals=2; plural=(n > 1);\n"
 
 #: ../depfinder:41
 #, sh-format
@@ -93,10 +93,9 @@ msgstr "ERRO: $arg não é um pacote ou um diretório!"
 #: ../depfinder:300
 #, sh-format
 msgid "WARNING: python module $i not found."
-msgstr "AVISO: módulo python $i não encontrado."
+msgstr "AVISO: módulo python $i não encontrado"
 
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "ERRO: pacote requer bibliotecas não encontradas no sistema:"
-
