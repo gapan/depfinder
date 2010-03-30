@@ -2,18 +2,21 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: DepFinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2010-03-23 20:33+0100\n"
+"PO-Revision-Date: 2010-03-30 17:28+0100\n"
 "Last-Translator: Mattia Tristo <mattia.tristo@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Italian\n"
+"X-Poedit-Country: ITALY\n"
+"X-Poedit-SourceCharset: utf-8\n"
 
 #: ../depfinder:41
 #, sh-format
@@ -48,7 +51,7 @@ msgstr ""
 "    -a,          Controlla tutti gli archivi nell'albero delle cartelle invece di\n"
 "                 seguire l'HFS\n"
 "    -p,          Tenta di identificare le dipendenze python.\n"
-"    -j [jobs],   Il numero di processi paralleli di depfinder da avviare. Più veloce\n"
+"    -j [jobs],   Il numero di processi paralleli di depfinder da avviare. Pi√π veloce\n"
 "                se coincide con il numero delle CPUs\n"
 "                (default: 1)\n"
 "    -v,          Visualizza le informazioni sulla versione\n"
@@ -86,14 +89,15 @@ msgstr "ERRORE: $arg non trovato"
 #: ../depfinder:179
 #, sh-format
 msgid "ERROR: $arg is not a package file or a directory!"
-msgstr "ERRORE: $arg non è un pacchetto o una cartella!"
+msgstr "ERRORE: $arg non e' un pacchetto o una cartella!"
 
 #: ../depfinder:300
 #, sh-format
 msgid "WARNING: python module $i not found."
-msgstr "ATTENZIONE: modulo python $i non trovato"
+msgstr "ATTENZIONE: modulo python $i non trovato."
 
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "ERRORE: il pacchetto richiede delle librerie non trovate nel sistema:"
+
