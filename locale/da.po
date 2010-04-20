@@ -2,13 +2,13 @@
 # Copyright (C) 2010
 # This file is distributed under the same license as the depfinder package.
 # Kris Thomsen <lakristho@gmail.com>, 2010.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2010-03-24 11:56+0100\n"
+"PO-Revision-Date: 2010-04-20 13:16+0200\n"
 "Last-Translator: Kris Thomsen <lakristho@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "MIME-Version: 1.0\n"
@@ -38,17 +38,17 @@ msgid ""
 msgstr ""
 "depfinder: finder afhængighederne til Slackware-pakker\n"
 "\n"
-"brug: depfinder [TILVALG] <package.tgz|.txz|.tlz|.tbz eller pakkemappe>\n"
+"brug: depfinder [TILVALG] <pakke.tgz|.txz|.tlz|.tbz eller pakkemappe>\n"
 "\n"
 "TILVALG:\n"
-"    -f,          Udskriver afgængihederne til en fil istedet for til stdout.\n"
-"                 Som standard opretter det en .dep-fil. Se også -s.\n"
+"    -f,          Udskriver afhængighederne til en fil i stedet for til stdout.\n"
+"                 Som standard oprettes der en .dep-fil. Se også -s.\n"
 "    -s,          Udskriver afhængighederne med versioninformation. Hvis\n"
-"                 kombineret med -f opretter den en slack-påkrævet fil\n"
-"    -a,          Kontrollerer alle filer i mappetræet istedet for at\n"
+"                 kombineret med -f, opretter den en slack-påkrævet fil\n"
+"    -a,          Kontrollerer alle filer i mappetræet i stedet for at\n"
 "                 følge FHS'en\n"
 "    -p,          Prøver at detektere python-afhængigheder.\n"
-"    -j [jobs],   Antallet af parallele depfinder-jobs at køre. Hurtigere\n"
+"    -j [jobs],   Antallet af parallelle depfinder-jobs at køre. Hurtigere\n"
 "                 hvis det matcher antallet af CPU'er/kerner\n"
 "                 (standard: 1)\n"
 "    -v,          Viser versioninformation\n"
@@ -91,7 +91,7 @@ msgstr "FEJL: $arg er ikke en pakkefil eller en mappe!"
 #: ../depfinder:300
 #, sh-format
 msgid "WARNING: python module $i not found."
-msgstr "ADVARSEL: python modulet $i blev ikke fundet"
+msgstr "ADVARSEL: python-modulet $i blev ikke fundet."
 
 #: ../depfinder:326
 #, sh-format
