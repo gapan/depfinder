@@ -42,7 +42,7 @@ fi
 
 # compile locales
 (
-	cd locale
+	cd po
 	for i in `ls *.po`; do
 		echo "Compiling $i"
 		msgfmt $i -o `echo $i | sed "s/.po//"`.mo
