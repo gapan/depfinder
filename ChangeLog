@@ -1,3 +1,7 @@
+version 1.3.3 
+  * Added Polish translation
+  * Updated Danish and Italian translations
+
 version 1.3.2 (2010-03-24)
   * Fixed a bug with excluding packages
   * Added Danish, Italian, Spanish and Argentinian Spanish translations
