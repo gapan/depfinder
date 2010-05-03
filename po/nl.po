@@ -1,0 +1,100 @@
+# Dutch .po file for depfinder.
+# Copyright (C) 2010
+# This file is distributed under the same license as the depfinder package.
+# Imar van Erven Dorens <gambit73@gmail.com>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-01-28 13:19+0200\n"
+"PO-Revision-Date: 2010-05-03 18:36+0100\n"
+"Last-Translator: Imar van Erven Dorens <gambit73@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../depfinder:41
+#, sh-format
+msgid ""
+"depfinder: finds the dependencies of Slackware packages\n"
+"\n"
+"usage: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>\n"
+"\n"
+"OPTIONS:\n"
+"    -f,          Output dependencies to a file instead of stdout.\n"
+"                 By default it creates a .dep file. See also -s.\n"
+"    -s,          Outputs dependencies with version information. If\n"
+"                 combined with -f, it creates a slack-required file\n"
+"    -a,          Checks all files in the directory tree instead of\n"
+"                 following the FHS\n"
+"    -p,          Attempts to detect python dependencies.\n"
+"    -j [jobs],   The number of parallel depfinder jobs to run. Faster\n"
+"                 if it matches the number of your CPUs/cores\n"
+"                 (default: 1)\n"
+"    -v,          Show version information\n"
+"    -h,          This help message"
+msgstr ""
+"depfinder: vindt de afhankelijkheden van Slackware pakketten\n"
+"\n"
+"Gebruik: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>\n"
+"\n"
+"OPTIES:\n"
+"   -f,           Output afhankelijkheden naar een bestand in plaats van stdout.\n"
+"                 Standaard wordt een .dep bestand gemaakt. Zie tevens -s.\n"
+"    -s,          Output afhankelijkheden met versie informatie. If\n"
+"                 Gecombineerd met -f, wordt een slack-vereist bestand gemaakt.\n"
+"    -a,          Controleert alle bestanden in de (sub)folders in plaats van de\n"
+"                 FHS te volgen.\n"
+"    -p,          Tracht de python afhankelijkheden te detecteren.\n"
+"    -j [jobs],   De hoeveelheid parallelle processen om uit te voeren.\n"
+"                 Werkt het snelst indien de processen gelijk zijn aan de\n"
+"                 hoeveelheid processoren/cores (default: 1)\n"
+"    -v,          Toon versie informatie.\n"
+"    -h,          Dit help bericht."
+
+#: ../depfinder:64
+#, sh-format
+msgid ""
+"depfinder version $VERSION (c) 2009 George Vlahavas\n"
+"Run \"depfinder -h\" for help information"
+msgstr ""
+"depfinder versie $VERSION (c) 2009 George Vlahavas\n"
+"Start  \"depfinder -h\" voor hulp en informatie"
+
+#: ../depfinder:105
+#, sh-format
+msgid "ERROR: No arguments found."
+msgstr "FOUT: Geen argumenten gevonden."
+
+#: ../depfinder:143
+#, sh-format
+msgid "ERROR: Number of jobs must be greater than one"
+msgstr "FOUT: Aantal processen moeten groter zijn dan 1."
+
+#: ../depfinder:161
+#, sh-format
+msgid "ERROR: Too many arguments"
+msgstr "FOUT: Teveel argumenten"
+
+#: ../depfinder:168
+#, sh-format
+msgid "ERROR: $arg not found"
+msgstr "FOUT: $arg niet gevonden"
+
+#: ../depfinder:179
+#, sh-format
+msgid "ERROR: $arg is not a package file or a directory!"
+msgstr "FOUT: $arg is geen pakket bestand of een folder!"
+
+#: ../depfinder:300
+#, sh-format
+msgid "WARNING: python module $i not found."
+msgstr "WAARSCHUWING: python module $i niet gevonden."
+
+#: ../depfinder:326
+#, sh-format
+msgid "ERROR: package requires libraries not found in the system:"
+msgstr "FOUT: pakket vereist libraries welke niet in het systeem zijn gevonden:"
+
