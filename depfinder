@@ -338,7 +338,7 @@ find $STARTDIR | grep "\.so" | \
 sed "s/\(.*\)\/\(.*\)\.so\(.*\)/\2\.so/" >> INCLUDED
 
 # Exclude the included libs from the search list
-[ -f INCLUDED ] && for i in `cat INCLUDED`; do sed -i "/$i/d" LIBS; done
+[ -f INCLUDED ] && for i in `cat INCLUDED`; do sed -i "/^$i$/d" LIBS; done
 
 # Check if any dependencies are not found and bail out if they are
 if [[ `grep "=> not found" LIBS` ]]; then
