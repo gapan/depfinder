@@ -420,12 +420,14 @@ else
 		cat DEPSNAMES | \
 		tr "\n" " " | \
 		sed "s/ /,/g" | \
-		sed "s/,$/\n/" > $CWD/$DEPFILENAME.dep
+		sed "s/,$/\n/" | \
+		sed "s/^,//" > $CWD/$DEPFILENAME.dep
 	else
 		cat DEPSNAMES | \
 		tr "\n" " " | \
 		sed "s/ /,/g" | \
-		sed "s/,$/\n/"
+		sed "s/,$/\n/" | \
+		sed "s/^,//"
 	fi
 fi
 
