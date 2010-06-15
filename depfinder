@@ -354,6 +354,9 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	cat PYTHONNEEDEDMODULES >> LIBS
 fi
 
+# Some files in /usr/lib have nasty paths like /usr/lib/../lib/
+sed -i "s|lib${LIBDIRSUFFIX}/\.\./||" LIBS
+
 # Get the total number of libraries in the package 
 TOTALLINES=`wc -l LIBS | sed "s/\(.*\) \(.*\)/\1/"`
 
