@@ -355,6 +355,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 fi
 
 # Some files in /usr/lib have nasty paths like /usr/lib/../lib/
+# as reported by ldd
 sed -i "s|lib${LIBDIRSUFFIX}/\.\./||" LIBS
 
 # Get the total number of libraries in the package 
