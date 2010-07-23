@@ -1,0 +1,101 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: depfinder\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-01-28 13:19+0200\n"
+"PO-Revision-Date: 2010-07-21 21:45+0100\n"
+"Last-Translator: Peter Polonkai <polesz@nedudu.hu>\n"
+"Language-Team: Nedudu Team <nedudu@nedudu.hu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Hungarian\n"
+"X-Poedit-Country: HUNGARY\n"
+
+#: ../depfinder:41
+#, sh-format
+msgid ""
+"depfinder: finds the dependencies of Slackware packages\n"
+"\n"
+"usage: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>\n"
+"\n"
+"OPTIONS:\n"
+"    -f,          Output dependencies to a file instead of stdout.\n"
+"                 By default it creates a .dep file. See also -s.\n"
+"    -s,          Outputs dependencies with version information. If\n"
+"                 combined with -f, it creates a slack-required file\n"
+"    -a,          Checks all files in the directory tree instead of\n"
+"                 following the FHS\n"
+"    -p,          Attempts to detect python dependencies.\n"
+"    -j [jobs],   The number of parallel depfinder jobs to run. Faster\n"
+"                 if it matches the number of your CPUs/cores\n"
+"                 (default: 1)\n"
+"    -v,          Show version information\n"
+"    -h,          This help message"
+msgstr ""
+"depfinder: Slackware csomagok függőségeinek keresése\n"
+"\n"
+"használat: depfinder [OPCIÓK] <csomag.tgz|.txz|.tlz|.tgz vagy csomag-könyvtár>\n"
+"\n"
+"OPCIÓK:\n"
+"    -f,          A szabványos kimenet helyett fájl létrehozása.\n"
+"                 Alapértelmezésben létrehozva egy .dep fájl. Lásd még -s.\n"
+"    -s,          Verzió információk hozzáadása a függőségekhez. Ha ezt\n"
+"                 kombinálja a -f kapcsolóval akkor szabványos slack-required fájl lesz létrehozva\n"
+"    -a,          Fájlok ellenőrzése a hagyományos könyvtár struktúra helyett\n"
+"                 az FHS szerint\n"
+"    -p,          Python függőségek keresésének megkísérlése.\n"
+"    -j [szám],   Az egyszerre futó depfinder folyamatok száma. Gyorsabb\n"
+"                 ha megegyezik a CPU/magok számával\n"
+"                 (alapértelmezés 1)\n"
+"    -v,          Verzió információk mutatása\n"
+"    -h,          Ez a segítség üzenet"
+
+#: ../depfinder:64
+#, sh-format
+msgid ""
+"depfinder version $VERSION (c) 2009 George Vlahavas\n"
+"Run \"depfinder -h\" for help information"
+msgstr ""
+"depfinder: verzió $VERSION (c) 2009 George Vlahavas\n"
+"További információk: \"depfinder -h\""
+
+#: ../depfinder:105
+#, sh-format
+msgid "ERROR: No arguments found."
+msgstr "HIBA: Nincs paraméter megadva."
+
+#: ../depfinder:143
+#, sh-format
+msgid "ERROR: Number of jobs must be greater than one"
+msgstr "HIBA: Folyamatok számának egynél nagyobbnak kell lennie"
+
+#: ../depfinder:161
+#, sh-format
+msgid "ERROR: Too many arguments"
+msgstr "HIBA: Túl sok paraméter"
+
+#: ../depfinder:168
+#, sh-format
+msgid "ERROR: $arg not found"
+msgstr "HIBA: $arg nem található"
+
+#: ../depfinder:179
+#, sh-format
+msgid "ERROR: $arg is not a package file or a directory!"
+msgstr "HIBA: $arg nem csomagfájl vagy könyvtár!"
+
+#: ../depfinder:300
+#, sh-format
+msgid "WARNING: python module $i not found."
+msgstr "FIGYELEM: $i python modul nem található."
+
+#: ../depfinder:326
+#, sh-format
+msgid "ERROR: package requires libraries not found in the system:"
+msgstr "HIBA: a csomaghoz szükséges könyvtárak nem találhatóak a rendszerben:"
