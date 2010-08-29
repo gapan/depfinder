@@ -2,7 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
@@ -98,5 +98,4 @@ msgstr "VARNING: python modulen $i hittades inte."
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
-msgstr ""
-
+msgstr "FEL: paketet kräver bibliotek som inte finns i systemet:"
