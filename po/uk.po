@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nameday\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-11 18:37+0200\n"
+"POT-Creation-Date: 2010-01-28 13:19+0200\n"
 "PO-Revision-Date: 2010-05-11 18:39+0100\n"
 "Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\\n\\n\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\\n\\n\\n\n"
 
 #: ../depfinder:41
 #, sh-format
@@ -42,7 +42,7 @@ msgstr ""
 "використання: depfinder [ОПЦІЇ] <пакет.tgz|.txz|.tlz|.tbz або тека пакету>\n"
 "\n"
 "ОПЦІЇ:\n"
-" -f, Виводити залкжності в файл замість в stdout.\n"
+" -f, Виводити залежності в файл замість в stdout.\n"
 " По замовчуванню створюється файл .dep . Дивись також -s.\n"
 " -s, Виводить залежності з інформацією про версію. Якщо\n"
 " використовується з -f, створюється файл, що вимагається Slack`ом\n"
@@ -67,7 +67,7 @@ msgstr ""
 #: ../depfinder:105
 #, sh-format
 msgid "ERROR: No arguments found."
-msgstr "ПРМИЛКА: Не знайдено аргументів."
+msgstr "ПОМИЛКА: Не знайдено аргументів."
 
 #: ../depfinder:143
 #, sh-format
@@ -87,7 +87,7 @@ msgstr "ПОМИЛКА: $arg не знайдено"
 #: ../depfinder:179
 #, sh-format
 msgid "ERROR: $arg is not a package file or a directory!"
-msgstr "ПОМИЛКА: $arg не є файлом пакету або текою!"
+msgstr "ПОМИЛКА: $arg не є файлом пакунку або текою!"
 
 #: ../depfinder:300
 #, sh-format
@@ -97,4 +97,4 @@ msgstr "ПОПЕРЕДЖЕННЯ: модуль python`а $i не знайден�
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
-msgstr "ПОМИЛКА: пакет вимагає бібіліотеки, які не знайдені в системі:"
+msgstr "ПОМИЛКА: пакет вимагає бібліотеки, які не знайдено в системі:"
