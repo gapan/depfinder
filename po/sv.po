@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+# Ingemar Karlsson <po@ingk.se>, 2010.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2010-08-29 19:11+0100\n"
+"PO-Revision-Date: 2010-09-26 09:41+0100\n"
 "Last-Translator: Ingemar Karlsson <ingemar@ingk.se>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -43,15 +43,15 @@ msgstr ""
 "användning: depfinder [ALTERNATIV] <package.tgz|.txz|.tlz|.tbz eller paket-katalog>\n"
 "\n"
 "ALTERNATIV:\n"
-"    -f,          Output dependencies to a file instead of stdout.\n"
-"                 By default it creates a .dep file. See also -s.\n"
-"    -s,          Outputs dependencies with version information. If\n"
-"                 combined with -f, it creates a slack-required file\n"
-"    -a,          Checks all files in the directory tree instead of\n"
-"                 following the FHS\n"
-"    -p,          Attempts to detect python dependencies.\n"
-"    -j [jobs],   The number of parallel depfinder jobs to run. Faster\n"
-"                 if it matches the number of your CPUs/cores\n"
+"    -f,          Matar ut beroende till en fil istä'llet för till stdout.\n"
+"                 Som standard skapas en .dep fil. Se också -s.\n"
+"    -s,         Matar ut beroende med versions information. Om\n"
+"                 kombinerad med -f, skapas en slack-required fil\n"
+"    -a,         Kontrollerar alla filer i katalogträdet istället för\n"
+"                 att följa FHS\n"
+"    -p,          Försöker detektera python beroende.\n"
+"    -j [jobs],   Antalet parallella depfinder jobb att köra. Snabbare\n"
+"                 om det matchar antalet CPUs/cores\n"
 "                 (standard: 1)\n"
 "    -v,          Visa versions information\n"
 "    -h,          Denna hjälp"
@@ -99,3 +99,4 @@ msgstr "VARNING: python modulen $i hittades inte."
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "FEL: paketet kräver bibliotek som inte finns i systemet:"
+
