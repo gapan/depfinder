@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: Depfinder\n"
+"Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2010-04-05 12:05+0100\n"
-"Last-Translator: Grzegorz Gibas <amigib@gmail.com>\n"
-"Language-Team:  <amigib@gmail.com>\n"
+"PO-Revision-Date: 2011-01-09 15:51+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Polish\n"
-"X-Poedit-Country: POLAND\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: ../depfinder:41
 #, sh-format
@@ -100,4 +100,3 @@ msgstr "UWAGA: nie znaleziono modułu $i pythona."
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "BŁĄD: pakiet wymaga bibliotek, których brakuje w twoim systemie:"
-

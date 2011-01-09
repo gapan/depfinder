@@ -1,19 +1,21 @@
-# Dutch .po file for depfinder.
-# Copyright (C) 2010
-# This file is distributed under the same license as the depfinder package.
-# Imar van Erven Dorens <gambit73@gmail.com>, 2010.
-#
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.0\n"
+"Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2010-05-03 18:36+0100\n"
-"Last-Translator: Imar van Erven Dorens <gambit73@gmail.com>\n"
+"PO-Revision-Date: 2011-01-09 15:50+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: nl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: ../depfinder:41
 #, sh-format
@@ -97,4 +99,3 @@ msgstr "WAARSCHUWING: python module $i niet gevonden."
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "FOUT: pakket vereist libraries welke niet in het systeem zijn gevonden:"
-
