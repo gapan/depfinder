@@ -326,6 +326,7 @@ for i in `cat FILES`; do
 	LANG=C ldd ${STARTDIR}${i} 2> /dev/null \
 	| grep "=>" \
 	| sed "s/\(.*\) => \/\(.*\) \(.*\)/\2/" \
+	| sed "s/=> not found/NOT FOUND/" \
         | grep -v "=>" >> LIBSM
 done
 
@@ -340,10 +341,10 @@ sed "s/\(.*\)\/\(.*\)\.so\(.*\)/\2\.so/" >> INCLUDED
 [ -f INCLUDED ] && for i in `cat INCLUDED`; do sed -i "/^$i$/d" LIBS; done
 
 # Check if any dependencies are not found and bail out if they are
-if [[ `grep "=> not found" LIBS` ]]; then
+if [[ `grep "NOT FOUND" LIBS` ]]; then
 	echo "`eval_gettext 'ERROR: package requires libraries not found in the system:'`" >&2
-	grep "=> not found" LIBS |\
-	sed "s/=> not found//" |\
+	grep "NOT FOUND" LIBS |\
+	sed "s/NOT FOUND//" |\
 	sed "s/\t/ /" >&2
 	err
 fi
