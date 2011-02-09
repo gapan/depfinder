@@ -1,4 +1,68 @@
 ------------------------------------------------------------------------
+r129 | gapan | 2011-02-09 21:49:40 +0200 (Τετ, 09 Φεβ 2011) | 1 line
+
+Bumped version to 1.3.7
+------------------------------------------------------------------------
+r128 | gapan | 2011-02-09 21:47:34 +0200 (Τετ, 09 Φεβ 2011) | 1 line
+
+Fixed producing an error when a dependency is not installed
+------------------------------------------------------------------------
+r127 | gapan | 2011-02-09 21:24:27 +0200 (Τετ, 09 Φεβ 2011) | 1 line
+
+Updated translations from transifex
+------------------------------------------------------------------------
+r126 | gapan | 2011-01-09 17:52:09 +0200 (Κυρ, 09 Ιαν 2011) | 1 line
+
+Updated translations from transifex
+------------------------------------------------------------------------
+r125 | ingemar | 2010-09-26 13:13:28 +0300 (Κυρ, 26 Σεπ 2010) | 5 lines
+
+l10n: Updated Swedish (sv) translation to 100%
+
+New status: 9 messages complete with 0 fuzzies and 0 untranslated.
+
+Transmitted-via: Transifex (www.transifex.net).
+------------------------------------------------------------------------
+r124 | knedlyk | 2010-09-08 22:56:47 +0300 (Τετ, 08 Σεπ 2010) | 5 lines
+
+l10n: Updated Ukrainian (uk) translation to 100%
+
+New status: 9 messages complete with 0 fuzzies and 0 untranslated.
+
+Transmitted-via: Transifex (www.transifex.net).
+------------------------------------------------------------------------
+r123 | tsuren | 2010-08-31 00:33:55 +0300 (Τρι, 31 Αύγ 2010) | 5 lines
+
+l10n: Japanese translation
+
+New status: 9 messages complete with 0 fuzzies and 0 untranslated.
+
+Transmitted-via: Transifex (www.transifex.net).
+------------------------------------------------------------------------
+r122 | ingemar | 2010-08-29 20:12:45 +0300 (Κυρ, 29 Αύγ 2010) | 5 lines
+
+l10n: Updated Swedish (sv) translation to 100%
+
+New status: 9 messages complete with 0 fuzzies and 0 untranslated.
+
+Transmitted-via: Transifex (www.transifex.net).
+------------------------------------------------------------------------
+r121 | ingemar | 2010-08-29 20:12:05 +0300 (Κυρ, 29 Αύγ 2010) | 5 lines
+
+l10n: Swedish translation
+
+New status: 8 messages complete with 0 fuzzies and 1 untranslated.
+
+Transmitted-via: Transifex (www.transifex.net).
+------------------------------------------------------------------------
+r120 | Polesz | 2010-07-23 17:35:57 +0300 (Παρ, 23 Ιούλ 2010) | 5 lines
+
+l10n: Initial translation
+
+New status: 9 messages complete with 0 fuzzies and 0 untranslated.
+
+Transmitted-via: Transifex (www.transifex.net).
+------------------------------------------------------------------------
 r119 | gapan | 2010-06-17 10:24:37 +0300 (Πεμ, 17 Ιούν 2010) | 1 line
 
 Bumped version to 1.3.6
