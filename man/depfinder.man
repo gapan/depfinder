@@ -1,4 +1,4 @@
-.TH "depfinder" 1 "03/24/2010" "George Vlahavas"
+.TH "depfinder" 1 "02/13/2011" "George Vlahavas"
 
 .SH NAME
 .P
@@ -66,22 +66,20 @@ though it's inside a block quote and will never be executed by python.
 a \fBlot\fR faster on PCs with multiple CPUs/cores.
 
 .SH OPTIONS
-.P
-\fB\-f\fR,
-outputs dependencies to a file instead of stdout. By default it creates a
+.TP
+\fB\-f\fR
+Outputs dependencies to a file instead of stdout. By default it creates a
 \&.dep file with a comma separated list of dependencies without version
 information. See also \fB\-s\fR.
 
-.P
-\fB\-s\fR,
-outputs dependencies including version information. Dependencies will be
+:\fB\-s\fR,
+Outputs dependencies including version information. Dependencies will be
 listed in the format following this example: "zlib >= 1.2.3\-i486\-2". If
 combined with \fB\-f\fR, it creates a slack\-required file which can be
 placed inside the package under the \fIinstall\fR directory.
 
-.P
-\fB\-a\fR,
-checks all files in the directory tree instead of following the FHS. If
+:\fB\-a\fR
+Checks all files in the directory tree instead of following the FHS. If
 \fB\-a\fR is not used then depfinder looks for binary files only under
 \fI/sbin\fR ,\fI/usr/sbin\fR, \fI/usr/bin\fR, \fI/bin\fR, \fI/usr/libexec\fR and
 \fI/usr/lib\fR, \fI/lib\fR or \fI/usr/lib64\fR, \fI/lib64\fR for 32\-bit and
@@ -90,9 +88,8 @@ searches for files dynamically linking to libraries anywhere inside the
 package. This option could be usefull if the installation scripts put
 binaries in a non\-standard location.
 
-.P
-\fB\-p\fR,
-attempts to discover python dependencies. Using this switch, depfinder
+:\fB\-p\fR
+Attempts to discover python dependencies. Using this switch, depfinder
 searches for all files that can be recognized as python scripts.
 All python files that are detected are parsed for modules that they
 import and depfinder ultimately reports which packages these modules
@@ -110,32 +107,30 @@ functionality perhaps. It's up to the packager to determine which of
 the reported python dependencies are actually dependencies and which
 ones should merely be suggested packages.
 
-.P
-\fB\-j\fR \fIjobs\fR,
-specifies the number of parallel depfinder jobs to run. depfinder will
+:\fB\-j\fR \fIjobs\fR
+Specifies the number of parallel depfinder jobs to run. depfinder will
 finish considerably faster if this matches exactly the number of your
 CPUs/cores (default number of jobs: 1)
 
-.SH GENERAL OPTIONS
-.P
-\fB\-v\fR,
-shows version information for depfinder and exits.
+= GENERAL OPTIONS =
 
-.P
-\fB\-h\fR,
-prints a usage message briefly summarizing all command\-line options
+:\fB\-v\fR
+Shows version information for depfinder and exits.
+
+:\fB\-h\fR
+Prints a usage message briefly summarizing all command\-line options
 and exits.
 
-.SH WEBSITE
-.P
+= WEBSITE =
+
 http://depfinder.sourceforge.net/
 
-.SH AUTHORS
-.P
+= AUTHORS =
+
 depfinder was written by George Vlahavas <vlahavas~at~gmail~dot~com>
 
-.SH SEE ALSO
-.P
+= SEE ALSO =
+
 \fBldd\fR(1)
 
 

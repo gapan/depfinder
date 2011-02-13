@@ -66,22 +66,19 @@ a **lot** faster on PCs with multiple CPUs/cores.
 
 = OPTIONS =
 
-**-f**,
-%comment
-outputs dependencies to a file instead of stdout. By default it creates a
+: **-f**
+Outputs dependencies to a file instead of stdout. By default it creates a
 .dep file with a comma separated list of dependencies without version
 information. See also **-s**.
 
-**-s**,
-%comment
-outputs dependencies including version information. Dependencies will be
+: **-s**,
+Outputs dependencies including version information. Dependencies will be
 listed in the format following this example: "zlib >= 1.2.3-i486-2". If
 combined with **-f**, it creates a slack-required file which can be
 placed inside the package under the //install// directory.
 
-**-a**,
-%comment
-checks all files in the directory tree instead of following the FHS. If
+: **-a**
+Checks all files in the directory tree instead of following the FHS. If
 **-a** is not used then depfinder looks for binary files only under
 ///sbin// ,///usr/sbin//, ///usr/bin//, ///bin//, ///usr/libexec// and
 ///usr/lib//, ///lib// or ///usr/lib64//, ///lib64// for 32-bit and
@@ -90,9 +87,8 @@ searches for files dynamically linking to libraries anywhere inside the
 package. This option could be usefull if the installation scripts put
 binaries in a non-standard location.
 
-**-p**,
-%comment
-attempts to discover python dependencies. Using this switch, depfinder
+: **-p**
+Attempts to discover python dependencies. Using this switch, depfinder
 searches for all files that can be recognized as python scripts.
 All python files that are detected are parsed for modules that they
 import and depfinder ultimately reports which packages these modules
@@ -110,21 +106,18 @@ functionality perhaps. It's up to the packager to determine which of
 the reported python dependencies are actually dependencies and which
 ones should merely be suggested packages.
 
-**-j** //jobs//,
-%comment
-specifies the number of parallel depfinder jobs to run. depfinder will
+: **-j** //jobs//
+Specifies the number of parallel depfinder jobs to run. depfinder will
 finish considerably faster if this matches exactly the number of your
 CPUs/cores (default number of jobs: 1)
 
 = GENERAL OPTIONS =
 
-**-v**,
-%comment
-shows version information for depfinder and exits.
+: **-v**
+Shows version information for depfinder and exits.
 
-**-h**,
-%comment
-prints a usage message briefly summarizing all command-line options
+: **-h**
+Prints a usage message briefly summarizing all command-line options
 and exits.
 
 = WEBSITE =
