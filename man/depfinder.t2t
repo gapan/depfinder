@@ -71,7 +71,7 @@ Outputs dependencies to a file instead of stdout. By default it creates a
 .dep file with a comma separated list of dependencies without version
 information. See also **-s**.
 
-: **-s**,
+: **-s**
 Outputs dependencies including version information. Dependencies will be
 listed in the format following this example: "zlib >= 1.2.3-i486-2". If
 combined with **-f**, it creates a slack-required file which can be

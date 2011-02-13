@@ -72,13 +72,15 @@ Outputs dependencies to a file instead of stdout. By default it creates a
 \&.dep file with a comma separated list of dependencies without version
 information. See also \fB\-s\fR.
 
-:\fB\-s\fR,
+.TP
+\fB\-s\fR,
 Outputs dependencies including version information. Dependencies will be
 listed in the format following this example: "zlib >= 1.2.3\-i486\-2". If
 combined with \fB\-f\fR, it creates a slack\-required file which can be
 placed inside the package under the \fIinstall\fR directory.
 
-:\fB\-a\fR
+.TP
+\fB\-a\fR
 Checks all files in the directory tree instead of following the FHS. If
 \fB\-a\fR is not used then depfinder looks for binary files only under
 \fI/sbin\fR ,\fI/usr/sbin\fR, \fI/usr/bin\fR, \fI/bin\fR, \fI/usr/libexec\fR and
@@ -88,7 +90,8 @@ searches for files dynamically linking to libraries anywhere inside the
 package. This option could be usefull if the installation scripts put
 binaries in a non\-standard location.
 
-:\fB\-p\fR
+.TP
+\fB\-p\fR
 Attempts to discover python dependencies. Using this switch, depfinder
 searches for all files that can be recognized as python scripts.
 All python files that are detected are parsed for modules that they
@@ -107,17 +110,20 @@ functionality perhaps. It's up to the packager to determine which of
 the reported python dependencies are actually dependencies and which
 ones should merely be suggested packages.
 
-:\fB\-j\fR \fIjobs\fR
+.TP
+\fB\-j\fR \fIjobs\fR
 Specifies the number of parallel depfinder jobs to run. depfinder will
 finish considerably faster if this matches exactly the number of your
 CPUs/cores (default number of jobs: 1)
 
 = GENERAL OPTIONS =
 
-:\fB\-v\fR
+.TP
+\fB\-v\fR
 Shows version information for depfinder and exits.
 
-:\fB\-h\fR
+.TP
+\fB\-h\fR
 Prints a usage message briefly summarizing all command\-line options
 and exits.
 
