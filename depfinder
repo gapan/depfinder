@@ -390,8 +390,12 @@ done
 # Exclude the present package from the dependency list
 EXCLUDE=$( basename `echo $PKGNAME | sed "s/\(.*\)-\(.*\)-\(.*\)-\(.*\)/\1/"` )
 sed -i ":a;s/|\(${EXCLUDE}\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)//g;ta" DEPS
-sed -i ":a;s/\(${EXCLUDE}\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)|//g;ta" DEPS
-sed -i ":a;s/\(${EXCLUDE}\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)//g;ta" DEPS
+
+sed -i ":a;s/,\(${EXCLUDE}\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)|/,/g;ta" DEPS
+sed -i ":a;s/^\(${EXCLUDE}\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)|//g;ta" DEPS
+
+sed -i ":a;s/,\(${EXCLUDE}\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/,/g;ta" DEPS
+sed -i ":a;s/^\(${EXCLUDE}\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)//g;ta" DEPS
 
 if [ $VERSIONINFO -eq 1 ]; then
 	sort DEPS | uniq | \
