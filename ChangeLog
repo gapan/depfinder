@@ -1,560 +1,160 @@
-------------------------------------------------------------------------
-r129 | gapan | 2011-02-09 21:49:40 +0200 (Τετ, 09 Φεβ 2011) | 1 line
+version 1.3.7 (2011-02-12):
+  * Fixed a bug with reinstating an error message when dependencies were
+    not installed.
+  * Updated translations, including new translations for Japanese,
+    Ukranian, and Swedish
+
+version 1.3.6 (2010-06-17):
+  * Fixed a problem with detecting some dependencies that were missed
+    before.
+
+version 1.3.5 (2010-06-14):
+  * Disabled the exclusion of aaa_elflibs and glibc-* packages and fixed
+    minor bug that would sometimes put a leading comma in the dependency
+    list.
+
+version 1.3.4 (2010-05-24)
+  * Fixed a bug that would make depfinder run forever if it encountered
+    a python file with spaces in its filename.
+
+version 1.3.3 (2010-05-20)
+  * Fixed broken detection of included libraries
+  * Added Ukranian translation
+  * Added Dutch translation
+  * Added Polish translation
+  * Updated Danish and Italian translations
+
+version 1.3.2 (2010-03-24)
+  * Fixed a bug with excluding packages
+  * Added Danish, Italian, Spanish and Argentinian Spanish translations
+
+version 1.3.1 (2010-02-26)
+  * Added Brazilian Portuguese translation
+
+version 1.3.0 (2010-01-28)
+  * Added support for detecting python dependencies
+
+version 1.2.2 (2009-12-24)
+  * Fixed a bug where no dependencies were displayed when the number of
+    jobs was larger than the number of libraries included in the
+    package
+  * Fixed a bug with not splitting the jobs properly resulting to an
+    error message
+  * Speed optimizations by removing the dependency on python
+  * Fixed removing default excluded packages
+
+version 1.2.1 (2009-12-13)
+  * Added manpage
+
+version 1.2.0 (2009-12-08)
+  * Removed support for the ADD and EXCLUDE environment variables. It's
+    easy enough to do this with standard tools like sed, or by editing
+    the dependency list manually. No reason to keep complicating
+    depfinder for it, lets keep things as simple as possible.
+  * Fixed not detecting dependencies when ldd pointed to a symlink to
+    the actual library and the symlink was not included in the package
+    contents in /var/log/packages/ (thanks Emmanuel Bailleul)
+  * Made it possible to launch the installation scripts from a different
+    directory
+
+version 1.1.4 (2009-12-05)
+  * Fixed extraction of txz packages that was broken with xz-4.999.9beta
+
+version 1.1.3 (2009-11-18)
+  * Fixed more things in the French translation
+
+version 1.1.2 (2009-11-18)
+  * Fixed some strings in the French translation
+
+version 1.1.1 (2009-11-17)
+  * Added French translation
+
+version 1.1.0 (2009-10-02)
+  * Added localization support
+  * Nicer "libraries not found" error message.
+  * Changed the way the compile.sh and install.sh scripts work.
+
+version 1.0.2 (2009-08-30)
+  * Bugfixes for the OR statement when outputing to comma separated
+    list.
+
+version 1.0.1 (2009-08-30)
+  * Bugfixes for the OR statement combined with the -s switch
+
+version 1.0.0 (2009-08-29)
+  * Placed the pkglist.log file in a different directory per process, so
+    there is no need for any lock files anymore (thanks for the idea
+    Dimitar Stankov)
+  * Added support for x86_64 arch, by passing the -64 switch to
+    install.sh
+  * Added support for OR statements using the "|" operator in dependency
+    lists.
+  * aaa_elflibs is never listed as a dependency
+
+versjkon 0.9.2 (2009-06-12)
+  * Removed some unneeded lowercasing (thanks for the patch Dimitar
+    Stankov)
+
+version 0.9.1 (2009-06-12)
+  * Fixed use of EXCLUDE environment variable that was broken since
+    the addition of -s (thanks for the patch Dimitar Stankov)
+  * The ADD environment variable works properly now combined with -s
+  * ADD now takes priority over EXCLUDE
 
-Bumped version to 1.3.7
-------------------------------------------------------------------------
-r128 | gapan | 2011-02-09 21:47:34 +0200 (Τετ, 09 Φεβ 2011) | 1 line
+version 0.9 (2009-06-11)
+  * Added -s option to include version information in dependencies
+    list. Creates a slack-required file if combined with -f.
 
-Fixed producing an error when a dependency is not installed
-------------------------------------------------------------------------
-r127 | gapan | 2011-02-09 21:24:27 +0200 (Τετ, 09 Φεβ 2011) | 1 line
+version 0.8.1 (2009-06-09)
+  * Apply lock to removing /tmp/depfinder-pkglist.log too
+  * Used LOCKFILE variable for the lock file location (thanks for the
+    patch Dimitar Stankov)
+  * /var/lock/depfinder/ with write priviliges for everyone is
+    installed by default
+  * Used basename for the DEPFILENAME (thanks for the patch Dimitar
+    Stankov)
 
-Updated translations from transifex
-------------------------------------------------------------------------
-r126 | gapan | 2011-01-09 17:52:09 +0200 (Κυρ, 09 Ιαν 2011) | 1 line
+version 0.8 (2009-06-09)
+  * Apply lock to /tmp/depfinder-pkglist.log, so there is no chance of
+    overwritting the file while reading it (thanks for the idea
+    Dimitar Stankov!). flock is used for that, so depfinder now also
+    needs util-linux-ng to be installed.
 
-Updated translations from transifex
-------------------------------------------------------------------------
-r125 | ingemar | 2010-09-26 13:13:28 +0300 (Κυρ, 26 Σεπ 2010) | 5 lines
+version 0.7.1 (2009-05-10)
+  * Fixed receiving a directory as an argument
 
-l10n: Updated Swedish (sv) translation to 100%
+version 0.7 (2009-05-09)
+  * Added support for txz packages
+  * Changed a Zenwalk specific error message to something more general
 
-New status: 9 messages complete with 0 fuzzies and 0 untranslated.
+version 0.6 (2009-04-15)
+  * Added support for tbz and tlz packages
 
-Transmitted-via: Transifex (www.transifex.net).
-------------------------------------------------------------------------
-r124 | knedlyk | 2010-09-08 22:56:47 +0300 (Τετ, 08 Σεπ 2010) | 5 lines
+version 0.5 (2009-03-06)
+  * Don't search for dependencies that are included in the same package
 
-l10n: Updated Ukrainian (uk) translation to 100%
+version 0.4.1 (2009-01-31)
+  * Outputs error messages to stderr instead of stdout
 
-New status: 9 messages complete with 0 fuzzies and 0 untranslated.
+version 0.4 (2009-01-27)
+  * Can now use a directory with the package structure directly
+  * Fix bad dependency calculation for "not found" libraries, a proper error
+    message is shown instead
+  * Removed testing for root user priviliges, can now be run as a
+    non-priviliged user
+  * Added support for ADD and EXCLUDE environment variables for adding or
+    excluding deps respectively
 
-Transmitted-via: Transifex (www.transifex.net).
-------------------------------------------------------------------------
-r123 | tsuren | 2010-08-31 00:33:55 +0300 (Τρι, 31 Αύγ 2010) | 5 lines
+version 0.3.1 (2009-01-26)
 
-l10n: Japanese translation
+  * Replaced bc with python for calculations
+  * Fixed error when ldd mistakes a script for a dynamic executable
 
-New status: 9 messages complete with 0 fuzzies and 0 untranslated.
+version 0.3 (2009-01-25)
 
-Transmitted-via: Transifex (www.transifex.net).
-------------------------------------------------------------------------
-r122 | ingemar | 2010-08-29 20:12:45 +0300 (Κυρ, 29 Αύγ 2010) | 5 lines
+  * Added support for multiple jobs with the -j# switch
+  * Many small performance enhancements
 
-l10n: Updated Swedish (sv) translation to 100%
+version 0.2 (2009-01-23)
 
-New status: 9 messages complete with 0 fuzzies and 0 untranslated.
-
-Transmitted-via: Transifex (www.transifex.net).
-------------------------------------------------------------------------
-r121 | ingemar | 2010-08-29 20:12:05 +0300 (Κυρ, 29 Αύγ 2010) | 5 lines
-
-l10n: Swedish translation
-
-New status: 8 messages complete with 0 fuzzies and 1 untranslated.
-
-Transmitted-via: Transifex (www.transifex.net).
-------------------------------------------------------------------------
-r120 | Polesz | 2010-07-23 17:35:57 +0300 (Παρ, 23 Ιούλ 2010) | 5 lines
-
-l10n: Initial translation
-
-New status: 9 messages complete with 0 fuzzies and 0 untranslated.
-
-Transmitted-via: Transifex (www.transifex.net).
-------------------------------------------------------------------------
-r119 | gapan | 2010-06-17 10:24:37 +0300 (Πεμ, 17 Ιούν 2010) | 1 line
-
-Bumped version to 1.3.6
-------------------------------------------------------------------------
-r118 | gapan | 2010-06-17 10:23:21 +0300 (Πεμ, 17 Ιούν 2010) | 1 line
-
-added a comment line
-------------------------------------------------------------------------
-r117 | gapan | 2010-06-16 01:11:20 +0300 (Τετ, 16 Ιούν 2010) | 1 line
-
-Fixed detection of libraries with /../ in their path
-------------------------------------------------------------------------
-r116 | gapan | 2010-06-12 13:17:14 +0300 (Σαβ, 12 Ιούν 2010) | 1 line
-
-Added ChangeLog from svn log
-------------------------------------------------------------------------
-r115 | gapan | 2010-06-12 13:15:58 +0300 (Σαβ, 12 Ιούν 2010) | 1 line
-
-Bumped version to 1.3.5
-------------------------------------------------------------------------
-r114 | gapan | 2010-06-12 13:14:41 +0300 (Σαβ, 12 Ιούν 2010) | 1 line
-
-Moved ChangeLog to ChangeLog-old
-------------------------------------------------------------------------
-r113 | gapan | 2010-06-11 00:48:29 +0300 (Παρ, 11 Ιούν 2010) | 1 line
-
-Remove leading comma in dependency list if there is one
-------------------------------------------------------------------------
-r112 | gapan | 2010-06-08 10:07:03 +0300 (Τρι, 08 Ιούν 2010) | 1 line
-
-Don't exclude aaa_elflibs and glibc-* packages
-------------------------------------------------------------------------
-r111 | gapan | 2010-05-24 20:31:06 +0300 (Δευ, 24 Μάι 2010) | 1 line
-
-Fixed a bug with python files with spaces in their filenames
-------------------------------------------------------------------------
-r110 | gapan | 2010-05-20 16:51:23 +0300 (Πεμ, 20 Μάι 2010) | 1 line
-
-Bumped version to 1.3.3
-------------------------------------------------------------------------
-r109 | gapan | 2010-05-20 16:51:03 +0300 (Πεμ, 20 Μάι 2010) | 1 line
-
-Fixed broken detection of included libraries
-------------------------------------------------------------------------
-r108 | gapan | 2010-05-20 16:46:39 +0300 (Πεμ, 20 Μάι 2010) | 1 line
-
-Updated changelog
-------------------------------------------------------------------------
-r107 | knedlyk | 2010-05-19 19:25:00 +0300 (Τετ, 19 Μάι 2010) | 5 lines
-
-l10n: Updated Ukrainian (uk) translation to 100%
-
-New status: 9 messages complete with 0 fuzzies and 0 untranslated.
-
-Transmitted-via: Transifex (www.transifex.net).
-------------------------------------------------------------------------
-r106 | knedlyk | 2010-05-19 19:11:42 +0300 (Τετ, 19 Μάι 2010) | 5 lines
-
-l10n: Ukrainian translation
-
-New status: 1 message complete with 0 fuzzies and 8 untranslated.
-
-Transmitted-via: Transifex (www.transifex.net).
-------------------------------------------------------------------------
-r105 | gambit73 | 2010-05-03 19:47:27 +0300 (Δευ, 03 Μάι 2010) | 5 lines
-
-l10n: First Dutch translation
-
-New status: 9 messages complete with 0 fuzzies and 0 untranslated.
-
-Transmitted-via: Transifex (www.transifex.net).
-------------------------------------------------------------------------
-r104 | gapan | 2010-04-24 13:40:40 +0300 (Σαβ, 24 Απρ 2010) | 1 line
-
-Updated installation scripts for locale->po change
-------------------------------------------------------------------------
-r103 | gapan | 2010-04-24 13:39:20 +0300 (Σαβ, 24 Απρ 2010) | 1 line
-
-Renamed locale dir to po
-------------------------------------------------------------------------
-r102 | gapan | 2010-04-24 13:38:54 +0300 (Σαβ, 24 Απρ 2010) | 1 line
-
-Updated changelog
-------------------------------------------------------------------------
-r101 | gapan | 2010-04-24 13:38:25 +0300 (Σαβ, 24 Απρ 2010) | 1 line
-
-Fixed formatting in man page
-------------------------------------------------------------------------
-r100 | kristho | 2010-04-20 14:17:26 +0300 (Τρι, 20 Απρ 2010) | 3 lines
-
-l10n: Updates to Danish (da) translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r99 | amigib | 2010-04-05 13:12:39 +0300 (Δευ, 05 Απρ 2010) | 3 lines
-
-l10n: Add Polish translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r98 | keepsimple | 2010-03-30 18:30:28 +0300 (Τρι, 30 Μάρ 2010) | 3 lines
-
-l10n: Updates to Italian translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r97 | gapan | 2010-03-24 22:20:13 +0200 (Τετ, 24 Μάρ 2010) | 1 line
-
-Fixed formatting in man page
-------------------------------------------------------------------------
-r96 | gapan | 2010-03-24 22:09:59 +0200 (Τετ, 24 Μάρ 2010) | 1 line
-
-Bumped version to 1.3.2
-------------------------------------------------------------------------
-r95 | gapan | 2010-03-24 22:09:10 +0200 (Τετ, 24 Μάρ 2010) | 1 line
-
-Fixed properly comma separating deps
-------------------------------------------------------------------------
-r94 | gapan | 2010-03-24 21:56:32 +0200 (Τετ, 24 Μάρ 2010) | 1 line
-
-Updated Changelog, TRANSLATORS file
-------------------------------------------------------------------------
-r93 | gapan | 2010-03-24 21:49:27 +0200 (Τετ, 24 Μάρ 2010) | 1 line
-
-Removed it_IT.po, it.po is used anyway
-------------------------------------------------------------------------
-r92 | gapan | 2010-03-24 21:48:06 +0200 (Τετ, 24 Μάρ 2010) | 3 lines
-
-l10n: Updates to Spanish (Castilian) (es) translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r91 | gapan | 2010-03-24 21:47:39 +0200 (Τετ, 24 Μάρ 2010) | 3 lines
-
-l10n: Updates to Spanish (Argentinian) (es_AR) translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r90 | gapan | 2010-03-24 21:47:13 +0200 (Τετ, 24 Μάρ 2010) | 3 lines
-
-l10n: Updates to Portuguese (Brazilian) (pt_BR) translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r89 | gapan | 2010-03-24 21:46:43 +0200 (Τετ, 24 Μάρ 2010) | 3 lines
-
-l10n: Updates to Italian (it) translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r88 | gapan | 2010-03-24 21:46:08 +0200 (Τετ, 24 Μάρ 2010) | 3 lines
-
-l10n: Updates to Greek (el) translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r87 | gapan | 2010-03-24 21:45:19 +0200 (Τετ, 24 Μάρ 2010) | 3 lines
-
-l10n: Updates to German (de) translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r86 | gapan | 2010-03-24 21:44:26 +0200 (Τετ, 24 Μάρ 2010) | 3 lines
-
-l10n: Updates to French (fr) translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r85 | gapan | 2010-03-24 21:43:49 +0200 (Τετ, 24 Μάρ 2010) | 3 lines
-
-l10n: Updates to Danish (da) translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r84 | gapan | 2010-03-24 21:41:26 +0200 (Τετ, 24 Μάρ 2010) | 3 lines
-
-l10n: Updates to it_IT translation
-
-Transmitted-via: Transifex (www.transifex.net)
-------------------------------------------------------------------------
-r83 | gapan | 2010-03-24 21:14:34 +0200 (Τετ, 24 Μάρ 2010) | 1 line
-
-Fixed package exclusions
-------------------------------------------------------------------------
-r82 | gapan | 2010-03-23 15:05:27 +0200 (Τρι, 23 Μάρ 2010) | 1 line
-
-Transifex
-------------------------------------------------------------------------
-r81 | gapan | 2010-03-23 14:57:30 +0200 (Τρι, 23 Μάρ 2010) | 1 line
-
-Transifex
-------------------------------------------------------------------------
-r80 | gapan | 2010-03-01 16:15:20 +0200 (Δευ, 01 Μάρ 2010) | 1 line
-
-Updated AUTHORS file with correct info
-------------------------------------------------------------------------
-r79 | gapan | 2010-02-26 13:33:14 +0200 (Παρ, 26 Φεβ 2010) | 1 line
-
-Updated translators list
-------------------------------------------------------------------------
-r77 | gapan | 2010-02-26 13:29:13 +0200 (Παρ, 26 Φεβ 2010) | 1 line
-
-Bumped version for 1.3.1
-------------------------------------------------------------------------
-r76 | gapan | 2010-01-30 13:22:32 +0200 (Σαβ, 30 Ιαν 2010) | 1 line
-
-Added pt_BR translation
-------------------------------------------------------------------------
-r75 | gapan | 2010-01-29 22:51:12 +0200 (Παρ, 29 Ιαν 2010) | 1 line
-
-Man page: added some more comments about python dependencies. Cleared some formatting.
-------------------------------------------------------------------------
-r74 | gapan | 2010-01-29 01:47:17 +0200 (Παρ, 29 Ιαν 2010) | 1 line
-
-Updated README with python dependency info
-------------------------------------------------------------------------
-r73 | gapan | 2010-01-29 01:21:43 +0200 (Παρ, 29 Ιαν 2010) | 1 line
-
-Edited man page for python warnings info
-------------------------------------------------------------------------
-r72 | gapan | 2010-01-29 01:06:36 +0200 (Παρ, 29 Ιαν 2010) | 1 line
-
-Also parse __import__('foo') style python commands
-------------------------------------------------------------------------
-r71 | gapan | 2010-01-28 23:28:53 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Moved finding python files to its own function
-------------------------------------------------------------------------
-r70 | gapan | 2010-01-28 23:20:32 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Moved parsing python scripts to it's own function
-------------------------------------------------------------------------
-r69 | gapan | 2010-01-28 23:09:04 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Updated french translation
-------------------------------------------------------------------------
-r68 | gapan | 2010-01-28 23:04:23 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Hopefully fixed module parsing using millions of seds :P
-------------------------------------------------------------------------
-r67 | gapan | 2010-01-28 21:43:43 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Better comment
-------------------------------------------------------------------------
-r66 | gapan | 2010-01-28 21:40:27 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Handle python scripts with multiple commands per line
-------------------------------------------------------------------------
-r65 | gapan | 2010-01-28 17:53:24 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Remove comments trailing a command in python scripts
-------------------------------------------------------------------------
-r64 | gapan | 2010-01-28 17:49:18 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-TODO list: Add support for perl
-------------------------------------------------------------------------
-r63 | gapan | 2010-01-28 15:18:51 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Fixed parsing python modules separated by just a comma, no spaces
-------------------------------------------------------------------------
-r62 | gapan | 2010-01-28 15:18:06 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Updated translations
-------------------------------------------------------------------------
-r61 | gapan | 2010-01-28 13:12:38 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Also look in all *.py files when searching for python dependencies
-------------------------------------------------------------------------
-r60 | gapan | 2010-01-28 12:50:24 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Updated README file
-------------------------------------------------------------------------
-r59 | gapan | 2010-01-28 12:39:59 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Bumped version to 1.3.0
-------------------------------------------------------------------------
-r58 | gapan | 2010-01-28 12:39:07 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Updated changelog
-------------------------------------------------------------------------
-r57 | gapan | 2010-01-28 12:37:49 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Added -b option to file when looking for python scripts
-------------------------------------------------------------------------
-r56 | gapan | 2010-01-28 12:36:48 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Updated man page with python stuff
-------------------------------------------------------------------------
-r55 | gapan | 2010-01-28 11:54:29 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Added -p to the help message
-------------------------------------------------------------------------
-r54 | gapan | 2010-01-28 11:22:14 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Fixed sed that separates multiple python imports in the same line
-------------------------------------------------------------------------
-r53 | gapan | 2010-01-28 10:34:02 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Added comments in code
-------------------------------------------------------------------------
-r52 | gapan | 2010-01-28 10:30:35 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Make sure the output of file is always in english so it can be parsed
-------------------------------------------------------------------------
-r51 | gapan | 2010-01-28 01:49:00 +0200 (Πεμ, 28 Ιαν 2010) | 1 line
-
-Done adding python support?
-------------------------------------------------------------------------
-r50 | gapan | 2010-01-27 19:35:43 +0200 (Τετ, 27 Ιαν 2010) | 1 line
-
-Determine which python modules are imported
-------------------------------------------------------------------------
-r49 | gapan | 2010-01-27 18:53:12 +0200 (Τετ, 27 Ιαν 2010) | 1 line
-
-Added DEBUG for cleanup. Fixed find command when searching for python scripts.
-------------------------------------------------------------------------
-r48 | gapan | 2010-01-27 18:44:25 +0200 (Τετ, 27 Ιαν 2010) | 1 line
-
-Started adding support for detecting python deps
-------------------------------------------------------------------------
-r46 | gapan | 2009-12-24 14:18:21 +0200 (Πεμ, 24 Δεκ 2009) | 1 line
-
-Fixed number of jobs being possible to get value zero
-------------------------------------------------------------------------
-r45 | gapan | 2009-12-24 01:50:22 +0200 (Πεμ, 24 Δεκ 2009) | 1 line
-
-Fixed removing default excluded packages
-------------------------------------------------------------------------
-r44 | gapan | 2009-12-24 01:45:05 +0200 (Πεμ, 24 Δεκ 2009) | 1 line
-
-Bumped version to 1.2.2
-------------------------------------------------------------------------
-r43 | gapan | 2009-12-24 01:44:28 +0200 (Πεμ, 24 Δεκ 2009) | 1 line
-
-Updated changelog
-------------------------------------------------------------------------
-r42 | gapan | 2009-12-24 01:41:48 +0200 (Πεμ, 24 Δεκ 2009) | 1 line
-
-Updated changelog
-------------------------------------------------------------------------
-r41 | gapan | 2009-12-24 01:40:06 +0200 (Πεμ, 24 Δεκ 2009) | 1 line
-
-Speed optimizations: removed python dependency
-------------------------------------------------------------------------
-r40 | gapan | 2009-12-24 01:33:23 +0200 (Πεμ, 24 Δεκ 2009) | 1 line
-
-Fixed bugs when running more jobs than libraries present in the system and files not being splitted properly
-------------------------------------------------------------------------
-r39 | gapan | 2009-12-13 19:59:56 +0200 (Κυρ, 13 Δεκ 2009) | 1 line
-
-Bumped version to 1.2.1
-------------------------------------------------------------------------
-r38 | gapan | 2009-12-13 18:13:42 +0200 (Κυρ, 13 Δεκ 2009) | 1 line
-
-Edited man page
-------------------------------------------------------------------------
-r37 | gapan | 2009-12-13 13:18:49 +0200 (Κυρ, 13 Δεκ 2009) | 1 line
-
-Default target for depfinder.t2t is manpage
-------------------------------------------------------------------------
-r36 | gapan | 2009-12-13 13:14:46 +0200 (Κυρ, 13 Δεκ 2009) | 1 line
-
-Updated README
-------------------------------------------------------------------------
-r35 | gapan | 2009-12-13 13:01:49 +0200 (Κυρ, 13 Δεκ 2009) | 1 line
-
-Updated man page
-------------------------------------------------------------------------
-r34 | gapan | 2009-12-13 01:34:25 +0200 (Κυρ, 13 Δεκ 2009) | 1 line
-
-Added manpage to installation script
-------------------------------------------------------------------------
-r33 | gapan | 2009-12-13 01:32:32 +0200 (Κυρ, 13 Δεκ 2009) | 1 line
-
-Added man page
-------------------------------------------------------------------------
-r31 | gapan | 2009-12-09 10:12:10 +0200 (Τετ, 09 Δεκ 2009) | 1 line
-
-Updated changelog
-------------------------------------------------------------------------
-r30 | gapan | 2009-12-09 00:49:49 +0200 (Τετ, 09 Δεκ 2009) | 1 line
-
-Updated TODO list
-------------------------------------------------------------------------
-r29 | gapan | 2009-12-08 23:59:35 +0200 (Τρι, 08 Δεκ 2009) | 1 line
-
-Removed support for ADD and EXCLUDE environment variables
-------------------------------------------------------------------------
-r28 | gapan | 2009-12-08 23:44:29 +0200 (Τρι, 08 Δεκ 2009) | 1 line
-
-Simpler check for symlinked libraries
-------------------------------------------------------------------------
-r27 | gapan | 2009-12-08 17:23:34 +0200 (Τρι, 08 Δεκ 2009) | 1 line
-
-Updated TODO. Minor edit in depfinder.
-------------------------------------------------------------------------
-r26 | gapan | 2009-12-08 17:14:33 +0200 (Τρι, 08 Δεκ 2009) | 1 line
-
-Updated changelog, bumped version
-------------------------------------------------------------------------
-r25 | gapan | 2009-12-08 16:15:24 +0200 (Τρι, 08 Δεκ 2009) | 1 line
-
-Fixed sed error when excluding the present package
-------------------------------------------------------------------------
-r24 | gapan | 2009-12-08 16:00:16 +0200 (Τρι, 08 Δεκ 2009) | 5 lines
-
-Changed behaviour of EXCLUDE.
-Fixed not detecting dependencies when ldd pointed to a symlink to the
-actual library and the symlink was not included in the package contents
-in /var/log/packages/
-
-------------------------------------------------------------------------
-r23 | gapan | 2009-12-08 15:58:11 +0200 (Τρι, 08 Δεκ 2009) | 1 line
-
-Made it possible to launch the installation scripts from a different directory
-------------------------------------------------------------------------
-r22 | gapan | 2009-12-05 23:52:32 +0200 (Σαβ, 05 Δεκ 2009) | 1 line
-
-Bumped version to 1.1.4
-------------------------------------------------------------------------
-r21 | gapan | 2009-12-05 23:51:44 +0200 (Σαβ, 05 Δεκ 2009) | 1 line
-
-Fixed extraction of txz packages that was broken with xz-4.999.9beta
-------------------------------------------------------------------------
-r20 | gapan | 2009-11-19 23:15:34 +0200 (Πεμ, 19 Νοέ 2009) | 1 line
-
-Added changelog entry for 1.1.3
-------------------------------------------------------------------------
-r19 | gapan | 2009-11-19 16:32:10 +0200 (Πεμ, 19 Νοέ 2009) | 1 line
-
-Fixed a string in the French translation
-------------------------------------------------------------------------
-r18 | gapan | 2009-11-18 22:33:26 +0200 (Τετ, 18 Νοέ 2009) | 1 line
-
-Fixed typo in changelog
-------------------------------------------------------------------------
-r17 | gapan | 2009-11-18 22:32:57 +0200 (Τετ, 18 Νοέ 2009) | 1 line
-
-Updated changelog for 1.1.2
-------------------------------------------------------------------------
-r16 | gapan | 2009-11-18 22:29:51 +0200 (Τετ, 18 Νοέ 2009) | 1 line
-
-Updated French translation
-------------------------------------------------------------------------
-r15 | gapan | 2009-11-17 11:33:17 +0200 (Τρι, 17 Νοέ 2009) | 2 lines
-
-Added french translation
-
-------------------------------------------------------------------------
-r13 | gapan | 2009-10-03 12:36:39 +0300 (Σαβ, 03 Οκτ 2009) | 1 line
-
-fixed errors in compile and install scripts
-------------------------------------------------------------------------
-r12 | gapan | 2009-10-03 12:27:33 +0300 (Σαβ, 03 Οκτ 2009) | 1 line
-
-Added German translation
-------------------------------------------------------------------------
-r11 | gapan | 2009-10-03 12:22:48 +0300 (Σαβ, 03 Οκτ 2009) | 1 line
-
-compile.sh compiles files and install.sh only installs them
-------------------------------------------------------------------------
-r10 | gapan | 2009-10-03 11:57:21 +0300 (Σαβ, 03 Οκτ 2009) | 1 line
-
-Moved compile script to main dir
-------------------------------------------------------------------------
-r9 | gapan | 2009-10-02 22:43:55 +0300 (Παρ, 02 Οκτ 2009) | 2 lines
-
-Added Greek translation
-
-------------------------------------------------------------------------
-r8 | gapan | 2009-10-02 22:43:19 +0300 (Παρ, 02 Οκτ 2009) | 2 lines
-
-fixed "libraries not found" message in pot file
-
-------------------------------------------------------------------------
-r7 | gapan | 2009-10-02 22:07:35 +0300 (Παρ, 02 Οκτ 2009) | 2 lines
-
-Nicer "libraries not found" error message
-
-------------------------------------------------------------------------
-r6 | gapan | 2009-10-02 21:59:15 +0300 (Παρ, 02 Οκτ 2009) | 3 lines
-
-Added gettext support in depfinder. Created pot file and added
-TRANSLATORS file.
-
-------------------------------------------------------------------------
-r2 | gapan | 2009-10-02 15:35:55 +0300 (Παρ, 02 Οκτ 2009) | 1 line
-
-Initial import (version 1.0.2)
-------------------------------------------------------------------------
-r1 | gapan | 2009-10-02 15:26:59 +0300 (Παρ, 02 Οκτ 2009) | 2 lines
-
-created trunk
-
-------------------------------------------------------------------------
+  * Initial public release
