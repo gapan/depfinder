@@ -73,7 +73,7 @@ Outputs dependencies to a file instead of stdout. By default it creates a
 information. See also \fB\-s\fR.
 
 .TP
-\fB\-s\fR,
+\fB\-s\fR
 Outputs dependencies including version information. Dependencies will be
 listed in the format following this example: "zlib >= 1.2.3\-i486\-2". If
 combined with \fB\-f\fR, it creates a slack\-required file which can be
