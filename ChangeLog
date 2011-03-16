@@ -1,3 +1,7 @@
+version 1.3.9 (2011-03-16):
+  * Fixed a rarely occuring bug with not reading including libraries
+    properly.
+
 version 1.3.8 (2011-02-13):
   * Fixed a bug which accidentally removed the package's name from the
     dependency list, if the name was part of the dependency.
