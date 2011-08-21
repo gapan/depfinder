@@ -1,14 +1,13 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2011-03-16 17:14+0000\n"
+"PO-Revision-Date: 2011-08-21 18:24+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -100,3 +99,5 @@ msgstr "UWAGA: nie znaleziono modułu $i pythona."
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "BŁĄD: pakiet wymaga bibliotek, których brakuje w twoim systemie:"
+
+
