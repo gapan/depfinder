@@ -1,3 +1,12 @@
+version 1.4.0 (2012-05-15):
+  * Check if a file is an ELF executable instead of checking if it has
+    the executable flag set. Some shared libraries do not have the
+    executable flag set, so depfinder was unable to trace them.
+    Thanks JRD!
+  * When asking for python dependencies, make sure the python module is
+    an exact match and not only a partial match.
+  * Added portuguese (pt_PT) and russian (ru) translations.
+
 version 1.3.9 (2011-03-16):
   * Fixed a rarely occurring bug with not reading included libraries
     properly.
