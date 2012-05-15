@@ -242,12 +242,12 @@ if [ $CHECKALLFILES -eq 0 ]; then
 	find \
 	{sbin,usr/sbin,usr/bin,bin,usr/lib${LIBDIRSUFFIX},lib${LIBDIRSUFFIX},usr/libexec} \
 	-type f -exec bash -c \
-	"[ -x {} ] && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
+	"file {} | grep -q ELF && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
 else
 	# or anywhere in the package if -a is specified
 	find ./ \
 	-type f -exec bash -c \
-	"[ -x {} ] && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
+	"file {} | grep -q ELF && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
 fi
 
 # Look for python dependencies
