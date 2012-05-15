@@ -297,15 +297,15 @@ if [ $PYTHONDEPS -eq 1 ]; then
 				if [ -f $dir/$i.py ]; then
 					echo "$dir/$i.py" \
 					>> /tmp/depfinder.$$/PYTHONNEEDEDMODULES
-					sed -i "/$i/d" /tmp/depfinder.$$/PYTHONMODULES
+					sed -i "/^${i}$/d" /tmp/depfinder.$$/PYTHONMODULES
 				elif [ -f $dir/$i/__init__.py ]; then
 					echo "$dir/$i/__init__.py" \
 					>> /tmp/depfinder.$$/PYTHONNEEDEDMODULES
-					sed -i "/$i/d" /tmp/depfinder.$$/PYTHONMODULES
+					sed -i "/^${i}$/d" /tmp/depfinder.$$/PYTHONMODULES
 				elif [ -f $dir/$i.so ]; then
 					echo "$dir/$i.so" \
 					>> /tmp/depfinder.$$/PYTHONNEEDEDMODULES
-					sed -i "/$i/d" /tmp/depfinder.$$/PYTHONMODULES
+					sed -i "/^${i}$/d" /tmp/depfinder.$$/PYTHONMODULES
 				fi		
 			done
 		fi
