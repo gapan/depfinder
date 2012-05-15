@@ -2,14 +2,15 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2011-08-21 18:24+0000\n"
+"PO-Revision-Date: 2010-11-30 06:44+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Danish (http://www.transifex.net/projects/p/depfinder/team/da/)\n"
+"Language-Team: Danish (http://www.transifex.net/projects/p/depfinder/language/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -36,33 +37,14 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr ""
-"depfinder: finder afhængighederne til Slackware-pakker\n"
-"\n"
-"brug: depfinder [TILVALG] <pakke.tgz|.txz|.tlz|.tbz eller pakkemappe>\n"
-"\n"
-"TILVALG:\n"
-"    -f,          Udskriver afhængighederne til en fil i stedet for til stdout.\n"
-"                 Som standard oprettes der en .dep-fil. Se også -s.\n"
-"    -s,          Udskriver afhængighederne med versioninformation. Hvis\n"
-"                 kombineret med -f, opretter den en slack-påkrævet fil\n"
-"    -a,          Kontrollerer alle filer i mappetræet i stedet for at\n"
-"                 følge FHS'en\n"
-"    -p,          Prøver at detektere python-afhængigheder.\n"
-"    -j [jobs],   Antallet af parallelle depfinder-jobs at køre. Hurtigere\n"
-"                 hvis det matcher antallet af CPU'er/kerner\n"
-"                 (standard: 1)\n"
-"    -v,          Viser versioninformation\n"
-"    -h,          Denne hjælpebesked"
+msgstr "depfinder: finder afhængighederne til Slackware-pakker\n\nbrug: depfinder [TILVALG] <pakke.tgz|.txz|.tlz|.tbz eller pakkemappe>\n\nTILVALG:\n    -f,          Udskriver afhængighederne til en fil i stedet for til stdout.\n                 Som standard oprettes der en .dep-fil. Se også -s.\n    -s,          Udskriver afhængighederne med versioninformation. Hvis\n                 kombineret med -f, opretter den en slack-påkrævet fil\n    -a,          Kontrollerer alle filer i mappetræet i stedet for at\n                 følge FHS'en\n    -p,          Prøver at detektere python-afhængigheder.\n    -j [jobs],   Antallet af parallelle depfinder-jobs at køre. Hurtigere\n                 hvis det matcher antallet af CPU'er/kerner\n                 (standard: 1)\n    -v,          Viser versioninformation\n    -h,          Denne hjælpebesked"
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr ""
-"depfinder version $VERSION (c) 2009 George Vlahavas\n"
-"Kør \"depfinder -h\" for hjælpeinformation"
+msgstr "depfinder version $VERSION (c) 2009 George Vlahavas\nKør \"depfinder -h\" for hjælpeinformation"
 
 #: ../depfinder:105
 #, sh-format
@@ -97,7 +79,4 @@ msgstr "ADVARSEL: python-modulet $i blev ikke fundet."
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
-msgstr ""
-"FEJL: programbiblioteker påkrævet af pakke blev ikke fundet på systemet:"
-
-
+msgstr "FEJL: programbiblioteker påkrævet af pakke blev ikke fundet på systemet:"

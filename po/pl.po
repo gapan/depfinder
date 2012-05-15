@@ -2,12 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2011-08-21 18:24+0000\n"
+"PO-Revision-Date: 2010-11-30 06:44+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,34 +37,14 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr ""
-"depfinder: znajduje zależności pakietów dla Slackware\n"
-"\n"
-"użycie: depfinder [OPCJE] <pakiet.tgz|.txz|.tlz|.tbz lub katalog-z-pakietami>\n"
-"\n"
-"OPCJE:\n"
-"    -f,          Wypisuje zależności do pliku zamiast do strumienia wyjścia (stdout).\n"
-"                 Domyślnie tworzy plik .dep. Zobacz również opcje -s.\n"
-"    -s,          Wypisuje zależności wraz informacją o wersji. Jeśli zostanie\n"
-"                 połączony z opcją -f, to tworzy plik slack-required\n"
-"    -a,          Sprawdza wszystkie pliki w katalogu zamiast podążać za FHS\n"
-"                 (Standard Hierarchii Systemu Plików - definiuje rozmieszczenie plików\n"
-"                 i katalogów w systemach operacyjnych z rodziny Linux i Unix.)\n"
-"    -p,          Próbuje wykryć zależności pythona.\n"
-"    -j [jobs],   Ilość równoległych zadań, które ma uruchomić depfinder. Szybsze\n"
-"                 jeśli jest równe ilości procesorów/rdzeni w twoim komputerze\n"
-"                 (domyślnie: 1)\n"
-"    -v,          Pokazuje informacje o wersji\n"
-"    -h,          Wyświetla opcje pomocy"
+msgstr "depfinder: znajduje zależności pakietów dla Slackware\n\nużycie: depfinder [OPCJE] <pakiet.tgz|.txz|.tlz|.tbz lub katalog-z-pakietami>\n\nOPCJE:\n    -f,          Wypisuje zależności do pliku zamiast do strumienia wyjścia (stdout).\n                 Domyślnie tworzy plik .dep. Zobacz również opcje -s.\n    -s,          Wypisuje zależności wraz informacją o wersji. Jeśli zostanie\n                 połączony z opcją -f, to tworzy plik slack-required\n    -a,          Sprawdza wszystkie pliki w katalogu zamiast podążać za FHS\n                 (Standard Hierarchii Systemu Plików - definiuje rozmieszczenie plików\n                 i katalogów w systemach operacyjnych z rodziny Linux i Unix.)\n    -p,          Próbuje wykryć zależności pythona.\n    -j [jobs],   Ilość równoległych zadań, które ma uruchomić depfinder. Szybsze\n                 jeśli jest równe ilości procesorów/rdzeni w twoim komputerze\n                 (domyślnie: 1)\n    -v,          Pokazuje informacje o wersji\n    -h,          Wyświetla opcje pomocy"
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr ""
-"depfinder wersja $VERSION (c) 2009 George Vlahavas\n"
-"Wpisz \"depfinder -h\" po więcej informacji"
+msgstr "depfinder wersja $VERSION (c) 2009 George Vlahavas\nWpisz \"depfinder -h\" po więcej informacji"
 
 #: ../depfinder:105
 #, sh-format
@@ -99,5 +80,3 @@ msgstr "UWAGA: nie znaleziono modułu $i pythona."
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "BŁĄD: pakiet wymaga bibliotek, których brakuje w twoim systemie:"
-
-

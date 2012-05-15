@@ -2,12 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2011-08-21 18:24+0000\n"
+"PO-Revision-Date: 2010-11-30 06:44+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,33 +37,14 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr ""
-"depfinder : recherche les dépendances des paquets Slackware\n"
-"\n"
-"Utilisation : depfinder [OPTIONS] <paquet.tgz|.txz|.tlz|.tbz ou répertoire d'empaquetage>\n"
-"\n"
-"OPTIONS :\n"
-"    -f,         Redirige l'affichage des dépendances vers un fichier plutôt qu'en sortie standard.\n"
-"                Crée par défaut un ficher .dep. Voir aussi l'option -s.\n"
-"    -s,         Affiche les dépendances avec des informations sur la version. Combiné à\n"
-"                l'option -f, crée un fichier 'slack-required'.\n"
-"    -a,         Vérifie les fichiers dans l'arborescence courante plutôt qu'en se référant\n"
-"                au FHS.\n"
-"    -p,          Tentatives de détection des dépendances Python.\n"
-"    -j [jobs],  Le nombre de processus en parallèle que depfinder doit exécuter. Rapide\n"
-"                s'il correspond au nombre de vos processeurs/cœurs.\n"
-"                (par défaut : 1)\n"
-"    -v,         Affiche la version.\n"
-"    -h,         Affiche cette aide."
+msgstr "depfinder : recherche les dépendances des paquets Slackware\n\nUtilisation : depfinder [OPTIONS] <paquet.tgz|.txz|.tlz|.tbz ou répertoire d'empaquetage>\n\nOPTIONS :\n    -f,         Redirige l'affichage des dépendances vers un fichier plutôt qu'en sortie standard.\n                Crée par défaut un ficher .dep. Voir aussi l'option -s.\n    -s,         Affiche les dépendances avec des informations sur la version. Combiné à\n                l'option -f, crée un fichier 'slack-required'.\n    -a,         Vérifie les fichiers dans l'arborescence courante plutôt qu'en se référant\n                au FHS.\n    -p,          Tentatives de détection des dépendances Python.\n    -j [jobs],  Le nombre de processus en parallèle que depfinder doit exécuter. Rapide\n                s'il correspond au nombre de vos processeurs/cœurs.\n                (par défaut : 1)\n    -v,         Affiche la version.\n    -h,         Affiche cette aide."
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr ""
-"depfinder, version $VERSION (c) 2009 George Vlahavas\n"
-"Invoquez \"depfinder -h\" pour afficher l'aide"
+msgstr "depfinder, version $VERSION (c) 2009 George Vlahavas\nInvoquez \"depfinder -h\" pour afficher l'aide"
 
 #: ../depfinder:105
 #, sh-format
@@ -97,8 +79,4 @@ msgstr "ATTENTION: Le module python $i n'a pas été trouvé"
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
-msgstr ""
-"ERREUR : le paquet nécessite des bibliothèques introuvables sur votre "
-"système :"
-
-
+msgstr "ERREUR : le paquet nécessite des bibliothèques introuvables sur votre système :"

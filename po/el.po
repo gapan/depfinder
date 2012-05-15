@@ -2,12 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2011-08-21 18:24+0000\n"
+"PO-Revision-Date: 2010-11-30 06:44+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,33 +37,14 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr ""
-"depfinder: βρίσκει τις εξαρτήσεις πακέτων του Slackware\n"
-"\n"
-"Χρήση: depfinder [ΠΑΡΑΜΕΤΡΟΙ] <package.tgz|.txz|.tlz|.tbz ή κατάλογος-πακέτου>\n"
-"\n"
-"ΠΑΡΑΜΕΤΡΟΙ:\n"
-"    -f,          Εξαγωγή των εξαρτήσεων σε αρχείο αντί του stdout. Χωρίς\n"
-"                 άλλες παραμέτρους δημιουργεί ένα αρχείο .dep. Δείτε επίσης το -s.\n"
-"    -s,          Εξαγωγή των εξαρτήσεων με πληροφορίες εκδόσεων. Αν\n"
-"                 συνδυαστεί με το -f, δημιουργεί ένα αρχείο slack-required\n"
-"    -a,          Ελέγχει όλα τα αρχεία για εξαρτήσεις, αντί να\n"
-"                 ακολουθεί το FHS\n"
-"    -p,          Προσπάθεια για εντοπισμό εξαρτήσεων python\n"
-"    -j [jobs],   Ο αριθμός των παράλληλων εργασιών που θα εκτελεί το depfinder.\n"
-"                 Γρηγορότερο όταν είναι ίσο με τον αριθμό των CPUs/cores\n"
-"                 (εξ ορισμού τιμή: 1)\n"
-"    -v,          Εμφάνιση πληροφοριών έκδοσης\n"
-"    -h,          Το παρόν μήνυμα βοήθειας"
+msgstr "depfinder: βρίσκει τις εξαρτήσεις πακέτων του Slackware\n\nΧρήση: depfinder [ΠΑΡΑΜΕΤΡΟΙ] <package.tgz|.txz|.tlz|.tbz ή κατάλογος-πακέτου>\n\nΠΑΡΑΜΕΤΡΟΙ:\n    -f,          Εξαγωγή των εξαρτήσεων σε αρχείο αντί του stdout. Χωρίς\n                 άλλες παραμέτρους δημιουργεί ένα αρχείο .dep. Δείτε επίσης το -s.\n    -s,          Εξαγωγή των εξαρτήσεων με πληροφορίες εκδόσεων. Αν\n                 συνδυαστεί με το -f, δημιουργεί ένα αρχείο slack-required\n    -a,          Ελέγχει όλα τα αρχεία για εξαρτήσεις, αντί να\n                 ακολουθεί το FHS\n    -p,          Προσπάθεια για εντοπισμό εξαρτήσεων python\n    -j [jobs],   Ο αριθμός των παράλληλων εργασιών που θα εκτελεί το depfinder.\n                 Γρηγορότερο όταν είναι ίσο με τον αριθμό των CPUs/cores\n                 (εξ ορισμού τιμή: 1)\n    -v,          Εμφάνιση πληροφοριών έκδοσης\n    -h,          Το παρόν μήνυμα βοήθειας"
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr ""
-"depfinder έκδοση $VERSION (c) 2009 George Vlahavas\n"
-"Εκτελέστε \"depfinder -h\" για βοήθεια"
+msgstr "depfinder έκδοση $VERSION (c) 2009 George Vlahavas\nΕκτελέστε \"depfinder -h\" για βοήθεια"
 
 #: ../depfinder:105
 #, sh-format
@@ -72,9 +54,7 @@ msgstr "ΣΦΑΛΜΑ: Δεν βρέθηκαν παράμετροι"
 #: ../depfinder:143
 #, sh-format
 msgid "ERROR: Number of jobs must be greater than one"
-msgstr ""
-"ΣΦΑΛΜΑ: Ο αριθμός των εργασιών (jobs) πρέπει να είναι ίσος ή μεγαλύτερος του"
-" 1"
+msgstr "ΣΦΑΛΜΑ: Ο αριθμός των εργασιών (jobs) πρέπει να είναι ίσος ή μεγαλύτερος του 1"
 
 #: ../depfinder:161
 #, sh-format
@@ -100,5 +80,3 @@ msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: το άρθρωμα python $i δεν βρέ�
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "ΣΦΑΛΜΑ: Το πακέτο απαιτεί βιβλιοθήκες που δεν υπάρχουν στο σύστημα:"
-
-

@@ -2,12 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2011-08-21 18:24+0000\n"
+"PO-Revision-Date: 2010-11-30 06:44+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,33 +37,14 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr ""
-"depfinder: Findet Abhängigkeiten von Slackware-Paketen\n"
-"\n"
-"Syntax: depfinder [OPTIONEN] <Paket.tgz|.txz|.tlz|.tbz oder Verzeichnis>\n"
-"\n"
-"OPTIONEN:\n"
-"    -f,          Abhängigkeiten in Datei schreiben statt anzuzeigen.\n"
-"                 Standard ist eine .dep-Datei. Bitte -s beachten.\n"
-"    -s,          Abhängigkeiten mit Paket-Versionen ausgeben. Mit\n"
-"                 -f kombiniert, wird eine slack-required Datei erstellt.\n"
-"    -a,          Alle Dateien im Verzeichnis prüfen, statt den\n"
-"                 FHS-Vorgaben zu folgen.\n"
-"    -p,          Versuche Python Abhängigkeiten zu erkennen.\n"
-"    -j [jobs],   Anzahl der gleichzeitigen Prozesse. Schneller,\n"
-"                 falls es der Anzahl Ihrer CPUs/Cores entspricht.\n"
-"                 (Standard: 1)\n"
-"    -v,          Versions-Informationen anzeigen.\n"
-"    -h,          Diese Hilfe anzeigen."
+msgstr "depfinder: Findet Abhängigkeiten von Slackware-Paketen\n\nSyntax: depfinder [OPTIONEN] <Paket.tgz|.txz|.tlz|.tbz oder Verzeichnis>\n\nOPTIONEN:\n    -f,          Abhängigkeiten in Datei schreiben statt anzuzeigen.\n                 Standard ist eine .dep-Datei. Bitte -s beachten.\n    -s,          Abhängigkeiten mit Paket-Versionen ausgeben. Mit\n                 -f kombiniert, wird eine slack-required Datei erstellt.\n    -a,          Alle Dateien im Verzeichnis prüfen, statt den\n                 FHS-Vorgaben zu folgen.\n    -p,          Versuche Python Abhängigkeiten zu erkennen.\n    -j [jobs],   Anzahl der gleichzeitigen Prozesse. Schneller,\n                 falls es der Anzahl Ihrer CPUs/Cores entspricht.\n                 (Standard: 1)\n    -v,          Versions-Informationen anzeigen.\n    -h,          Diese Hilfe anzeigen."
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr ""
-"depfinder version $VERSION (c) 2009 George Vlahavas\n"
-"\"depfinder -h\" für Hilfe eingeben"
+msgstr "depfinder version $VERSION (c) 2009 George Vlahavas\n\"depfinder -h\" für Hilfe eingeben"
 
 #: ../depfinder:105
 #, sh-format
@@ -98,5 +80,3 @@ msgstr "WARNUNG: Python Modul $i nicht gefunden"
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "FEHLER: Paket erfordert Bibliotheken, welche im System fehlen:"
-
-

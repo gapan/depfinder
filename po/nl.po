@@ -2,12 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2011-08-21 18:24+0000\n"
+"PO-Revision-Date: 2010-11-30 06:44+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,33 +37,14 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr ""
-"depfinder: vindt de afhankelijkheden van Slackware pakketten\n"
-"\n"
-"Gebruik: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>\n"
-"\n"
-"OPTIES:\n"
-"   -f,           Output afhankelijkheden naar een bestand in plaats van stdout.\n"
-"                 Standaard wordt een .dep bestand gemaakt. Zie tevens -s.\n"
-"    -s,          Output afhankelijkheden met versie informatie. If\n"
-"                 Gecombineerd met -f, wordt een slack-vereist bestand gemaakt.\n"
-"    -a,          Controleert alle bestanden in de (sub)folders in plaats van de\n"
-"                 FHS te volgen.\n"
-"    -p,          Tracht de python afhankelijkheden te detecteren.\n"
-"    -j [jobs],   De hoeveelheid parallelle processen om uit te voeren.\n"
-"                 Werkt het snelst indien de processen gelijk zijn aan de\n"
-"                 hoeveelheid processoren/cores (default: 1)\n"
-"    -v,          Toon versie informatie.\n"
-"    -h,          Dit help bericht."
+msgstr "depfinder: vindt de afhankelijkheden van Slackware pakketten\n\nGebruik: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>\n\nOPTIES:\n   -f,           Output afhankelijkheden naar een bestand in plaats van stdout.\n                 Standaard wordt een .dep bestand gemaakt. Zie tevens -s.\n    -s,          Output afhankelijkheden met versie informatie. If\n                 Gecombineerd met -f, wordt een slack-vereist bestand gemaakt.\n    -a,          Controleert alle bestanden in de (sub)folders in plaats van de\n                 FHS te volgen.\n    -p,          Tracht de python afhankelijkheden te detecteren.\n    -j [jobs],   De hoeveelheid parallelle processen om uit te voeren.\n                 Werkt het snelst indien de processen gelijk zijn aan de\n                 hoeveelheid processoren/cores (default: 1)\n    -v,          Toon versie informatie.\n    -h,          Dit help bericht."
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr ""
-"depfinder versie $VERSION (c) 2009 George Vlahavas\n"
-"Start  \"depfinder -h\" voor hulp en informatie"
+msgstr "depfinder versie $VERSION (c) 2009 George Vlahavas\nStart  \"depfinder -h\" voor hulp en informatie"
 
 #: ../depfinder:105
 #, sh-format
@@ -97,7 +79,4 @@ msgstr "WAARSCHUWING: python module $i niet gevonden."
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
-msgstr ""
-"FOUT: pakket vereist libraries welke niet in het systeem zijn gevonden:"
-
-
+msgstr "FOUT: pakket vereist libraries welke niet in het systeem zijn gevonden:"

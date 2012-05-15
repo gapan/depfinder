@@ -2,12 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2011-08-21 18:24+0000\n"
+"PO-Revision-Date: 2010-11-30 06:44+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,33 +37,14 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr ""
-"depfinder: Slackwareのパッケージの依存ファイルを見つけます。\n"
-"\n"
-"使用法: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>\n"
-"\n"
-"オプション:\n"
-"    -f,          依存ファイルのアウトプットをスタンダード・アウトプットにではなくファイルに保存する。\n"
-"                 デフォは、.dep ファイル。 -sも参考にしてください。\n"
-"    -s,          依存ファイルのアウトプットをバージョン情報と一緒に出力する。\n"
-"                 -f　とのコンビで使った場合、slack-required ファイルを出力する。\n"
-"    -a,          ファイルシステム・ハイラーキ・スタンダードのかわりに、ディレクトリ・ツリー\n"
-"                 のファイルをすべてチェックする。\n"
-"    -p,          python の依存ファイルを見つけようとする。\n"
-"    -j [ジョブ],   同時にいくつかのジョブをdepfinderにさせる。\n"
-"                 CPU・コアの数に合わせたジョブ数にすると能率よく実行できる。\n"
-"                 (デフォルト: 1)\n"
-"    -v,          バージョン情報\n"
-"    -h,          ヘルプ"
+msgstr "depfinder: Slackwareのパッケージの依存ファイルを見つけます。\n\n使用法: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>\n\nオプション:\n    -f,          依存ファイルのアウトプットをスタンダード・アウトプットにではなくファイルに保存する。\n                 デフォは、.dep ファイル。 -sも参考にしてください。\n    -s,          依存ファイルのアウトプットをバージョン情報と一緒に出力する。\n                 -f　とのコンビで使った場合、slack-required ファイルを出力する。\n    -a,          ファイルシステム・ハイラーキ・スタンダードのかわりに、ディレクトリ・ツリー\n                 のファイルをすべてチェックする。\n    -p,          python の依存ファイルを見つけようとする。\n    -j [ジョブ],   同時にいくつかのジョブをdepfinderにさせる。\n                 CPU・コアの数に合わせたジョブ数にすると能率よく実行できる。\n                 (デフォルト: 1)\n    -v,          バージョン情報\n    -h,          ヘルプ"
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr ""
-"depfinder バージョン $VERSION (c) 2009 George Vlahavas\n"
-"ヘルプは、\"depfinder -h\" のコマンドで表示されます。"
+msgstr "depfinder バージョン $VERSION (c) 2009 George Vlahavas\nヘルプは、\"depfinder -h\" のコマンドで表示されます。"
 
 #: ../depfinder:105
 #, sh-format
@@ -98,5 +80,3 @@ msgstr "注意: python のモジュール、 $i、 がみつかりません。"
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "エラー：パッケージの必要としているライブラリーが、システムにインストールされていません。"
-
-

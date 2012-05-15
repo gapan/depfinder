@@ -2,12 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2011-08-21 18:24+0000\n"
+"PO-Revision-Date: 2010-11-30 06:44+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,33 +37,14 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr ""
-"depfinder: hittar beroende till Slackware paket\n"
-"\n"
-"användning: depfinder [ALTERNATIV] <package.tgz|.txz|.tlz|.tbz eller paket-katalog>\n"
-"\n"
-"ALTERNATIV:\n"
-"    -f,          Matar ut beroende till en fil istä'llet för till stdout.\n"
-"                 Som standard skapas en .dep fil. Se också -s.\n"
-"    -s,         Matar ut beroende med versions information. Om\n"
-"                 kombinerad med -f, skapas en slack-required fil\n"
-"    -a,         Kontrollerar alla filer i katalogträdet istället för\n"
-"                 att följa FHS\n"
-"    -p,          Försöker detektera python beroende.\n"
-"    -j [jobs],   Antalet parallella depfinder jobb att köra. Snabbare\n"
-"                 om det matchar antalet CPUs/cores\n"
-"                 (standard: 1)\n"
-"    -v,          Visa versions information\n"
-"    -h,          Denna hjälp"
+msgstr "depfinder: hittar beroende till Slackware paket\n\nanvändning: depfinder [ALTERNATIV] <package.tgz|.txz|.tlz|.tbz eller paket-katalog>\n\nALTERNATIV:\n    -f,          Matar ut beroende till en fil istä'llet för till stdout.\n                 Som standard skapas en .dep fil. Se också -s.\n    -s,         Matar ut beroende med versions information. Om\n                 kombinerad med -f, skapas en slack-required fil\n    -a,         Kontrollerar alla filer i katalogträdet istället för\n                 att följa FHS\n    -p,          Försöker detektera python beroende.\n    -j [jobs],   Antalet parallella depfinder jobb att köra. Snabbare\n                 om det matchar antalet CPUs/cores\n                 (standard: 1)\n    -v,          Visa versions information\n    -h,          Denna hjälp"
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr ""
-"depfinder version $VERSION (c) 2009 George Vlahavas\n"
-"Kör \"depfinder -h\" för hjälp"
+msgstr "depfinder version $VERSION (c) 2009 George Vlahavas\nKör \"depfinder -h\" för hjälp"
 
 #: ../depfinder:105
 #, sh-format
@@ -98,5 +80,3 @@ msgstr "VARNING: python modulen $i hittades inte."
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "FEL: paketet kräver bibliotek som inte finns i systemet:"
-
-

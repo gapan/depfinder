@@ -3,19 +3,19 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Yarema aka Knedlyk <yupadmin@gmail.com>, 2011.
+# goriy  <wolfr2@gmail.com>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2012-02-14 08:23+0000\n"
-"Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>\n"
+"PO-Revision-Date: 2012-04-08 19:16+0000\n"
+"Last-Translator: goriy <wolfr2@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: uk\n"
+"Language: ru\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: ../depfinder:41
@@ -38,46 +38,46 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr "depfinder: знаходить залкжності серед пакетів Slackware\n\nвикористання: depfinder [ОПЦІЇ] <пакет.tgz|.txz|.tlz|.tbz або тека пакету>\n\nОПЦІЇ:\n -f, Виводити залежності в файл замість в stdout.\n По замовчуванню створюється файл .dep . Дивись також -s.\n -s, Виводить залежності з інформацією про версію. Якщо\n використовується з -f, створюється файл, що вимагається Slack`ом\n -a, Перевіряє всі файли в дереві теки замість\n наступних FHS\n -p, Спроби визначити залежності python’а.\n -j [роботи], Кількість запущених паралельних робіт depfinder’а. Пришвидшує роботу,\n якщо збігається з кількістю Ваших CPU/ядер\n (по замовчуванню: 1)\n -v, Показує інформацію про версію\n -h, Ця допомога"
+msgstr "depfinder: находит зависимости пакетов Slackware\n\nиспользование: depfinder [ОПЦИИ] <package.tgz|.txz|.tlz|.tbz или packaging-dir>\n\nОПЦИИ:\n    -f,          Выводить зависимости в файл вместо stdout.\n                 По умолчанию создает файл .dep. см. также ключ -s.\n    -s,          Выводить зависимости вместе с информацией о версиях.\n                 В сочетании с ключом -f создает slack-файл\n    -a,          Проверять все файлы в дереве каталогов вместо\n                 следованию FHS\n    -p,          Пытаться определить зависимости python.\n    -j [jobs],   Количество параллельных потоков depfinder. Ускоряет работу\n                 если совпадает с количеством процессоров/ядер в системе\n                 (значение по умолчанию: 1)\n    -v,          Показать информацию о версии\n    -h,          Этот текст справки"
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr "depfinder версія $VERSION (c) 2009 George Vlahavas\nЗапустіть \"depfinder -h\" для допомоги"
+msgstr "depfinder version $VERSION (c) 2009 George Vlahavas\nЗапустите \"depfinder -h\" для получения справочной информации"
 
 #: ../depfinder:105
 #, sh-format
 msgid "ERROR: No arguments found."
-msgstr "ПОМИЛКА: Не знайдено аргументів."
+msgstr "ОШИБКА: Аргументы отсутствуют."
 
 #: ../depfinder:143
 #, sh-format
 msgid "ERROR: Number of jobs must be greater than one"
-msgstr "ПОМИЛКА: Число робіт повинно бути більше ніж один"
+msgstr "ОШИБКА: Количество потоков должно быть более одного"
 
 #: ../depfinder:161
 #, sh-format
 msgid "ERROR: Too many arguments"
-msgstr "ПОМИЛКА: Забагато аргументів"
+msgstr "ОШИБКА: Слишком много аргументов"
 
 #: ../depfinder:168
 #, sh-format
 msgid "ERROR: $arg not found"
-msgstr "ПОМИЛКА: $arg не знайдено"
+msgstr "ОШИБКА: $arg не найден"
 
 #: ../depfinder:179
 #, sh-format
 msgid "ERROR: $arg is not a package file or a directory!"
-msgstr "ПОМИЛКА: $arg не є файлом пакунку або текою!"
+msgstr "ОШИБКА: $arg не является ни названием пакета, ни каталогом!"
 
 #: ../depfinder:300
 #, sh-format
 msgid "WARNING: python module $i not found."
-msgstr "ПОПЕРЕДЖЕННЯ: модуль python`а $i не знайдено. "
+msgstr "ВНИМАНИЕ: модуль python $i не найден."
 
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
-msgstr "ПОМИЛКА: пакет вимагає бібліотек, які не знайдено в системі:"
+msgstr "ОШИБКА: пакет требует библиотек, не найденных в системе:"

@@ -2,13 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
+# Translators:
 # phantomx <megaphantomx@bol.com.br>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
-"PO-Revision-Date: 2011-04-12 01:29+0000\n"
+"PO-Revision-Date: 2012-02-14 08:23+0000\n"
 "Last-Translator: phantomx <megaphantomx@bol.com.br>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -37,33 +38,14 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr ""
-"depfinder: encontra as dependências de pacotes Slackware\n"
-"\n"
-"uso: depfinder [OPÇÕES] <pacote.tgz|.txz|.tlz|.tbz ou dir-de-empacotamento>\n"
-"\n"
-"OPÇÕES:\n"
-"    -f,          Direciona dependências para um arquivo em vez da saída padrão.\n"
-"                 Por padrão ele cria um arquivo .dep. Veja também -s.\n"
-"    -s,          Direciona dependências com informação de versão. Se\n"
-"                 combinado com -f, ele cria um arquivo slack-required\n"
-"    -a,          Verifica todos os arquivos numa ávore de diretório em vez de\n"
-"                 seguir o FHS\n"
-"    -p,          Tenta detectar dependências python.\n"
-"    -j [jobs],   O número de jobs paralelos do depfinder para executar. Mais\n"
-"                 rápido se for o mesmo de número de seus CPUs/cores\n"
-"                 (padrão: 1)\n"
-"    -v,          Exibir informação de versão\n"
-"    -h,          Esta mensagem de ajuda"
+msgstr "depfinder: encontra as dependências de pacotes Slackware\n\nuso: depfinder [OPÇÕES] <pacote.tgz|.txz|.tlz|.tbz ou dir-de-empacotamento>\n\nOPÇÕES:\n    -f,          Direciona dependências para um arquivo em vez da saída padrão.\n                 Por padrão ele cria um arquivo .dep. Veja também -s.\n    -s,          Direciona dependências com informação de versão. Se\n                 combinado com -f, ele cria um arquivo slack-required\n    -a,          Verifica todos os arquivos numa ávore de diretório em vez de\n                 seguir o FHS\n    -p,          Tenta detectar dependências python.\n    -j [jobs],   O número de jobs paralelos do depfinder para executar. Mais\n                 rápido se for o mesmo de número de seus CPUs/cores\n                 (padrão: 1)\n    -v,          Exibir informação de versão\n    -h,          Esta mensagem de ajuda"
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr ""
-"depfinder version $VERSION (c) 2009 George Vlahavas\n"
-"Execute \"depfinder -h\" para informação de ajuda"
+msgstr "depfinder version $VERSION (c) 2009 George Vlahavas\nExecute \"depfinder -h\" para informação de ajuda"
 
 #: ../depfinder:105
 #, sh-format
@@ -99,5 +81,3 @@ msgstr "AVISO: módulo python $i não encontrado."
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
 msgstr "ERRO: pacote requer bibliotecas não encontradas no sistema:"
-
-
