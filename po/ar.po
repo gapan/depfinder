@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Karim Oulad Chalha <herr.linux88@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: depfinder\n"
@@ -10,12 +11,12 @@ msgstr ""
 "POT-Creation-Date: 2010-01-28 13:19+0200\n"
 "PO-Revision-Date: 2013-04-29 08:26+0000\n"
 "Last-Translator: gapan <vlahavas@gmail.com>\n"
-"Language-Team: Spanish (Argentina) (http://www.transifex.com/projects/p/depfinder/language/es_AR/)\n"
+"Language-Team: Arabic (http://www.transifex.com/projects/p/depfinder/language/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es_AR\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: ../depfinder:41
 #, sh-format
@@ -37,46 +38,46 @@ msgid ""
 "                 (default: 1)\n"
 "    -v,          Show version information\n"
 "    -h,          This help message"
-msgstr "depfinder: encuentra las dependencias de paquetes Slackware\n\nUso: depfinder [OPCIONES] <paquete.tgz|.txz|.tlz|.tbz o directorio-de-empaquetado>\n\nOPCIONES:\n    -f,         Redirigir las dependencias de la salida estándar a un archivo.\n                Por defecto crea un archivo .dep. Ver también la opción -s.\n    -s,         Muestra las dependencias con información de la versión. Si se\n                combina con la opción -f, crea un archivo 'slack-required'.\n    -a,         Verificar todos los archivos en el árbol de directorios en lugar del\n                siguiente FHS.\n    -p,          Intentos de detección de dependencias de Python.\n    -j [jobs],  La cantidad de procesos depfinder en paralelo a ejecutar. Más rápido\n                si coincide la cantidad de sus procesadores/núcleos.\n                (por defecto: 1)\n    -v,          Mostrar la versión.\n    -h,          Mostrar este mensaje de ayuda."
+msgstr ""
 
 #: ../depfinder:64
 #, sh-format
 msgid ""
 "depfinder version $VERSION (c) 2009 George Vlahavas\n"
 "Run \"depfinder -h\" for help information"
-msgstr "depfinder, versión $VERSION (c) 2009 George Vlahavas\nEjecute \"depfinder -h\" para ver la ayuda"
+msgstr ""
 
 #: ../depfinder:105
 #, sh-format
 msgid "ERROR: No arguments found."
-msgstr "ERROR: No se encontraron argumentos."
+msgstr ""
 
 #: ../depfinder:143
 #, sh-format
 msgid "ERROR: Number of jobs must be greater than one"
-msgstr "ERROR: La cantidad de procesos tiene que ser mayor que 1"
+msgstr ""
 
 #: ../depfinder:161
 #, sh-format
 msgid "ERROR: Too many arguments"
-msgstr "ERROR: Demasiados argumentos"
+msgstr ""
 
 #: ../depfinder:168
 #, sh-format
 msgid "ERROR: $arg not found"
-msgstr "ERROR: No se encontró $arg"
+msgstr "خطأ: لم يتم العثور على $arg"
 
 #: ../depfinder:179
 #, sh-format
 msgid "ERROR: $arg is not a package file or a directory!"
-msgstr "ERROR: $arg no es un archivo de paquete o un directorio!"
+msgstr ""
 
 #: ../depfinder:300
 #, sh-format
 msgid "WARNING: python module $i not found."
-msgstr "ADVERTENCIA: No se encontró el módulo $i de python"
+msgstr ""
 
 #: ../depfinder:326
 #, sh-format
 msgid "ERROR: package requires libraries not found in the system:"
-msgstr "ERROR: el paquete necesita bibliotecas que no están en su sistema:"
+msgstr ""
