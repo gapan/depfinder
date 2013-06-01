@@ -1,3 +1,10 @@
+version 1.4.1 (2013-06-01):
+  * Add detection of a "secret" DEPFINDERNOEXIT variable. If set to 1,
+    depfinder will not stop, even if there are libraries that are needed
+    by the package but are not present in the system.
+  * Add a partial arabic translation.
+  * Update all other translations from transifex.
+
 version 1.4.0 (2012-05-15):
   * Check if a file is an ELF executable instead of checking if it has
     the executable flag set. Some shared libraries do not have the
