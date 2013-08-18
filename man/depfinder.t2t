@@ -9,9 +9,11 @@ George Vlahavas
 
 depfinder - a tool that finds dependencies of slackware packages
 
+
 = SYNOPSIS =
 
 **depfinder** [//OPTIONS//] //PACKAGE// or //PACKAGING-DIRECTORY//
+
 
 = DESCRIPTION =
 
@@ -64,6 +66,7 @@ though it's inside a block quote and will never be executed by python.
 **depfinder** also has support for running multiple jobs which makes it
 a **lot** faster on PCs with multiple CPUs/cores.
 
+
 = OPTIONS =
 
 : **-f**
@@ -111,6 +114,7 @@ Specifies the number of parallel depfinder jobs to run. depfinder will
 finish considerably faster if this matches exactly the number of your
 CPUs/cores (default number of jobs: 1)
 
+
 = GENERAL OPTIONS =
 
 : **-v**
@@ -120,13 +124,16 @@ Shows version information for depfinder and exits.
 Prints a usage message briefly summarizing all command-line options
 and exits.
 
+
 = WEBSITE =
 
 http://depfinder.sourceforge.net/
 
+
 = AUTHORS =
 
 depfinder was written by George Vlahavas <vlahavas~at~gmail~dot~com>
+
 
 = SEE ALSO =
 
