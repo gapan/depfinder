@@ -3,26 +3,22 @@ Installation
 
 To install, just run:
 
- ./compile.sh
+ make
 
 followed by:
 
- ./install.sh
+ make install
 
 as root. You can set DESTDIR to change the installation target:
 
- DESTDIR=/my/custom/installation/target ./install.sh
+ make install DESTDIR=/my/custom/installation/target
 
-If you want to install on a x86_64 system, run compile.sh:
+You can set the CPU arch to use with an ARCH variable, like this:
 
- ./compile.sh -64
+ make install ARCH=i586
 
-Actually, what the above command does is just change a single line in
-the depfinder executable. There is a
-LIBDIRSUFFIX=""
-line at the top of that file, that for x86_64 systems should become:
-LIBDIRSUFFIX="64"
-So you can change it anytime after installation too.
+The default value is ARCH=x86_64.
+
 
 Uninstallation
 --------------
