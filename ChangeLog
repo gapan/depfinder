@@ -1,3 +1,7 @@
+version 1.4.2 (2015-...):
+  * Switch to using a proper Makefile for building/installation
+  * Update translations
+
 version 1.4.1 (2013-06-01):
   * Add detection of a "secret" DEPFINDERNOEXIT variable. If set to 1,
     depfinder will not stop, even if there are libraries that are needed
