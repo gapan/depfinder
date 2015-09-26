@@ -83,7 +83,7 @@ depfind()
 	done
 }
 
-# Routine to find python files in the current directory, where the
+# Function that finds python files in the current directory, where the
 # current directory is always the packaging directory here. Since
 # python scripts could be all over the place, we're looking everywhere
 # in the package by default.
@@ -97,7 +97,7 @@ findpython()
 	-type f -name "*.py"
 }
 
-# Routine to parse python scripts for modules that it imports
+# Function that parses python scripts for modules that it imports
 parsepython()
 {
 	sed "s/;/\n/g" $1 | \
@@ -118,7 +118,7 @@ parsepython()
 	sed "s/\(.*\)@MODULESEPARATOR@.*/\1/" 
 }
 
-# routine to clean up temp files
+# Function that cleans up temp files
 cleanup()
 {
 	if [ $DEBUG -eq 0 ]; then
@@ -126,12 +126,17 @@ cleanup()
 	fi
 }
 
-# routine to cleanly exit on error (just to be sure)
+# Function to cleanly exit on error (just to be sure)
 err()
 {
 	cleanup
 	exit 1
 }
+
+#
+# This is where everything starts...
+#
+
 
 # If no arguments are passed, show an error message
 if [ $# -eq 0 ]; then
