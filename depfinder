@@ -39,6 +39,7 @@ OPTIONS:
     -a,          Checks all files in the directory tree instead of
                  following the FHS
     -p,          Attempts to detect python dependencies.
+    -3,          Uses python 3 instead of 2 (works only with -p)
     -j [jobs],   The number of parallel depfinder jobs to run. Faster
                  if it matches the number of your CPUs/cores
                  (default: 1)
