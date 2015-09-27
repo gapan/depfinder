@@ -1,4 +1,5 @@
 version 1.4.2 (2015-...):
+  * Add support for python 3
   * Switch to using a proper Makefile for building/installation
   * Update translations
 
