@@ -91,7 +91,7 @@ findpython()
 {
 	LANG=C find ./ \
 	-type f -exec bash -c \
-	"file -b \"{}\" | grep \"python script text executable\" 1>/dev/null && echo \"{}\" >> /tmp/depfinder.$$/PYTHONFILES" \; \
+	"file -b \"{}\" | grep -i \"python script\" 1>/dev/null && echo \"{}\"" \; \
 	2> /dev/null
 	find ./ \
 	-type f -name "*.py"
@@ -268,7 +268,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 
 	# Determine which python modules are imported (used)
 	touch /tmp/depfinder.$$/PYTHONMODULESRAW
-	for i in `cat /tmp/depfinder.$$/PYTHONFILES`; do
+	for i in `sort /tmp/depfinder.$$/PYTHONFILES | uniq`; do
 		parsepython $i >> /tmp/depfinder.$$/PYTHONMODULESRAW
 	done
 
