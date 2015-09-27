@@ -9,16 +9,6 @@
 
 VERSION=1.4.2
 
-# Translations only work with utf8 locales
-if [ ! `echo $LANG | grep -i utf` ]; then
-	LANG=C
-fi
-
-# Gettext internationalization
-export TEXTDOMAIN="depfinder"
-export TEXTDOMAINDIR="/usr/share/locale"
-. gettext.sh
-
 CWD=`pwd`
 
 # Set default settings
@@ -37,7 +27,7 @@ LIBDIRSUFFIX=""
 help_msg()
 {
 echo \
-"`eval_gettext 'depfinder: finds the dependencies of Slackware packages
+"depfinder: finds the dependencies of Slackware packages
 
 usage: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>
 
@@ -53,15 +43,15 @@ OPTIONS:
                  if it matches the number of your CPUs/cores
                  (default: 1)
     -v,          Show version information
-    -h,          This help message'`"
+    -h,          This help message"
 }
 
 # version message
 ver_msg()
 {
 echo \
-"`eval_gettext 'depfinder version $VERSION (c) 2009 George Vlahavas
-Run "depfinder -h" for help information'`"
+"depfinder version $VERSION (c) 2009 George Vlahavas
+Run "depfinder -h" for help information"
 }
 
 # Routine to find out where each dependency comes from and output to
@@ -141,7 +131,7 @@ err()
 # If no arguments are passed, show an error message
 if [ $# -eq 0 ]; then
 	help_msg
-	echo "`eval_gettext 'ERROR: No arguments found.'`" >&2
+	echo "ERROR: No arguments found." >&2
 	err
 fi
 
@@ -184,7 +174,7 @@ do
 			# if it's out of range show help
 			else
 				help_msg
-				echo "`eval_gettext 'ERROR: Number of jobs must be greater than one'`" >&2
+				echo "ERROR: Number of jobs must be greater than one" >&2
 				err
 			fi
 		# if it's not a number show help
@@ -202,14 +192,14 @@ shift $((OPTIND-1))
 # Only one package at a time!
 if [ $# -gt 1 ]; then
 	help_msg
-	echo "`eval_gettext 'ERROR: Too many arguments'`" >&2
+	echo "ERROR: Too many arguments" >&2
 	err
 fi
 
 # test if the package file is there
 if [ ! -d $1 ] && [ ! -f $1 ] ; then
 	arg=$1
-	echo "`eval_gettext 'ERROR: $arg not found'`" >&2
+	echo "ERROR: $arg not found" >&2
 	err
 fi
 
@@ -220,7 +210,7 @@ else
 	# ... or has the .tgz|tbz|tlz extension (is a package file)
 	if [ ! `echo $1 | grep "\.t[gblx]z$"` ]; then
 		arg=$1
-		echo "`eval_gettext 'ERROR: $arg is not a package file or a directory!'`" >&2
+		echo "ERROR: $arg is not a package file or a directory!" >&2
 		err
 	fi
 fi
@@ -324,7 +314,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	# the system. These are not errors because the modules could be
 	# optional.
 	for i in `cat /tmp/depfinder.$$/PYTHONMODULES`; do
-		echo "`eval_gettext 'WARNING: python module $i not found.'`" >&2
+		echo "WARNING: python module $i not found." >&2
 	done
 fi
 
@@ -357,7 +347,7 @@ fi
 
 # Check if any dependencies are not found and bail out if they are
 if [[ `grep "NOT FOUND" LIBS` ]]; then
-	echo "`eval_gettext 'ERROR: package requires libraries not found in the system:'`" >&2
+	echo "ERROR: package requires libraries not found in the system:" >&2
 	grep "NOT FOUND" LIBS |\
 	sed "s/NOT FOUND//" |\
 	sed "s/\t/ /" >&2
