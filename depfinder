@@ -268,7 +268,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 
 	# Determine which python modules are imported (used)
 	touch /tmp/depfinder.$$/PYTHONMODULESRAW
-	for i in `sort /tmp/depfinder.$$/PYTHONFILES | uniq`; do
+	for i in `cat /tmp/depfinder.$$/PYTHONFILES`; do
 		parsepython $i >> /tmp/depfinder.$$/PYTHONMODULESRAW
 	done
 
