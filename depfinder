@@ -146,7 +146,7 @@ if [ $# -eq 0 ]; then
 fi
 
 # check which switches are used
-while getopts  ":hvfsapj:" flag
+while getopts  ":hvfsap3j:" flag
 do
 	# if switch is unknown or if asking for help
 	if [ $flag = "?" ] || [ $flag = "h" ]; then
@@ -168,6 +168,11 @@ do
 	fi
 	if [ $flag = "p" ]; then
 		PYTHONDEPS=1
+	fi
+	if [ $flag = "3" ]; then
+		PYTHON="python3"
+	else
+		PYTHON="python"
 	fi
 	if [ $flag = "j" ]; then
 		# we check if it's a number
@@ -258,7 +263,7 @@ fi
 # Look for python dependencies
 if [ $PYTHONDEPS -eq 1 ]; then
 	# Determine in which directories python looks for modules
-	python -c "import sys; print(sys.path)" | \
+	$PYTHON -c "import sys; print(sys.path)" | \
 	sed "s/'\|,\|\[\|\]//g" | \
 	sed "s/ /\n/g" > /tmp/depfinder.$$/PYTHONDIRS
 
@@ -288,7 +293,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	done
 
 	# Remove python built-in modules from the list
-	python -c "import sys; print(sys.builtin_module_names)" | \
+	$PYTHON -c "import sys; print(sys.builtin_module_names)" | \
 	sed "s/'\|,\|(\|)//g" > /tmp/depfinder.$$/PYTHONBUILTIN
 	for i in `cat /tmp/depfinder.$$/PYTHONBUILTIN`; do
 		sed -i "/$i/d" /tmp/depfinder.$$/PYTHONMODULES
