@@ -109,6 +109,14 @@ functionality perhaps. It's up to the packager to determine which of
 the reported python dependencies are actually dependencies and which
 ones should merely be suggested packages.
 
+: **-3**
+If you use the **-p** option to detect python dependencies, the default
+python version that will be used is python 2. This option turns on
+support for python 3. Note that it is possible to detect only python 2
+or only python 3 dependencies in a single run, not both. This option
+only makes sense when used together with the **-p** option, otherwise it
+does nothing.
+
 : **-j** //jobs//
 Specifies the number of parallel depfinder jobs to run. depfinder will
 finish considerably faster if this matches exactly the number of your
