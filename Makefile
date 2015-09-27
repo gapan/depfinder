@@ -8,12 +8,7 @@ else
 	LIBDIRSUFFIX = ""
 endif
 
-all: mo depfinder-search man
-
-mo:
-	for i in `ls po/*.po`; do \
-		msgfmt $$i -o `echo $$i | sed "s/\.po//"`.mo; \
-	done
+all: depfinder-search man
 
 depfinder-search:
 	$(MAKE) -C depfinder-search/
@@ -29,16 +24,11 @@ install:
 	sed -i "s/^LIBDIRSUFFIX=.*/LIBDIRSUFFIX=\"$(LIBDIRSUFFIX)\"/" \
 		$(DESTDIR)/usr/bin/depfinder
 	install -m 755 depfinder-search/depfinder-search $(DESTDIR)/usr/libexec/
-	for i in `ls po/*.po|sed "s/po\/\(.*\)\.po/\1/"`; do \
-		install -D -m 644 po/$$i.mo \
-		$(DESTDIR)/usr/share/locale/$$i/LC_MESSAGES/depfinder.mo; \
-	done
 	[ -f man/depfinder.man ] && \
 		install -D -m 644 man/depfinder.man $(DESTDIR)/usr/man/man1/depfinder.1
 
 clean:
-	rm -f po/*.mo
 	rm -f man/depfinder.man
 	$(MAKE) clean -C depfinder-search/
 
-.PHONY: install clean depfinder-search mo
+.PHONY: install clean depfinder-search
