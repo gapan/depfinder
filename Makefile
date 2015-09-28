@@ -31,4 +31,4 @@ clean:
 	rm -f man/depfinder.man
 	$(MAKE) clean -C depfinder-search/
 
-.PHONY: install clean depfinder-search
+.PHONY: install clean depfinder-search man
