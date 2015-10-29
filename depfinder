@@ -29,7 +29,7 @@ help_msg()
 echo \
 "depfinder: finds the dependencies of Slackware packages
 
-usage: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz or packaging-dir>
+usage: depfinder [OPTIONS] <package.tgz|.txz|.tlz|.tbz|.tbr or packaging-dir>
 
 OPTIONS:
     -f,          Output dependencies to a file instead of stdout.
@@ -209,7 +209,7 @@ if [ -d $1 ]; then
 	STARTDIR=`readlink -f $1`/
 else
 	# ... or has the .tgz|tbz|tlz extension (is a package file)
-	if [ ! `echo $1 | grep "\.t[gblx]z$"` ]; then
+	if [ ! `echo $1 | grep "\.t[gblx]z$\|\.tbr"` ]; then
 		arg=$1
 		echo "ERROR: $arg is not a package file or a directory!" >&2
 		err
@@ -230,10 +230,12 @@ elif [ `echo $1 | grep "\.tlz$"` ]; then
 	lzma -d -c $1 | tar xf - -C /tmp/depfinder.$$
 elif [ `echo $1 | grep "\.txz$"` ]; then
 	xz -d -c $1 | tar xf - -C /tmp/depfinder.$$
+elif [ `echo $1 | grep "\.tbr$"` ]; then
+	bro --decompress --input $1 | tar xf - -C /tmp/depfinder.$$
 fi
 cd /tmp/depfinder.$$
 
-PKGNAME=`echo $1 | sed "s/\(.*\)\.t[gblx]z/\1/"`
+PKGNAME=`echo $1 | sed "s/\.t[gblx]z\|\.tbr//"`
 
 # Find all binaries and libs in the package
 [ -z $STARTDIR ] || cd $STARTDIR
@@ -433,7 +435,7 @@ else
 	# .dep file or to stdout
 	if [ $CREATEDEPFILE -eq 1 ]; then
 		BASENAME=`basename "$PKGNAME"`
-		DEPFILENAME=`echo $BASENAME | sed "s/\.t[xgbl]z$//"`
+		DEPFILENAME=`echo $BASENAME | sed "s/\.t[xgbl]z$\|\.tbr//"`
 		cat DEPSNAMES | \
 		tr "\n" " " | \
 		sed "s/ /,/g" | \
