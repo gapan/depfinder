@@ -26,8 +26,8 @@ dependencies with version information and to a file: a .dep file
 with a comma separated list without version information, or a
 //slack-required// file that includes version information.
 
-**depfinder** can check //.tgz//, //.tbz//, //.tlz// and //.txz//
-packages for dependencies
+**depfinder** can check //.tgz//, //.tbz//, //.tlz//, //.txz// and
+//.tbr// packages for dependencies
 but you can also point it to a packaging directory where you have the
 package contents extracted.
 
