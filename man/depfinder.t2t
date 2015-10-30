@@ -82,7 +82,7 @@ placed inside the package under the //install// directory.
 
 : **-a**
 Checks all files in the directory tree instead of following the FHS. If
-**-a** is not used then depfinder looks for binary files only under
+**-a** is not used, then depfinder looks for binary files only under
 ///sbin// ,///usr/sbin//, ///usr/bin//, ///bin//, ///usr/libexec// and
 ///usr/lib//, ///lib// or ///usr/lib64//, ///lib64// for 32-bit and
 64-bit architectures respectively. If **-a** is used, then depfinder
