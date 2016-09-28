@@ -235,7 +235,7 @@ elif [ `echo $1 | grep "\.tbr$"` ]; then
 fi
 cd /tmp/depfinder.$$
 
-PKGNAME=`echo $1 | sed "s/\.t[gblx]z\|\.tbr\|\/$//"`
+PKGNAME=`basename $1 | sed "s/\.t[gblx]z\|\.tbr\|\/$//"`
 
 # Find all binaries and libs in the package
 [ -z $STARTDIR ] || cd $STARTDIR
