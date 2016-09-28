@@ -1,3 +1,8 @@
+version 1.4.4 (2016-09-28):
+  * Improve self-exclusion from dependency list
+  * Make it possible to run depfinder on a package that is located in a
+    different directory than the current one
+
 version 1.4.3 (2016-02-25):
   * Add support for .tbr packages
 
