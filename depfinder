@@ -7,7 +7,7 @@
 #
 # Licensed under the GPL v3
 
-VERSION=1.4.3
+VERSION=1.4.4
 
 CWD=`pwd`
 
