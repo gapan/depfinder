@@ -231,7 +231,7 @@ elif [ `echo $1 | grep "\.tlz$"` ]; then
 elif [ `echo $1 | grep "\.txz$"` ]; then
 	xz -d -c $1 | tar xf - -C /tmp/depfinder.$$
 elif [ `echo $1 | grep "\.tbr$"` ]; then
-	bro --decompress --input $1 | tar xf - -C /tmp/depfinder.$$
+	brotli -c --decompress $1 | tar xf - -C /tmp/depfinder.$$
 fi
 cd /tmp/depfinder.$$
 
