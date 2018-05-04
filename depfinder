@@ -51,7 +51,7 @@ OPTIONS:
 ver_msg()
 {
 echo \
-"depfinder version $VERSION (c) 2009-2016 George Vlahavas
+"depfinder version $VERSION (c) 2009-2018 George Vlahavas
 Run "depfinder -h" for help information"
 }
 
