@@ -8,10 +8,10 @@ else
 	LIBDIRSUFFIX = ""
 endif
 
-all: depfinder-search man
+all: depfinder man
 
-depfinder-search:
-	$(MAKE) -C depfinder-search/
+depfinder:
+	$(MAKE) -C src/
 
 man:
 	@txt2tags -o man/depfinder.man man/depfinder.t2t || \
