@@ -1,39 +1,13 @@
 // vim:et:sta:sts=2:sw=2:ts=2:tw=79:
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdbool.h>
-#include <dirent.h>
-#include "uthash.h"
 
-#if INTPTR_MAX == INT64_MAX
-#define LIBDIR "lib64/"
-#define USRLIBDIR "usr/lib64/"
-#elif INTPTR_MAX == INT32_MAX
-#define LIBDIR "lib/"
-#define USRLIBDIR "usr/lib/"
-#else
-#error Unknown pointer size or missing size macros!
-#endif
-
-#define free_zero(p) {free(p); p = 0;}
-#define VARLOGPKG "/var/log/packages"
-
-typedef struct {
-  char *filename; // key
-  uint16_t count;
-  char **packages;
-  UT_hash_handle hh; // makes this structure hashable
-} reverse_log_t;
-
+#include "depfinder.h"
 
 /*
  * Returns the length of the package name from the full package name as it is
  * listed in /var/log/packages.
  * e.g. for "judy-1.0.5-x86_64-1" it will return 4.
  */
-uint8_t pkg_name_length(char *pkg_full_name) {
+static uint8_t pkg_name_length(char *pkg_full_name) {
   uint8_t l = strlen(pkg_full_name);
   uint8_t count_dashes = 0;
   for (uint8_t i = l; i > 0 ; --i) {
@@ -51,7 +25,7 @@ uint8_t pkg_name_length(char *pkg_full_name) {
  * For a filename that does not match a package's naming structure, it will
  * return NULL.
  */
-char *pkg_name(char *full_pkg_name) {
+static char *pkg_name(char *full_pkg_name) {
   uint8_t len = pkg_name_length(full_pkg_name) + 1; // '\0'
   if (len == 1) return NULL;
   char *pkg_name = malloc(len);
@@ -63,7 +37,7 @@ char *pkg_name(char *full_pkg_name) {
 /*
  * Checks if the filename is in an FHS directory
  */
-bool file_in_fhs(char *filename) {
+static bool file_in_fhs(char *filename) {
   if (strncmp(filename, USRLIBDIR, strlen(USRLIBDIR)) == 0) return true;
   if (strncmp(filename, LIBDIR, strlen(LIBDIR)) == 0) return true;
   if (strncmp(filename, "usr/bin/", 8) == 0) return true;
@@ -77,7 +51,7 @@ bool file_in_fhs(char *filename) {
 /*
  * Adds an entry to the hashtable.
  */
-void add_ht_entry(reverse_log_t **revlog, const char *filename, const char *pkgname) {
+static void add_ht_entry(reverse_log_t **revlog, const char *filename, const char *pkgname) {
   reverse_log_t *r = NULL; 
   HASH_FIND_STR(*revlog, filename, r);
   if (!r) {
@@ -104,7 +78,7 @@ void add_ht_entry(reverse_log_t **revlog, const char *filename, const char *pkgn
  * adds an entry to the hashtable. The fhs option determines if it will only
  * look in FHS-specified directories.
  */
-void get_pkglog_contents(char *pkg_name, reverse_log_t **revlog, bool fhs) {
+static void get_pkglog_contents(char *pkg_name, reverse_log_t **revlog, bool fhs) {
   size_t len = strlen(VARLOGPKG) + strlen(pkg_name) + 2;
   char *full_path = malloc(len);
   if (full_path == NULL) exit(EXIT_FAILURE);
@@ -157,28 +131,3 @@ void read_var_log_pkg(reverse_log_t **revlog, bool fhs) {
   closedir (dir);
 }
 
-int main(void) {
-  reverse_log_t *rlog = NULL;
-  reverse_log_t *r, *tmp = NULL;
-  read_var_log_pkg(&rlog, true); // set FHS=true for now
-  
-  HASH_FIND_STR(rlog, "lib64/libcrypto.so.1.0.0", r);
-  if (r) {
-    for (int i = 0; i < r->count; ++i) printf("%s\n", r->packages[i]);
-  }
-  HASH_FIND_STR(rlog, "usr/lib64/libusb-1.0.so.0.1.0", r);
-  if (r) {
-    for (int i = 0; i < r->count; ++i) printf("%s\n", r->packages[i]);
-  }
-
-  /* free the hash table contents */
-  HASH_ITER(hh, rlog, r, tmp) {
-    for (size_t i = 0; i < r->count; ++i) free_zero(r->packages[i]);
-    free_zero(r->packages);
-    free_zero(r->filename);
-    HASH_DEL(rlog, r);
-    free(r);
-  }
-  
-  return 0;
-}

@@ -1,7 +1,13 @@
+CFLAGS?=-g -Wall -Wextra
+CC=gcc
+OBJS=depfinder.o main.o
 
-depfinder:
-	gcc -Wall -g -o depfinder depfinder.c
+main: $(OBJS)
+	$(CC) $(CFLAGS) -o depfinder $(OBJS)
 .PHONY: depfinder
+
+$(OBJS):
+
 
 valgrind:
 	valgrind --leak-check=full \
