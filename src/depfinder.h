@@ -18,7 +18,10 @@
 #endif
 
 #define free_zero(p) {free(p); p = 0;}
+
+#ifndef VARLOGPKG
 #define VARLOGPKG "/var/log/packages"
+#endif
 
 typedef struct {
   char *filename; // key
