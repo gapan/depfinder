@@ -74,6 +74,9 @@ bool file_in_fhs(char *filename) {
   return false;
 }
 
+/*
+ * Adds an entry to the hashtable.
+ */
 void add_ht_entry(reverse_log_t **revlog, const char *filename, const char *pkgname) {
   reverse_log_t *r = NULL; 
   HASH_FIND_STR(*revlog, filename, r);
@@ -96,6 +99,11 @@ void add_ht_entry(reverse_log_t **revlog, const char *filename, const char *pkgn
   }
 }
 
+/*
+ * Reads the contents of a log file in /var/log/packages and for each file, it
+ * adds an entry to the hashtable. The fhs option determines if it will only
+ * look in FHS-specified directories.
+ */
 void get_pkglog_contents(char *pkg_name, reverse_log_t **revlog, bool fhs) {
   size_t len = strlen(VARLOGPKG) + strlen(pkg_name) + 2;
   char *full_path = malloc(len);
@@ -128,6 +136,10 @@ void get_pkglog_contents(char *pkg_name, reverse_log_t **revlog, bool fhs) {
   free_zero(full_path);
 }
 
+/*
+ * Opens the /var/log/packages directory and reads every log file in it, one by
+ * one.
+ */
 void read_var_log_pkg(reverse_log_t **revlog, bool fhs) {
   DIR *dir;
   struct dirent *ent;
@@ -151,6 +163,10 @@ int main(void) {
   read_var_log_pkg(&rlog, true); // set FHS=true for now
   
   HASH_FIND_STR(rlog, "lib64/libcrypto.so.1.0.0", r);
+  if (r) {
+    for (int i = 0; i < r->count; ++i) printf("%s\n", r->packages[i]);
+  }
+  HASH_FIND_STR(rlog, "usr/lib64/libusb-1.0.so.0.1.0", r);
   if (r) {
     for (int i = 0; i < r->count; ++i) printf("%s\n", r->packages[i]);
   }
