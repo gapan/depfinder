@@ -9,5 +9,5 @@ valgrind:
 		--track-origins=yes \
 		--verbose \
 		--log-file=valgrind-out.txt \
-		./list_pkg
+		./depfinder
 
