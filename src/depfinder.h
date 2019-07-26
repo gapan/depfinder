@@ -1,4 +1,8 @@
 // vim:et:sta:sts=2:sw=2:ts=2:tw=79:
+
+#ifndef DEPFINDER_H
+#define DEPFINDER_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -35,3 +39,6 @@ typedef struct {
  * one.
  */
 void read_var_log_pkg(reverse_log_t **revlog, bool fhs);
+
+#endif // #ifdef DEPFINDER_H
+
