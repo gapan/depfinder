@@ -1,0 +1,47 @@
+PACKAGE NAME:     libburn-1.4.2-x86_64-1gv
+COMPRESSED PACKAGE SIZE:     272K
+UNCOMPRESSED PACKAGE SIZE:     745K
+PACKAGE LOCATION: /usb-stick/salix/full/libburn-1.4.2-x86_64-1gv.txz
+PACKAGE DESCRIPTION:
+libburn: libburn (a library for reading, mastering and writing optical discs)
+libburn: 
+libburn: libburnia is a project comprised of libraries, language bindings, and
+libburn: middleware binaries that emulate classic and valuable Linux tools.
+libburn: Currently that means reading, mastering and writing optical discs.
+libburn: 
+libburn: 
+libburn: 
+libburn: 
+libburn: 
+libburn: 
+FILE LIST:
+./
+install/
+install/doinst.sh
+install/slack-desc
+usr/
+usr/bin/
+usr/bin/cdrskin
+usr/doc/
+usr/doc/libburn-1.4.2/
+usr/doc/libburn-1.4.2/AUTHORS
+usr/doc/libburn-1.4.2/CONTRIBUTORS
+usr/doc/libburn-1.4.2/COPYING
+usr/doc/libburn-1.4.2/COPYRIGHT
+usr/doc/libburn-1.4.2/ChangeLog
+usr/doc/libburn-1.4.2/INSTALL
+usr/doc/libburn-1.4.2/NEWS
+usr/doc/libburn-1.4.2/README
+usr/include/
+usr/include/libburn/
+usr/include/libburn/libburn.h
+usr/lib64/
+usr/lib64/libburn.so.4.95.0
+usr/lib64/pkgconfig/
+usr/lib64/pkgconfig/libburn-1.pc
+usr/man/
+usr/man/man1/
+usr/man/man1/cdrskin.1.gz
+usr/src/
+usr/src/libburn-1.4.2/
+usr/src/libburn-1.4.2/SLKBUILD

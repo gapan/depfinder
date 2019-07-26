@@ -2,3 +2,5 @@ man/depfinder.man
 src/depfinder
 src/valgrind-out.txt
 src/*.o
+tests/test
+tests/*.o
