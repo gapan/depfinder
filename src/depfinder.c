@@ -131,3 +131,15 @@ void read_var_log_pkg(reverse_log_t **revlog, bool fhs) {
   closedir (dir);
 }
 
+/* free the hash table contents */
+void free_ht(reverse_log_t **rlog) {
+  reverse_log_t *r, *tmp = NULL;
+  HASH_ITER(hh, *rlog, r, tmp) {
+    for (size_t i = 0; i < r->count; ++i) free(r->packages[i]);
+    free(r->packages);
+    free(r->filename);
+    HASH_DEL(*rlog, r);
+    free(r);
+  }
+}
+

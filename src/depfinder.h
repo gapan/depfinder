@@ -38,5 +38,8 @@ typedef struct {
  */
 void read_var_log_pkg(reverse_log_t **revlog, bool fhs);
 
+/* free the hash table contents */
+void free_ht(reverse_log_t **rlog);
+
 #endif // #ifdef DEPFINDER_H
 
