@@ -102,12 +102,12 @@ static void get_pkglog_contents(char *pkg_name, reverse_log_t **revlog, bool fhs
       snprintf(filename, read, "%s", line);
       // populate reverse log hashtable here
       add_ht_entry(revlog, filename, pkg_name);
-      free_zero(filename);
+      free(filename);
     }
   } 
   fclose(fp);
-  free_zero(line);
-  free_zero(full_path);
+  free(line);
+  free(full_path);
 }
 
 /*
@@ -125,8 +125,8 @@ void read_var_log_pkg(reverse_log_t **revlog, bool fhs) {
     if (pkg_short_name) {
       get_pkglog_contents(pkg_full_name, revlog, fhs);
     }
-    free_zero(pkg_short_name);
-    free_zero(pkg_full_name);
+    free(pkg_short_name);
+    free(pkg_full_name);
   }
   closedir (dir);
 }
