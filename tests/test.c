@@ -19,6 +19,7 @@ START_TEST(test_pkg_name1) {
   char *pkgname = "judy-1.0.5-x86_64-1";
   char *res = pkg_name(pkgname);
   ck_assert_str_eq(res, "judy");
+  free(res);
 }
 END_TEST
 
@@ -26,6 +27,7 @@ START_TEST(test_pkg_name2) {
   char *pkgname = "xfce4-power-manager-1.4.4-x86_64-4";
   char *res = pkg_name(pkgname);
   ck_assert_str_eq(res, "xfce4-power-manager");
+  free(res);
 }
 END_TEST
 
