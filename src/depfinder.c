@@ -57,18 +57,15 @@ static void add_ht_entry(reverse_log_t **revlog, const char *filename, const cha
   if (!r) {
     // new hash table entry
     r = malloc(sizeof(*r));
-    r->filename = malloc(strlen(filename) + 1);
-    sprintf(r->filename, "%s", filename);
+    r->filename = strdup(filename);
     r->packages = malloc(1*sizeof(char*));
-    r->packages[0] = malloc(strlen(pkgname) + 1);
-    sprintf(r->packages[0], "%s", pkgname);
+    r->packages[0] = strdup(pkgname);
     r->count = 1;
     HASH_ADD_KEYPTR(hh, *revlog, r->filename, strlen(r->filename), r);
   } else {
     // hash table entry exists, just append to the packages list
     r->packages = realloc(r->packages, (r->count + 1)*sizeof(char*));
-    r->packages[r->count] = malloc(strlen(pkgname) + 1);
-    sprintf(r->packages[r->count], "%s", pkgname);
+    r->packages[r->count] = strdup(pkgname);
     r->count++;
   }
 }
