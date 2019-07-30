@@ -17,3 +17,5 @@ valgrind:
 		--log-file=valgrind-out.txt \
 		./depfinder
 
+clean:
+	rm *.o ./depfinder
