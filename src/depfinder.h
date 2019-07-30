@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <dirent.h>
 #include "uthash.h"
+#include "utlist.h"
 
 #if INTPTR_MAX == INT64_MAX
 #define LIBDIR "lib64/"
@@ -32,14 +33,28 @@ typedef struct {
   UT_hash_handle hh; // makes this structure hashable
 } reverse_log_t;
 
+typedef struct ll_t {
+  char *name;
+  struct ll_t *next;
+} ll_t;
+
 /*
  * Opens the /var/log/packages directory and reads every log file in it, one by
  * one.
  */
 void read_var_log_pkg(reverse_log_t **revlog, bool fhs);
 
+/*
+ * Runs ldd on the given executable filename and returns all libraries the
+ * executable references in a linked list.
+ */
+uint8_t run_ldd(ll_t **lib_list, char *filename);
+
 /* free the hash table contents */
 void free_ht(reverse_log_t **rlog);
+
+/* free linked list */
+void free_ll(ll_t **list) {
 
 #endif // #ifdef DEPFINDER_H
 

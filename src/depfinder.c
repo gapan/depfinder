@@ -143,3 +143,44 @@ void free_ht(reverse_log_t **rlog) {
   }
 }
 
+/* free linked list */
+void free_ll(ll_t **list) {
+  ll_t *elt;
+  ll_t *tmp;
+  LL_FOREACH_SAFE(*list, elt, tmp) {
+    free(elt->name);
+    LL_DELETE(*list, elt);
+    free(elt);
+  }
+}
+
+/*
+ * Runs ldd on the given executable filename and returns all libraries the
+ * executable references in a linked list.
+ */
+uint8_t run_ldd(ll_t **lib_list, char *filename) {
+  char *ldd = "/usr/bin/ldd";
+  char *cmd = malloc(strlen(ldd) + strlen(filename) + 2);
+  sprintf(cmd, "%s %s", ldd, filename);
+  FILE *fp = popen(cmd, "r");
+  if (fp == NULL) exit(EXIT_FAILURE);
+  char *line = NULL;
+  size_t len = 0;
+  ssize_t read;
+  while ((read = getline(&line, &len, fp)) != -1) {
+    char *sub = strstr(line, "=> ");
+    if (sub != NULL) {
+      char *lib = NULL;
+      lib = strtok(sub + 4, " (");
+      ll_t *new = malloc(sizeof(*new));
+      if (new == NULL) exit(EXIT_FAILURE);
+      //new->name = malloc(strlen(lib) + 1);
+      new->name = strdup(lib);
+      LL_APPEND(*lib_list, new);
+    }
+  }
+  uint8_t res = pclose(fp);
+  free(line);
+  free(cmd);
+  return res;
+}
