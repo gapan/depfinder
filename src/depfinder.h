@@ -54,7 +54,7 @@ uint8_t run_ldd(ll_t **lib_list, char *filename);
 void free_ht(reverse_log_t **rlog);
 
 /* free linked list */
-void free_ll(ll_t **list) {
+void free_ll(ll_t **list);
 
 #endif // #ifdef DEPFINDER_H
 
