@@ -195,9 +195,7 @@ END_TEST
 START_TEST(test_remove_dir_dots1) {
   char *s = "/usr/lib64/libX11-xcb.so.1";
   char *path = strdup(s);
-  printf("TEST1: %s\n", path);
   remove_dir_dots(&path);
-  printf("TEST2: %s\n", path);
   ck_assert_str_eq(path, "/usr/lib64/libX11-xcb.so.1");
 }
 END_TEST
