@@ -108,6 +108,33 @@ static void get_pkglog_contents(char *pkg_name, reverse_log_t **revlog, bool fhs
 }
 
 /*
+ * Parses a file path and removes any previous directory (..) from it.
+ */
+static void remove_dir_dots(char **path) {
+  char *sub = NULL;
+  // first remove all previous dir dots (..)
+  while ((sub = strstr(*path, "/..")) != NULL) {
+    // part1 is the substring before the "/.."
+    size_t part1_len = (sub - *path) + 1;
+    char *part1 = malloc(part1_len);
+    snprintf(part1, part1_len, "%s", *path);
+    // part2 is the substring after the "/.."
+    size_t part2_len = strlen(sub) - 3;
+    // now locate where the previous directory name is and remove it
+    size_t n = strrchr(part1, '/') - part1; // number of initial chars to keep
+    memmove(*path + n, sub + 3, strlen(sub) - 3 + 1);
+    free(part1);
+  }
+  // then remove any current dir dot (.)
+  while ((sub = strstr(*path, "/.")) != NULL) {
+    size_t part1_len = (sub - *path);
+    memmove(*path + part1_len, sub + 2, strlen(sub) - 2 + 1);
+  }
+}
+
+
+
+/*
  * Opens the /var/log/packages directory and reads every log file in it, one by
  * one.
  */
@@ -168,6 +195,7 @@ uint8_t run_ldd(ll_t **lib_list, char *filename) {
     if (sub != NULL) {
       char *lib = NULL;
       lib = strtok(sub + 4, " (");
+      remove_dir_dots(&lib);
       ll_t *new = malloc(sizeof(*new));
       if (new == NULL) exit(EXIT_FAILURE);
       new->name = strdup(lib);
