@@ -170,7 +170,6 @@ uint8_t run_ldd(ll_t **lib_list, char *filename) {
       lib = strtok(sub + 4, " (");
       ll_t *new = malloc(sizeof(*new));
       if (new == NULL) exit(EXIT_FAILURE);
-      //new->name = malloc(strlen(lib) + 1);
       new->name = strdup(lib);
       LL_APPEND(*lib_list, new);
     }
