@@ -192,6 +192,47 @@ START_TEST(test_read_var_log_pkg5) {
 }
 END_TEST
 
+START_TEST(test_remove_dir_dots1) {
+  char *s = "/usr/lib64/libX11-xcb.so.1";
+  char *path = strdup(s);
+  printf("TEST1: %s\n", path);
+  remove_dir_dots(&path);
+  printf("TEST2: %s\n", path);
+  ck_assert_str_eq(path, "/usr/lib64/libX11-xcb.so.1");
+}
+END_TEST
+
+START_TEST(test_remove_dir_dots2) {
+  char *s = "/usr/lib64/../lib64/libX11-xcb.so.1";
+  char *path = strdup(s);
+  remove_dir_dots(&path);
+  ck_assert_str_eq(path, "/usr/lib64/libX11-xcb.so.1");
+}
+END_TEST
+
+START_TEST(test_remove_dir_dots3) {
+  char *s = "/usr/lib64/../../usr/lib64/libX11-xcb.so.1";
+  char *path = strdup(s);
+  remove_dir_dots(&path);
+  ck_assert_str_eq(path, "/usr/lib64/libX11-xcb.so.1");
+}
+END_TEST
+
+START_TEST(test_remove_dir_dots4) {
+  char *s = "/a/../a/b/c/d/e/f/../../../../../../a/b/c/d/e/f/g";
+  char *path = strdup(s);
+  remove_dir_dots(&path);
+  ck_assert_str_eq(path, "/a/b/c/d/e/f/g");
+}
+END_TEST
+
+START_TEST(test_remove_dir_dots5) {
+  char *path = "/a/b/c/./d/././e/f";
+  remove_dir_dots(&path);
+  ck_assert_str_eq(path, "/a/b/c/d/e/f");
+}
+END_TEST
+
 Suite *depfinder_suite(void) {
   Suite *s;
   TCase *tc_depfinder;
@@ -218,6 +259,11 @@ Suite *depfinder_suite(void) {
   tcase_add_test(tc_depfinder, test_read_var_log_pkg3);
   tcase_add_test(tc_depfinder, test_read_var_log_pkg4);
   tcase_add_test(tc_depfinder, test_read_var_log_pkg5);
+  tcase_add_test(tc_depfinder, test_remove_dir_dots1);
+  tcase_add_test(tc_depfinder, test_remove_dir_dots2);
+  tcase_add_test(tc_depfinder, test_remove_dir_dots3);
+  tcase_add_test(tc_depfinder, test_remove_dir_dots4);
+  tcase_add_test(tc_depfinder, test_remove_dir_dots5);
   suite_add_tcase(s, tc_depfinder);
 
   return s;
