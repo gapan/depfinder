@@ -225,7 +225,8 @@ START_TEST(test_remove_dir_dots4) {
 END_TEST
 
 START_TEST(test_remove_dir_dots5) {
-  char *path = "/a/b/c/./d/././e/f";
+  char *s = "/a/b/c/./d/././e/f";
+  char *path = strdup(s);
   remove_dir_dots(&path);
   ck_assert_str_eq(path, "/a/b/c/d/e/f");
 }
