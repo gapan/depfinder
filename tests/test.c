@@ -89,7 +89,7 @@ START_TEST(test_get_pkglog_contents1) {
   reverse_log_t *r = NULL;
   char *pkg = "libburn-1.4.2-x86_64-1gv";
   get_pkglog_contents(pkg, &revlog, true);
-  HASH_FIND_STR(revlog, "usr/bin/cdrskin", r);
+  HASH_FIND_STR(revlog, "/usr/bin/cdrskin", r);
   ck_assert_int_eq(r->count, 1);
   ck_assert_str_eq(r->packages[0], pkg);
   free_ht(&revlog);
@@ -101,7 +101,7 @@ START_TEST(test_get_pkglog_contents2) {
   reverse_log_t *r = NULL;
   char *pkg = "libburn-1.4.2-x86_64-1gv";
   get_pkglog_contents(pkg, &revlog, false);
-  HASH_FIND_STR(revlog, "usr/man/man1/cdrskin.1.gz", r);
+  HASH_FIND_STR(revlog, "/usr/man/man1/cdrskin.1.gz", r);
   ck_assert_int_eq(r->count, 1);
   ck_assert_str_eq(r->packages[0], pkg);
   free_ht(&revlog);
@@ -126,7 +126,7 @@ START_TEST(test_get_pkglog_contents4) {
   get_pkglog_contents(pkg1, &revlog, true);
   char *pkg2 = "openssl-solibs-1.0.2s-x86_64-1_slack14.2";
   get_pkglog_contents(pkg2, &revlog, true);
-  HASH_FIND_STR(revlog, "lib64/libssl.so.1.0.0", r);
+  HASH_FIND_STR(revlog, "/lib64/libssl.so.1.0.0", r);
   ck_assert_int_eq(r->count, 2);
   ck_assert_str_eq(r->packages[0],pkg1); 
   ck_assert_str_eq(r->packages[1], pkg2);
@@ -139,7 +139,7 @@ START_TEST(test_read_var_log_pkg1) {
   reverse_log_t *r = NULL;
   char *pkg = "libburn-1.4.2-x86_64-1gv";
   read_var_log_pkg(&revlog, false);
-  HASH_FIND_STR(revlog, "usr/bin/cdrskin", r);
+  HASH_FIND_STR(revlog, "/usr/bin/cdrskin", r);
   ck_assert_int_eq(r->count, 1);
   ck_assert_str_eq(r->packages[0], pkg);
   free_ht(&revlog);
@@ -151,7 +151,7 @@ START_TEST(test_read_var_log_pkg2) {
   reverse_log_t *r = NULL;
   char *pkg = "libburn-1.4.2-x86_64-1gv";
   read_var_log_pkg(&revlog, false);
-  HASH_FIND_STR(revlog, "usr/man/man1/cdrskin.1.gz", r);
+  HASH_FIND_STR(revlog, "/usr/man/man1/cdrskin.1.gz", r);
   ck_assert_int_eq(r->count, 1);
   ck_assert_str_eq(r->packages[0], pkg);
   free_ht(&revlog);
@@ -162,7 +162,7 @@ START_TEST(test_read_var_log_pkg3) {
   reverse_log_t *revlog = NULL;
   reverse_log_t *r = NULL;
   read_var_log_pkg(&revlog, true);
-  HASH_FIND_STR(revlog, "usr/man/man1/cdrskin.1.gz", r);
+  HASH_FIND_STR(revlog, "/usr/man/man1/cdrskin.1.gz", r);
   ck_assert_ptr_eq(r, NULL);
   free_ht(&revlog);
 }
@@ -184,7 +184,7 @@ START_TEST(test_read_var_log_pkg5) {
   char *pkg1 = "openssl-1.0.2s-x86_64-1_slack14.2";
   char *pkg2 = "openssl-solibs-1.0.2s-x86_64-1_slack14.2";
   read_var_log_pkg(&revlog, true);
-  HASH_FIND_STR(revlog, "lib64/libssl.so.1.0.0", r);
+  HASH_FIND_STR(revlog, "/lib64/libssl.so.1.0.0", r);
   ck_assert_int_eq(r->count, 2);
   ck_assert_str_eq(r->packages[0],pkg1); 
   ck_assert_str_eq(r->packages[1], pkg2);

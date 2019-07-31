@@ -94,9 +94,9 @@ static void get_pkglog_contents(char *pkg_name, reverse_log_t **revlog, bool fhs
     if (start_reading && (!fhs || file_in_fhs(line))) {
       // don't read directory entries, they're not useful in this context
       if (line[read - 2] == '/') continue; // last char is a newline char
-      char *filename = malloc(read);
+      char *filename = malloc(read + 1);
       if (filename == NULL) exit(EXIT_FAILURE);
-      snprintf(filename, read, "%s", line);
+      snprintf(filename, read + 1, "/%s", line);
       // populate reverse log hashtable here
       add_ht_entry(revlog, filename, pkg_name);
       free(filename);
