@@ -116,8 +116,7 @@ void read_var_log_pkg(reverse_log_t **revlog, bool fhs) {
   struct dirent *ent;
   if ((dir = opendir (VARLOGPKG)) == NULL) exit(EXIT_FAILURE);
   while ((ent = readdir (dir)) != NULL) {
-    char *pkg_full_name = malloc(strlen(ent->d_name) + 1);
-    sprintf(pkg_full_name, "%s", ent->d_name);
+    char *pkg_full_name = strdup(ent->d_name);
     char *pkg_short_name = pkg_name(pkg_full_name);
     if (pkg_short_name) {
       get_pkglog_contents(pkg_full_name, revlog, fhs);
