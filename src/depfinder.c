@@ -57,15 +57,20 @@ static void add_ht_entry(reverse_log_t **revlog, const char *filename, const cha
   if (!r) {
     // new hash table entry
     r = malloc(sizeof(*r));
+    if (r == NULL) exit(EXIT_FAILURE);
     r->filename = strdup(filename);
+    if (r->filename == NULL) exit(EXIT_FAILURE);
     r->packages = malloc(1*sizeof(char*));
+    if (r->packages == NULL) exit(EXIT_FAILURE);
     r->packages[0] = strdup(pkgname);
+    if (r->packages[0] == NULL) exit(EXIT_FAILURE);
     r->count = 1;
     HASH_ADD_KEYPTR(hh, *revlog, r->filename, strlen(r->filename), r);
   } else {
     // hash table entry exists, just append to the packages list
     r->packages = realloc(r->packages, (r->count + 1)*sizeof(char*));
     r->packages[r->count] = strdup(pkgname);
+    if (r->packages[r->count] == NULL) exit(EXIT_FAILURE);
     r->count++;
   }
 }
@@ -117,6 +122,7 @@ static void remove_dir_dots(char **path) {
     // part1 is the substring before the "/.."
     size_t part1_len = (sub - *path) + 1;
     char *part1 = malloc(part1_len);
+    if (part1 == NULL) exit(EXIT_FAILURE);
     snprintf(part1, part1_len, "%s", *path);
     // part2 is the substring after the "/.."
     size_t part2_len = strlen(sub) - 3;
@@ -142,6 +148,7 @@ void read_var_log_pkg(reverse_log_t **revlog, bool fhs) {
   if ((dir = opendir (VARLOGPKG)) == NULL) exit(EXIT_FAILURE);
   while ((ent = readdir (dir)) != NULL) {
     char *pkg_full_name = strdup(ent->d_name);
+    if (pkg_full_name == NULL) exit(EXIT_FAILURE);
     char *pkg_short_name = pkg_name(pkg_full_name);
     if (pkg_short_name) {
       get_pkglog_contents(pkg_full_name, revlog, fhs);
@@ -182,6 +189,7 @@ void free_ll(ll_t **list) {
 uint8_t run_ldd(ll_t **lib_list, char *filename) {
   char *ldd = "/usr/bin/ldd";
   char *cmd = malloc(strlen(ldd) + strlen(filename) + 2);
+  if (cmd == NULL) exit(EXIT_FAILURE);
   sprintf(cmd, "%s %s", ldd, filename);
   FILE *fp = popen(cmd, "r");
   if (fp == NULL) exit(EXIT_FAILURE);
@@ -197,6 +205,7 @@ uint8_t run_ldd(ll_t **lib_list, char *filename) {
       ll_t *new = malloc(sizeof(*new));
       if (new == NULL) exit(EXIT_FAILURE);
       new->name = strdup(lib);
+      if (new->name == NULL) exit(EXIT_FAILURE);
       LL_APPEND(*lib_list, new);
     }
   }
