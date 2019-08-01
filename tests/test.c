@@ -197,6 +197,7 @@ START_TEST(test_remove_dir_dots1) {
   char *path = strdup(s);
   remove_dir_dots(&path);
   ck_assert_str_eq(path, "/usr/lib64/libX11-xcb.so.1");
+  free(path);
 }
 END_TEST
 
@@ -205,6 +206,7 @@ START_TEST(test_remove_dir_dots2) {
   char *path = strdup(s);
   remove_dir_dots(&path);
   ck_assert_str_eq(path, "/usr/lib64/libX11-xcb.so.1");
+  free(path);
 }
 END_TEST
 
@@ -213,6 +215,7 @@ START_TEST(test_remove_dir_dots3) {
   char *path = strdup(s);
   remove_dir_dots(&path);
   ck_assert_str_eq(path, "/usr/lib64/libX11-xcb.so.1");
+  free(path);
 }
 END_TEST
 
@@ -221,6 +224,7 @@ START_TEST(test_remove_dir_dots4) {
   char *path = strdup(s);
   remove_dir_dots(&path);
   ck_assert_str_eq(path, "/a/b/c/d/e/f/g");
+  free(path);
 }
 END_TEST
 
@@ -229,6 +233,7 @@ START_TEST(test_remove_dir_dots5) {
   char *path = strdup(s);
   remove_dir_dots(&path);
   ck_assert_str_eq(path, "/a/b/c/d/e/f");
+  free(path);
 }
 END_TEST
 
