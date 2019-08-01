@@ -132,8 +132,6 @@ static void remove_dir_dots(char **path) {
   }
 }
 
-
-
 /*
  * Opens the /var/log/packages directory and reads every log file in it, one by
  * one.
