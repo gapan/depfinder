@@ -4,3 +4,4 @@ src/valgrind-out.txt
 src/*.o
 tests/test
 tests/*.o
+tests/valgrind-out.txt
