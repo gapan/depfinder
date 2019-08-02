@@ -253,6 +253,7 @@ START_TEST(test_run_ldd) {
     if (i == 4) ck_assert_str_eq(elt->name, "/lib64/libdl.so.2");
     i++;
   }
+  free_ll(&head);
 }
 END_TEST
 
