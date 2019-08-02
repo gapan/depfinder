@@ -199,7 +199,7 @@ uint8_t run_ldd(ll_t **lib_list, char *filename) {
     char *sub = strstr(line, "=> ");
     if (sub != NULL) {
       char *lib = NULL;
-      lib = strtok(sub + 4, " (");
+      lib = strtok(sub + 3, " (");
       remove_dir_dots(&lib);
       ll_t *new = malloc(sizeof(*new));
       if (new == NULL) exit(EXIT_FAILURE);
