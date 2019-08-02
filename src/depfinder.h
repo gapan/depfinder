@@ -26,6 +26,10 @@
 #define VARLOGPKG "/var/log/packages"
 #endif
 
+#ifndef LDD_CMD
+#define LDD_CMD "/usr/bin/ldd"
+#endif
+
 typedef struct {
   char *filename; // key
   uint16_t count;

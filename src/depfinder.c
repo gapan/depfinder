@@ -187,10 +187,9 @@ void free_ll(ll_t **list) {
  * executable references in a linked list.
  */
 uint8_t run_ldd(ll_t **lib_list, char *filename) {
-  char *ldd = "/usr/bin/ldd";
-  char *cmd = malloc(strlen(ldd) + strlen(filename) + 2);
+  char *cmd = malloc(strlen(LDD_CMD) + strlen(filename) + 2);
   if (cmd == NULL) exit(EXIT_FAILURE);
-  sprintf(cmd, "%s %s", ldd, filename);
+  sprintf(cmd, "%s %s", LDD_CMD, filename);
   FILE *fp = popen(cmd, "r");
   if (fp == NULL) exit(EXIT_FAILURE);
   char *line = NULL;
