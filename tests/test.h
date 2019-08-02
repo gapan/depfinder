@@ -9,5 +9,9 @@
 #define VARLOGPKG "var_log_packages"
 #endif
 
+#ifndef LDD_CMD
+#define LDD_CMD "scripts/fake_ldd.sh"
+#endif
+
 #include "../src/depfinder.c"
 

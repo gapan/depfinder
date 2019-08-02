@@ -237,6 +237,25 @@ START_TEST(test_remove_dir_dots5) {
 }
 END_TEST
 
+START_TEST(test_run_ldd) {
+  ll_t *head = NULL;
+  ll_t *elt = NULL;
+  uint8_t res = run_ldd(&head, "/usr/bin/dummy");
+  uint8_t count;
+  LL_COUNT(head, elt, count);
+  ck_assert_int_eq(count, 5);
+  uint8_t i = 0;
+  LL_FOREACH(head, elt) {
+    if (i == 0) ck_assert_str_eq(elt->name, "/lib64/libcrypto.so.1");
+    if (i == 1) ck_assert_str_eq(elt->name, "/lib64/libssl.so.1");
+    if (i == 2) ck_assert_str_eq(elt->name, "/lib64/libm.so.6");
+    if (i == 3) ck_assert_str_eq(elt->name, "/lib64/libc.so.6");
+    if (i == 4) ck_assert_str_eq(elt->name, "/lib64/libdl.so.2");
+    i++;
+  }
+}
+END_TEST
+
 Suite *depfinder_suite(void) {
   Suite *s;
   TCase *tc_depfinder;
@@ -268,6 +287,7 @@ Suite *depfinder_suite(void) {
   tcase_add_test(tc_depfinder, test_remove_dir_dots3);
   tcase_add_test(tc_depfinder, test_remove_dir_dots4);
   tcase_add_test(tc_depfinder, test_remove_dir_dots5);
+  tcase_add_test(tc_depfinder, test_run_ldd);
   suite_add_tcase(s, tc_depfinder);
 
   return s;
