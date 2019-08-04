@@ -124,8 +124,6 @@ static void remove_dir_dots(char **path) {
     char *part1 = malloc(part1_len);
     if (part1 == NULL) EERROR("malloc part1");
     snprintf(part1, part1_len, "%s", *path);
-    // part2 is the substring after the "/.."
-    size_t part2_len = strlen(sub) - 3;
     // now locate where the previous directory name is and remove it
     size_t n = strrchr(part1, '/') - part1; // number of initial chars to keep
     memmove(*path + n, sub + 3, strlen(sub) - 3 + 1);
