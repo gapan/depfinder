@@ -192,46 +192,46 @@ START_TEST(test_read_var_log_pkg5) {
 }
 END_TEST
 
-START_TEST(test_remove_dir_dots1) {
+START_TEST(test_sanitize_path1) {
   char *s = "/usr/lib64/libX11-xcb.so.1";
   char *path = strdup(s);
-  remove_dir_dots(&path);
+  sanitize_path(&path);
   ck_assert_str_eq(path, "/usr/lib64/libX11-xcb.so.1");
   free(path);
 }
 END_TEST
 
-START_TEST(test_remove_dir_dots2) {
+START_TEST(test_sanitize_path2) {
   char *s = "/usr/lib64/../lib64/libX11-xcb.so.1";
   char *path = strdup(s);
-  remove_dir_dots(&path);
+  sanitize_path(&path);
   ck_assert_str_eq(path, "/usr/lib64/libX11-xcb.so.1");
   free(path);
 }
 END_TEST
 
-START_TEST(test_remove_dir_dots3) {
+START_TEST(test_sanitize_path3) {
   char *s = "/usr/lib64/../../usr/lib64/libX11-xcb.so.1";
   char *path = strdup(s);
-  remove_dir_dots(&path);
+  sanitize_path(&path);
   ck_assert_str_eq(path, "/usr/lib64/libX11-xcb.so.1");
   free(path);
 }
 END_TEST
 
-START_TEST(test_remove_dir_dots4) {
+START_TEST(test_sanitize_path4) {
   char *s = "/a/../a/b/c/d/e/f/../../../../../../a/b/c/d/e/f/g";
   char *path = strdup(s);
-  remove_dir_dots(&path);
+  sanitize_path(&path);
   ck_assert_str_eq(path, "/a/b/c/d/e/f/g");
   free(path);
 }
 END_TEST
 
-START_TEST(test_remove_dir_dots5) {
+START_TEST(test_sanitize_path5) {
   char *s = "/a/b/c/./d/././e/f";
   char *path = strdup(s);
-  remove_dir_dots(&path);
+  sanitize_path(&path);
   ck_assert_str_eq(path, "/a/b/c/d/e/f");
   free(path);
 }
@@ -283,11 +283,11 @@ Suite *depfinder_suite(void) {
   tcase_add_test(tc_depfinder, test_read_var_log_pkg3);
   tcase_add_test(tc_depfinder, test_read_var_log_pkg4);
   tcase_add_test(tc_depfinder, test_read_var_log_pkg5);
-  tcase_add_test(tc_depfinder, test_remove_dir_dots1);
-  tcase_add_test(tc_depfinder, test_remove_dir_dots2);
-  tcase_add_test(tc_depfinder, test_remove_dir_dots3);
-  tcase_add_test(tc_depfinder, test_remove_dir_dots4);
-  tcase_add_test(tc_depfinder, test_remove_dir_dots5);
+  tcase_add_test(tc_depfinder, test_sanitize_path1);
+  tcase_add_test(tc_depfinder, test_sanitize_path2);
+  tcase_add_test(tc_depfinder, test_sanitize_path3);
+  tcase_add_test(tc_depfinder, test_sanitize_path4);
+  tcase_add_test(tc_depfinder, test_sanitize_path5);
   tcase_add_test(tc_depfinder, test_run_ldd);
   suite_add_tcase(s, tc_depfinder);
 

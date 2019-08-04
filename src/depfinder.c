@@ -115,7 +115,7 @@ static void get_pkglog_contents(char *pkg_name, reverse_log_t **revlog, bool fhs
 /*
  * Parses a file path and removes any previous directory (..) from it.
  */
-static void remove_dir_dots(char **path) {
+static void sanitize_path(char **path) {
   char *sub = NULL;
   // first remove all previous dir dots (..)
   while ((sub = strstr(*path, "/..")) != NULL) {
@@ -198,7 +198,7 @@ uint8_t run_ldd(ll_t **lib_list, char *filename) {
     if (sub != NULL) {
       char *lib = NULL;
       lib = strtok(sub + 3, " (");
-      remove_dir_dots(&lib);
+      sanitize_path(&lib);
       ll_t *new = malloc(sizeof(*new));
       if (new == NULL) EERROR("malloc new");
       new->name = strdup(lib);
