@@ -29,7 +29,7 @@ static char *pkg_name(char *full_pkg_name) {
   uint8_t len = pkg_name_length(full_pkg_name) + 1; // '\0'
   if (len == 1) return NULL;
   char *pkg_name = malloc(len);
-  if (pkg_name == NULL) exit(EXIT_FAILURE); 
+  if (pkg_name == NULL) EERROR("malloc pkg_name");
   snprintf(pkg_name, len, full_pkg_name);
   return pkg_name;
 }
@@ -57,20 +57,20 @@ static void add_ht_entry(reverse_log_t **revlog, const char *filename, const cha
   if (!r) {
     // new hash table entry
     r = malloc(sizeof(*r));
-    if (r == NULL) exit(EXIT_FAILURE);
+    if (r == NULL) EERROR("malloc r");
     r->filename = strdup(filename);
-    if (r->filename == NULL) exit(EXIT_FAILURE);
+    if (r->filename == NULL) EERROR("strdup r->filename");
     r->packages = malloc(1*sizeof(char*));
-    if (r->packages == NULL) exit(EXIT_FAILURE);
+    if (r->packages == NULL) EERROR("malloc r->packages");
     r->packages[0] = strdup(pkgname);
-    if (r->packages[0] == NULL) exit(EXIT_FAILURE);
+    if (r->packages[0] == NULL) EERROR("strdup r->packages[0]");
     r->count = 1;
     HASH_ADD_KEYPTR(hh, *revlog, r->filename, strlen(r->filename), r);
   } else {
     // hash table entry exists, just append to the packages list
     r->packages = realloc(r->packages, (r->count + 1)*sizeof(char*));
     r->packages[r->count] = strdup(pkgname);
-    if (r->packages[r->count] == NULL) exit(EXIT_FAILURE);
+    if (r->packages[r->count] == NULL) EERROR("strdup r->packages[r->count]");
     r->count++;
   }
 }
@@ -83,10 +83,10 @@ static void add_ht_entry(reverse_log_t **revlog, const char *filename, const cha
 static void get_pkglog_contents(char *pkg_name, reverse_log_t **revlog, bool fhs) {
   size_t len = strlen(VARLOGPKG) + strlen(pkg_name) + 2;
   char *full_path = malloc(len);
-  if (full_path == NULL) exit(EXIT_FAILURE);
+  if (full_path == NULL) EERROR("malloc full_path");
   snprintf(full_path, len, "%s/%s", VARLOGPKG, pkg_name);
   FILE *fp = fopen(full_path, "r");
-  if (fp == NULL) exit(EXIT_FAILURE);
+  if (fp == NULL) EERROR("fopen full_path");
   char *line = NULL;
   ssize_t read;
   len = 0; // oh well, repurpose this, it's not that we need the previous value
@@ -100,7 +100,7 @@ static void get_pkglog_contents(char *pkg_name, reverse_log_t **revlog, bool fhs
       // don't read directory entries, they're not useful in this context
       if (line[read - 2] == '/') continue; // last char is a newline char
       char *filename = malloc(read + 1);
-      if (filename == NULL) exit(EXIT_FAILURE);
+      if (filename == NULL) EERROR("malloc filename");
       snprintf(filename, read + 1, "/%s", line);
       // populate reverse log hashtable here
       add_ht_entry(revlog, filename, pkg_name);
@@ -122,7 +122,7 @@ static void remove_dir_dots(char **path) {
     // part1 is the substring before the "/.."
     size_t part1_len = (sub - *path) + 1;
     char *part1 = malloc(part1_len);
-    if (part1 == NULL) exit(EXIT_FAILURE);
+    if (part1 == NULL) EERROR("malloc part1");
     snprintf(part1, part1_len, "%s", *path);
     // part2 is the substring after the "/.."
     size_t part2_len = strlen(sub) - 3;
@@ -145,10 +145,10 @@ static void remove_dir_dots(char **path) {
 void read_var_log_pkg(reverse_log_t **revlog, bool fhs) {
   DIR *dir;
   struct dirent *ent;
-  if ((dir = opendir (VARLOGPKG)) == NULL) exit(EXIT_FAILURE);
+  if ((dir = opendir (VARLOGPKG)) == NULL) EERROR("opendir VARLOGPKG");
   while ((ent = readdir (dir)) != NULL) {
     char *pkg_full_name = strdup(ent->d_name);
-    if (pkg_full_name == NULL) exit(EXIT_FAILURE);
+    if (pkg_full_name == NULL) EERROR("strdup pkg_full_name");
     char *pkg_short_name = pkg_name(pkg_full_name);
     if (pkg_short_name) {
       get_pkglog_contents(pkg_full_name, revlog, fhs);
@@ -188,10 +188,10 @@ void free_ll(ll_t **list) {
  */
 uint8_t run_ldd(ll_t **lib_list, char *filename) {
   char *cmd = malloc(strlen(LDD_CMD) + strlen(filename) + 2);
-  if (cmd == NULL) exit(EXIT_FAILURE);
+  if (cmd == NULL) EERROR("malloc cmd");
   sprintf(cmd, "%s %s", LDD_CMD, filename);
   FILE *fp = popen(cmd, "r");
-  if (fp == NULL) exit(EXIT_FAILURE);
+  if (fp == NULL) EERROR("popen cmd");
   char *line = NULL;
   size_t len = 0;
   ssize_t read;
@@ -202,9 +202,9 @@ uint8_t run_ldd(ll_t **lib_list, char *filename) {
       lib = strtok(sub + 3, " (");
       remove_dir_dots(&lib);
       ll_t *new = malloc(sizeof(*new));
-      if (new == NULL) exit(EXIT_FAILURE);
+      if (new == NULL) EERROR("malloc new");
       new->name = strdup(lib);
-      if (new->name == NULL) exit(EXIT_FAILURE);
+      if (new->name == NULL) EERROR("strdup new->name");
       LL_APPEND(*lib_list, new);
     }
   }

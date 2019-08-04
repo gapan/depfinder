@@ -22,6 +22,10 @@
 #error Unknown pointer size or missing size macros!
 #endif
 
+#ifndef EERROR
+#define EERROR(s) {perror((s));exit(EXIT_FAILURE);}
+#endif
+
 #ifndef VARLOGPKG
 #define VARLOGPKG "/var/log/packages"
 #endif
