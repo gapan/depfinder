@@ -211,3 +211,39 @@ uint8_t run_ldd(ll_t **lib_list, char *filename) {
   free(cmd);
   return res;
 }
+
+uint8_t extract_pkg(const char *pkg, const char *tmp_dir) {
+  char *extension = strrchr(pkg, '.');
+  if (!extension) return 1;
+  char *cmd;
+  if ((strcmp(extension, ".txz") == 0) ||
+    (strcmp(extension, ".tgz") == 0) ||
+    (strcmp(extension, ".tbz") == 0)) {
+    char *tar_cmd = "/usr/bin/tar";
+    cmd = malloc(strlen(tar_cmd) + strlen(pkg) + strlen(tmp_dir) +  9);
+    if (cmd == NULL) EERROR("malloc cmd1");
+    sprintf(cmd, "%s xf %s -C %s", tar_cmd, pkg, tmp_dir);
+  } else if (strcmp(extension, ".tlz") == 0) {
+    char *lzma_cmd = "/usr/bin/lzma -d -c";
+    char *tar_cmd = "/usr/bin/tar -";
+    cmd = malloc(strlen(lzma_cmd) + strlen(pkg) + strlen(tar_cmd) +
+        strlen(tmp_dir) + 9);
+    if (cmd == NULL) EERROR("malloc cmd2");
+    sprintf(cmd, "%s %s | %s -C %s", lzma_cmd, pkg, tar_cmd, tmp_dir);
+  } else if (strcmp(extension, ".tbr") == 0) {
+    char *brotli_cmd = "/usr/bin/brotli -c --decompress";
+    char *tar_cmd = "/usr/bin/tar -";
+    cmd = malloc(strlen(brotli_cmd) + strlen(pkg) + strlen(tar_cmd) +
+        strlen(tmp_dir) + 9);
+    if (cmd == NULL) EERROR("malloc cmd3");
+    sprintf(cmd, "%s %s | %s -C %s", brotli_cmd, pkg, tar_cmd, tmp_dir);
+  } else {
+    fprintf(stderr, "ERROR: Unknown file format.\n");
+    exit(EXIT_FAILURE);
+  }
+  FILE *fp = popen(cmd, "r");
+  if (fp == NULL) EERROR("popen extract_pkg/fp");
+  uint8_t res = pclose(fp);
+  free(cmd);
+  return res;
+}
