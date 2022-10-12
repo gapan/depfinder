@@ -17,7 +17,7 @@ CWhatProvides::CWhatProvides(std::string& file, std::string& shellpid)
 	_logfile.open(TMPFILE("/pkglist.log", shellpid).c_str(), std::ios_base::in);
 	while ( !_logfile.eof() ) {
 		getline(_logfile, _inputstr);
-		if ( _inputstr.length() > 0 ) search_package("/var/log/packages/" + _inputstr, file);
+		if ( _inputstr.length() > 0 ) search_package("/var/lib/pkgtools/packages/" + _inputstr, file);
 	}
 	_logfile.close();
 }
