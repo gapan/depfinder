@@ -27,7 +27,7 @@
 #endif
 
 #ifndef VARLOGPKG
-#define VARLOGPKG "/var/log/packages"
+#define VARLOGPKG "/var/lib/pkgtools/packages"
 #endif
 
 #ifndef LDD_CMD
