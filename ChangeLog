@@ -3,6 +3,8 @@ version 1.4.5 ()
   * Always use python 3 for python dependency detection and remove the
     -3 option
   * Remove leftover code from the old ADD environment variable support
+  * Fix detection of python modules that are compiled .so files, both
+    inside the package and installed in the system
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

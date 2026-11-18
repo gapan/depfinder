@@ -272,7 +272,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	# list with the ones that are not
 	touch /tmp/depfinder.$$/PYTHONMODULES
 	for i in `cat /tmp/depfinder.$$/PYTHONMODULESSORTED`; do
-		FOUND=`find ./ -type f | grep "/$i\.py$\|/$i/__init__\.py$\|$\.so"`
+		FOUND=`find ./ -type f | grep "/$i\.py$\|/$i/__init__\.py$\|/$i\(\.[^/]*\)\?\.so$"`
 		if [[ ! "$FOUND" ]]; then
 			echo "$i" >> /tmp/depfinder.$$/PYTHONMODULES
 		fi
@@ -298,11 +298,16 @@ if [ $PYTHONDEPS -eq 1 ]; then
 					echo "$dir/$i/__init__.py" \
 					>> /tmp/depfinder.$$/PYTHONNEEDEDMODULES
 					sed -i "/^${i}$/d" /tmp/depfinder.$$/PYTHONMODULES
-				elif [ -f $dir/$i.so ]; then
-					echo "$dir/$i.so" \
-					>> /tmp/depfinder.$$/PYTHONNEEDEDMODULES
-					sed -i "/^${i}$/d" /tmp/depfinder.$$/PYTHONMODULES
-				fi		
+				else
+					# compiled modules may be named either module.so or
+					# module.<abi-tag>.so, e.g. module.cpython-39-x86_64-linux-gnu.so
+					SOFILE=`ls $dir/$i.so $dir/$i.*.so 2> /dev/null | head -n 1`
+					if [ -n "$SOFILE" ]; then
+						echo "$SOFILE" \
+						>> /tmp/depfinder.$$/PYTHONNEEDEDMODULES
+						sed -i "/^${i}$/d" /tmp/depfinder.$$/PYTHONMODULES
+					fi
+				fi
 			done
 		fi
 	done
