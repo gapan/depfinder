@@ -18,7 +18,6 @@ VERSIONINFO=0
 PYTHONDEPS=0
 JOBS=1
 STARTDIR=""
-DEPVER=""
 DEBUG=${DEBUG:-0}
 DEPFINDERSEARCH="/usr/libexec/depfinder-search"
 LIBDIRSUFFIX=""
@@ -406,10 +405,6 @@ if [ $VERSIONINFO -eq 1 ]; then
 	sort DEPS | uniq | \
 	sed ':a;s/\([^ \|]\+\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/\1 >= \2/g;ta' \
 	> DEPSNAMES
-	for i in `echo $ADD | sed "s/,/ /g"`; do
-		DEPVER=`ls /var/log/packages/$i-* | sed "s|/var/log/packages/$i-||" | grep "^[^\-]*\-[^\-]*\-[^\-]*$"`
-		sed -i "s/^$i$/$i >= $DEPVER/" DEPSNAMES
-	done
 else
 	sort DEPS | uniq | \
 	sed ':a;s/\([^ \|]\+\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/\1/g;ta'  \
