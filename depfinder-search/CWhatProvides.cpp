@@ -5,7 +5,7 @@
 #include "defs.h"
 #include "CWhatProvides.h"
 
-CWhatProvides::CWhatProvides(std::string& file, std::string& shellpid)
+CWhatProvides::CWhatProvides(std::string& file, std::string& shellpid, const std::string& pkgdb)
 {
 	// Mangle the request to be more easily seachable.
 	if ( file.find(".new") == file.length() - 1 && (int)file.find(".new") != -1 )
@@ -17,7 +17,7 @@ CWhatProvides::CWhatProvides(std::string& file, std::string& shellpid)
 	_logfile.open(TMPFILE("/pkglist.log", shellpid).c_str(), std::ios_base::in);
 	while ( !_logfile.eof() ) {
 		getline(_logfile, _inputstr);
-		if ( _inputstr.length() > 0 ) search_package("/var/lib/pkgtools/packages/" + _inputstr, file);
+		if ( _inputstr.length() > 0 ) search_package(pkgdb + "/" + _inputstr, file);
 	}
 	_logfile.close();
 }

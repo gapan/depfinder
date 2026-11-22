@@ -17,10 +17,17 @@ int main(int argc, char* argv[])
 	std::vector<std::string>	_files;
 	std::string			_arg_whatprovides;
 	std::string			_shell_pid;
+	std::string			_pkgdb = PKGDB;
 
+	if ( argc < 3 ) {
+		std::cerr << "usage: depfinder-search <file> <shell-pid> [package-db-dir]\n";
+		return 1;
+	}
 	_arg_whatprovides = argv[1];
 	_shell_pid = argv[2];
+	if ( argc > 3 )
+		_pkgdb = argv[3];
 
-	CWhatProvides	_ori(_arg_whatprovides, _shell_pid);
+	CWhatProvides	_ori(_arg_whatprovides, _shell_pid, _pkgdb);
 	return 0;
 }

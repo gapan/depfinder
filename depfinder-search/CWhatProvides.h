@@ -11,7 +11,7 @@
 class CWhatProvides
 {
 public:
-	CWhatProvides(std::string& file, std::string& shellpid);
+	CWhatProvides(std::string& file, std::string& shellpid, const std::string& pkgdb);
 protected:
 	void	search_package(const std::string& package, const std::string& file);
 };

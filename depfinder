@@ -21,6 +21,8 @@ STARTDIR=""
 DEBUG=${DEBUG:-0}
 DEPFINDERSEARCH="/usr/libexec/depfinder-search"
 LIBDIRSUFFIX=""
+# The installed package database. Can be overridden for testing.
+PKGDB=${DEPFINDERPKGDB:-/var/lib/pkgtools/packages}
 
 # help message
 help_msg()
@@ -61,7 +63,7 @@ depfind()
 	touch DEPS$1
 	for i in `cat LIBS$1`; do
 		[ -h /$i ] && i=`readlink -e /$i`
-		$DEPFINDERSEARCH  $i $$ | uniq > TMP$1
+		$DEPFINDERSEARCH  $i $$ "$PKGDB" | uniq > TMP$1
 		if [ `cat TMP$1 | wc -l` -gt 1 ];then
 			cat TMP$1 | tr '\n' ' ' | \
 			sed "s/ /|/g" | sed "s/|$//" >> DEPS$1
@@ -209,12 +211,18 @@ else
 	fi
 fi
 
+# The package database must be there
+if [ ! -d "$PKGDB" ]; then
+	echo "ERROR: package database $PKGDB not found" >&2
+	err
+fi
+
 # Cleanup any leftover files before really doing anything
 cleanup
 
 # Create temp dir and extract package
 mkdir -p /tmp/depfinder.$$
-ls /var/log/packages > /tmp/depfinder.$$/pkglist.log
+ls "$PKGDB" > /tmp/depfinder.$$/pkglist.log
 
 # Extract only if argument is not a directory
 if [ `echo $1 | grep "\.t[gb]z$"` ]; then

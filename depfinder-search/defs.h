@@ -7,3 +7,6 @@
 #ifndef TMPFILE
 #define TMPFILE(file,shellpid)	std::string(TMPDIR + std::string(shellpid) + std::string(file) )
 #endif
+#ifndef PKGDB
+#define PKGDB		"/var/lib/pkgtools/packages"
+#endif
