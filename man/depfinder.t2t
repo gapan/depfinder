@@ -125,6 +125,14 @@ Prints a usage message briefly summarizing all command-line options
 and exits.
 
 
+= ENVIRONMENT =
+
+: **DEPFINDERPKGDB**
+The directory holding the database of installed packages, which is used
+to find which package provides each library. The default is
+///var/lib/pkgtools/packages//.
+
+
 = WEBSITE =
 
 http://depfinder.sourceforge.net/
