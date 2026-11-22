@@ -5,6 +5,10 @@ version 1.4.5 ()
   * Remove leftover code from the old ADD environment variable support
   * Fix detection of python modules that are compiled .so files, both
     inside the package and installed in the system
+  * Use lzip for .tlz packages, like pkgtools
+  * The location of the package database can be set with the
+    DEPFINDERPKGDB environment variable
+  * Add a test suite, run with "make check"
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list
