@@ -220,7 +220,13 @@ ls /var/log/packages > /tmp/depfinder.$$/pkglist.log
 if [ `echo $1 | grep "\.t[gb]z$"` ]; then
 	[ -z $STARTDIR ] && tar xf $1 -C /tmp/depfinder.$$
 elif [ `echo $1 | grep "\.tlz$"` ]; then
-	lzma -d -c $1 | tar xf - -C /tmp/depfinder.$$
+	# .tlz packages are lzip compressed. Use plzip if available, like
+	# installpkg does, since it decompresses using multiple threads.
+	if which plzip 1> /dev/null 2> /dev/null; then
+		plzip -d -c $1 | tar xf - -C /tmp/depfinder.$$
+	else
+		lzip -d -c $1 | tar xf - -C /tmp/depfinder.$$
+	fi
 elif [ `echo $1 | grep "\.txz$"` ]; then
 	xz -d -c $1 | tar xf - -C /tmp/depfinder.$$
 elif [ `echo $1 | grep "\.tbr$"` ]; then
