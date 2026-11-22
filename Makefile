@@ -27,8 +27,11 @@ install:
 	[ -f man/depfinder.man ] && \
 		install -D -m 644 man/depfinder.man $(DESTDIR)/usr/man/man1/depfinder.1
 
+check: depfinder-search
+	tests/run.sh
+
 clean:
 	rm -f man/depfinder.man
 	$(MAKE) clean -C depfinder-search/
 
-.PHONY: install clean depfinder-search man
+.PHONY: install check clean depfinder-search man
