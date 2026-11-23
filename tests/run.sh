@@ -354,6 +354,16 @@ check "-f prints nothing" "" "$OUT"
 check "-f writes a .dep file" "bar,glibc" \
 	"$(cat "$RUNDIR/foo-1.0-x86_64-1.dep" 2>&1)"
 
+# Only the extension at the end of the name is removed
+cp "$P/foo-1.0-x86_64-1.txz" "$P/foo.tbz2-1.0-x86_64-1.txz"
+rundf "$DB" "$SYS" -f "$P/foo.tbz2-1.0-x86_64-1.txz"
+check "-f with an extension-like part in the name" "bar,glibc" \
+	"$(cat "$RUNDIR/foo.tbz2-1.0-x86_64-1.dep" 2>&1)"
+echo "x" > "$W/foo-1.0-x86_64-1.tbrx"
+rundf "$DB" "$SYS" "$W/foo-1.0-x86_64-1.tbrx"
+check "unknown extension: reported" "1" \
+	"$(echo "$ERR" | grep -c "is not a package file")"
+
 rundf "$DB" "$SYS" -f -s "$P/foo-1.0-x86_64-1.txz"
 check "-f -s writes slack-required" \
 	"$(printf 'bar >= 2.0-x86_64-1\nglibc >= 2.33-x86_64-1')" \

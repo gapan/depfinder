@@ -198,7 +198,7 @@ if [ -d $1 ]; then
 	STARTDIR=`readlink -f $1`/
 else
 	# ... or has the .tgz|tbz|tlz extension (is a package file)
-	if [ ! `echo $1 | grep "\.t[gblx]z$\|\.tbr"` ]; then
+	if [ ! `echo $1 | grep "\.t[gblx]z$\|\.tbr$"` ]; then
 		arg=$1
 		echo "ERROR: $arg is not a package file or a directory!" >&2
 		err
@@ -249,7 +249,7 @@ if [ -z "$STARTDIR" ]; then
 fi
 cd /tmp/depfinder.$$
 
-PKGNAME=`basename $1 | sed "s/\.t[gblx]z\|\.tbr\|\/$//"`
+PKGNAME=`basename $1 | sed "s/\.t[gblx]z$\|\.tbr$//"`
 
 # The name of the package without version, used to exclude the package
 # itself from the dependency list. For a package file it comes from the
@@ -484,8 +484,7 @@ else
 	# If not requesting version info, output the deps to a
 	# .dep file or to stdout
 	if [ $CREATEDEPFILE -eq 1 ]; then
-		BASENAME=`basename "$PKGNAME"`
-		DEPFILENAME=`echo $BASENAME | sed "s/\.t[xgbl]z$\|\.tbr//"`
+		DEPFILENAME=$PKGNAME
 		cat DEPSNAMES | \
 		tr "\n" " " | \
 		sed "s/ /,/g" | \
