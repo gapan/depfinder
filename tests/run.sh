@@ -369,6 +369,12 @@ PYEOF
 printf 'try:\n\timport extmod\nexcept ImportError:\n\tpass\n' \
 	> "$W/pyapp2/usr/share/pyapp2/helper.py"
 printf 'print "python 2"\n' > "$W/pyapp2/usr/share/pyapp2/old.py"
+# tests shipped in the package, which need modules that are installed
+# (timesheet) or not (testonly), but aren't dependencies
+mkdir -p "$W/pyapp2/$PYSITE/pyapp2/tests"
+for f in tests/test_main.py tests/helpers.py conftest.py test_it.py it_test.py; do
+	printf 'import timesheet\nimport testonly\n' > "$W/pyapp2/$PYSITE/pyapp2/$f"
+done
 cat > "$W/pyapp2/$PYSITE/pyapp2-1.0.dist-info/METADATA" <<'PYEOF'
 Metadata-Version: 2.1
 Name: pyapp2

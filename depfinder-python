@@ -14,6 +14,10 @@
 # the system that provides each of them, one per line. Modules and
 # distributions that can't be found are reported on stderr.
 #
+# Test files (in test/ or tests/ directories, test_*.py, *_test.py and
+# conftest.py) are skipped, since their imports are only needed to run
+# the tests.
+#
 # Optional imports (only inside try blocks that catch ImportError, so
 # the code works without them) are not dependencies: they are only
 # listed on stderr, for the packager to consider as suggestions.
@@ -128,6 +132,18 @@ def find_imports(path):
 	finder = ImportFinder()
 	finder.visit(tree)
 	return finder.required, finder.optional
+
+
+def is_test_file(path):
+	"""Whether a file is part of a test suite shipped in the package
+	(e.g. site-packages/foo/tests/test_bar.py), whose imports (pytest,
+	mock...) are only needed to run the tests."""
+	parts = path.split(os.sep)
+	name = parts[-1]
+	return any(d in ("test", "tests") for d in parts[:-1]) or \
+	       name == "conftest.py" or \
+	       (name.startswith("test_") and name.endswith(".py")) or \
+	       name.endswith("_test.py")
 
 
 #
@@ -453,6 +469,8 @@ def main():
 	imports = {}		# dotted name -> (optional?, set of script dirs)
 	for f in files:
 		path = os.path.join(root, f)
+		if is_test_file(os.path.relpath(path, root)):
+			continue
 		found = find_imports(path)
 		if found is None:
 			warn("could not parse %s as python 3." % os.path.relpath(path, root))

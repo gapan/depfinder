@@ -115,7 +115,9 @@ Modules imported only inside a //try// block that catches //ImportError//
 are optional, since the code is written to work without them: they are
 not added as dependencies, but listed in a note, as candidates for
 suggested packages (except modules from python's standard library).
-Imports under //if TYPE_CHECKING:// are ignored. Files that are not
+Imports under //if TYPE_CHECKING:// are ignored, and so are test files
+(in //test// or //tests// directories, //test_*.py//, //*_test.py// and
+//conftest.py//), since their imports are only needed to run the tests. Files that are not
 valid python 3 are reported and skipped.
 
 The list of reported python dependencies might still not be final.

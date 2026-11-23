@@ -80,6 +80,9 @@ version 2.0 ()
     became "font"), and garbled with -s
   * Exit with an error if depfinder-search is missing or fails, instead
     of printing an empty list
+  * With -p, skip the test files that python packages often ship (in
+    test/ or tests/ directories, test_*.py, *_test.py, conftest.py), whose
+    imports (pytest, nose, mock...) made test tools dependencies
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list
