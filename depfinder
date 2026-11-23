@@ -64,7 +64,7 @@ Run \"depfinder -h\" for help information"
 # UNOWNED<part>.
 depfind()
 {
-	if ! $DEPFINDERSEARCH "$PKGDB" pkglist.log LIBS$1 > DEPS$1; then
+	if ! "$DEPFINDERSEARCH" "$PKGDB" pkglist.log LIBS$1 > DEPS$1; then
 		touch FAILED$1
 	fi
 	awk 'FILENAME == ARGV[1] { lib[FNR] = $0; next }

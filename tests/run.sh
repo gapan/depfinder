@@ -810,6 +810,18 @@ rundf "$W/no-such-db" "$SYS" "$P/foo-1.0-x86_64-1.txz"
 check "missing package database: exit status 1" "1" "$RC"
 check "missing package database: reported" "1" \
 	"$(echo "$ERR" | grep -c "package database")"
+# depfinder-search and depfinder-python in a directory with a space
+mkdir -p "$W/lib exec"
+cp "$SEARCH" "$TOPDIR/depfinder-python" "$W/lib exec/"
+sed -e "s|^DEPFINDERSEARCH=.*|DEPFINDERSEARCH=\"$W/lib exec/depfinder-search\"|" \
+    -e "s|^DEPFINDERPYTHON=.*|DEPFINDERPYTHON=\"$W/lib exec/depfinder-python\"|" \
+	"$DF" > "$W/df-space"
+chmod 755 "$W/df-space"
+OUT=$(DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" PYTHONPATH="$SYS/py" \
+	"$W/df-space" -p "$W/with space/spacey-1.0-x86_64-1.txz" 2>&1)
+ERR=""
+check "helpers in a directory with a space" "bar,glibc,pyext" "$OUT"
+
 # depfinder-search missing, or failing
 sed "s|^DEPFINDERSEARCH=.*|DEPFINDERSEARCH=\"$W/no-such-search\"|" "$DF" > "$W/df-nosearch"
 printf '#!/bin/sh\nexit 1\n' > "$W/failing-search"
