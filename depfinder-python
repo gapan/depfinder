@@ -124,8 +124,13 @@ def collect_imports(tree):
 		if isinstance(node, ast.ImportFrom):
 			# relative imports (from . import x) are always in the
 			# package
-			if node.level == 0:
-				add(node.module)
+			# (each name can be a module, e.g. two in "from nspkg import
+			# two", which matters for namespace packages; for other
+			# names the module itself is found)
+			if node.level == 0 and node.module:
+				for alias in node.names:
+					add(node.module if alias.name == "*"
+					    else node.module + "." + alias.name)
 			continue
 		if isinstance(node, ast.Call):
 			# __import__("name") and importlib.import_module("name"),

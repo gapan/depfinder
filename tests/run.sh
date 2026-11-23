@@ -490,6 +490,13 @@ echo "import extmod" > "$W/pyshadow/$PYSITE/shadow/api.py"
 : > "$W/pyshadow/$PYSITE/shadow/extmod.py"
 mkpkg "$W/pyshadow" "$P/pyshadow-1.0-x86_64-1.txz"
 
+# pyns: a module imported from a namespace package split between
+# packages, and a name from a module
+mkdir -p "$W/pyns/usr/share/pyns"
+printf 'from nspkg import two\nfrom extmod import one, two\n' \
+	> "$W/pyns/usr/share/pyns/main.py"
+mkpkg "$W/pyns" "$P/pyns-1.0-x86_64-1.txz"
+
 # pygen: generated code, nested deeper than python's recursion limit
 mkdir -p "$W/pygen/usr/share/pygen"
 {
@@ -770,6 +777,11 @@ if command -v python3 >/dev/null; then
 	rundf "$DB" "$SYS" -p "$P/pyshadow-1.0-x86_64-1.txz"
 	check "-p: modules inside a package don't hide installed ones" \
 		"pyext,timesheet" "$OUT"
+
+	rundf "$DB" "$SYS" -p "$P/pyns-1.0-x86_64-1.txz"
+	check "-p: from a namespace package import a module" "nstwo,pyext" "$OUT"
+	check "-p: from a namespace package import a module: no warnings" \
+		"" "$ERR"
 
 	rundf "$DB" "$SYS" -p "$P/pygen-1.0-x86_64-1.txz"
 	check "-p: deeply nested code" "pyext" "$OUT"

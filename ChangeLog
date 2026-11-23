@@ -103,6 +103,9 @@ version 2.0 ()
   * With -p, a module inside a package of the package (e.g. foo/yaml.py)
     no longer hides the installed module with the same name (yaml),
     which was then missing from the dependencies
+  * With -p, "from nspkg import mod" for a namespace package split
+    between packages depends on the package providing mod, not on
+    either of the packages providing a part of nspkg
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a
