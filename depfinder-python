@@ -52,80 +52,76 @@ def warn(msg):
 # Finding the imports in python files
 #
 
-class ImportFinder(ast.NodeVisitor):
-	"""Collects the absolute imports of a module, as dotted names, in
-	two sets: required, and optional (inside a try block that catches
-	ImportError, so the code works without them)."""
+def handles_import_errors(node):
+	"""Whether a try statement catches ImportError (or anything that
+	includes it), so the imports in its body are optional."""
+	for handler in node.handlers:
+		if handler.type is None:
+			return True
+		types = handler.type.elts \
+			if isinstance(handler.type, ast.Tuple) else [handler.type]
+		if any(attr_name(t) in OPTIONAL_EXCEPTIONS for t in types):
+			return True
+	return False
 
-	def __init__(self):
-		self.required = set()
-		self.optional = set()
-		self._optional_depth = 0
 
-	def _add(self, name):
-		if not name:
-			return
-		if self._optional_depth:
-			self.optional.add(name)
-		else:
-			self.required.add(name)
+def collect_imports(tree):
+	"""The absolute imports in a parsed module, as dotted names, in two
+	sets: required, and optional (inside a try block that catches
+	ImportError, so the code works without them).
 
-	def visit_Import(self, node):
-		for alias in node.names:
-			self._add(alias.name)
+	The tree is walked with a list rather than recursively, since
+	generated code can be nested much deeper than python's recursion
+	limit (e.g. a long chain of "+")."""
+	required = set()
+	optional = set()
+	todo = [(tree, False)]		# (node, inside an optional block?)
+	while todo:
+		node, opt = todo.pop()
 
-	def visit_ImportFrom(self, node):
-		# relative imports (from . import x) are always in the package
-		if node.level == 0:
-			self._add(node.module)
+		def add(name):
+			if name:
+				(optional if opt else required).add(name)
 
-	def visit_Call(self, node):
-		# __import__("name") and importlib.import_module("name"),
-		# when the name is given as a string
-		func = node.func
-		fname = func.id if isinstance(func, ast.Name) else \
-			func.attr if isinstance(func, ast.Attribute) else None
-		if fname in ("__import__", "import_module") and node.args and \
-		   isinstance(node.args[0], ast.Constant) and \
-		   isinstance(node.args[0].value, str) and \
-		   not node.args[0].value.startswith("."):
-			self._add(node.args[0].value)
-		self.generic_visit(node)
-
-	def visit_Try(self, node):
-		catches = False
-		for handler in node.handlers:
-			if handler.type is None:
-				catches = True
-				continue
-			types = handler.type.elts \
-				if isinstance(handler.type, ast.Tuple) else [handler.type]
-			for t in types:
-				name = t.id if isinstance(t, ast.Name) else \
-					t.attr if isinstance(t, ast.Attribute) else None
-				if name in OPTIONAL_EXCEPTIONS:
-					catches = True
-		if catches:
-			self._optional_depth += 1
-		for stmt in node.body:
-			self.visit(stmt)
-		if catches:
-			self._optional_depth -= 1
-		for part in node.handlers + node.orelse + node.finalbody:
-			self.visit(part)
-
-	def visit_If(self, node):
-		# Only the branch that runs, if that can be told: "if
-		# TYPE_CHECKING:" imports are only for type checkers, and
-		# imports for other python versions aren't needed.
-		self.visit(node.test)
-		known = static_condition(node.test)
-		if known is not False:
-			for stmt in node.body:
-				self.visit(stmt)
-		if known is not True:
-			for stmt in node.orelse:
-				self.visit(stmt)
+		if isinstance(node, ast.Import):
+			for alias in node.names:
+				add(alias.name)
+			continue
+		if isinstance(node, ast.ImportFrom):
+			# relative imports (from . import x) are always in the
+			# package
+			if node.level == 0:
+				add(node.module)
+			continue
+		if isinstance(node, ast.Call):
+			# __import__("name") and importlib.import_module("name"),
+			# when the name is given as a string
+			arg = node.args[0] if node.args else None
+			if attr_name(node.func) in ("__import__", "import_module") and \
+			   isinstance(arg, ast.Constant) and isinstance(arg.value, str) \
+			   and not arg.value.startswith("."):
+				add(arg.value)
+		elif isinstance(node, ast.Try):
+			body_opt = opt or handles_import_errors(node)
+			todo += [(n, body_opt) for n in node.body]
+			todo += [(n, opt) for n in node.handlers + node.orelse + node.finalbody]
+			continue
+		elif isinstance(node, ast.If):
+			# Only the branch that runs, if that can be told: "if
+			# TYPE_CHECKING:" imports are only for type checkers, and
+			# imports for other python versions aren't needed.
+			try:
+				known = static_condition(node.test)
+			except RecursionError:
+				known = None
+			todo.append((node.test, opt))
+			if known is not False:
+				todo += [(n, opt) for n in node.body]
+			if known is not True:
+				todo += [(n, opt) for n in node.orelse]
+			continue
+		todo += [(n, opt) for n in ast.iter_child_nodes(node)]
+	return required, optional
 
 
 def attr_name(node):
@@ -213,11 +209,10 @@ def find_imports(path):
 	try:
 		with open(path, "rb") as f:
 			tree = ast.parse(f.read(), filename=path)
-	except (SyntaxError, ValueError, UnicodeDecodeError):
+	except (SyntaxError, ValueError, UnicodeDecodeError, RecursionError,
+		MemoryError):
 		return None
-	finder = ImportFinder()
-	finder.visit(tree)
-	return finder.required, finder.optional
+	return collect_imports(tree)
 
 
 def other_python_version(path):

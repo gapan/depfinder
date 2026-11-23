@@ -416,6 +416,20 @@ Requires-Dist: in-the-description
 PYEOF
 mkpkg "$W/pyapp2" "$P/pyapp2-1.0-x86_64-1.txz"
 
+# pygen: generated code, nested deeper than python's recursion limit
+mkdir -p "$W/pygen/usr/share/pygen"
+{
+	echo "import extmod"
+	printf 'x = "a"'
+	for i in $(seq 3000); do printf ' + "a"'; done
+	echo
+	echo "try:"
+	echo "	import optgen"
+	echo "except ImportError:"
+	echo "	pass"
+} > "$W/pygen/usr/share/pygen/gen.py"
+mkpkg "$W/pygen" "$P/pygen-1.0-x86_64-1.txz"
+
 # eggy: egg-info metadata without a version in its name, requiring
 # itself, an installed distribution, and others only for extras or for
 # python 2
@@ -666,6 +680,11 @@ if command -v python3 >/dev/null; then
 		"WARNING: not checking the requirements of pyapp2, which is for python 2.7." \
 		"WARNING: python package missingdist, required by pyapp2, not found.")" \
 		"$ERR"
+
+	rundf "$DB" "$SYS" -p "$P/pygen-1.0-x86_64-1.txz"
+	check "-p: deeply nested code" "pyext" "$OUT"
+	check "-p: deeply nested code: messages" \
+		"NOTE: optional python modules, not added as dependencies: optgen" "$ERR"
 
 	rundf "$DB" "$SYS" -p "$P/eggy-1.0-x86_64-1.txz"
 	check "-p: egg-info metadata" "python-plainegg" "$OUT"
