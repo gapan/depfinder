@@ -936,6 +936,23 @@ RC=$?
 check "depfinder-search failing: exit status 1" "1" "$RC"
 check "depfinder-search failing: reported" "1" "$(echo "$OUT" | grep -c "could not look up")"
 
+# depfinder-python missing (only needed with -p)
+sed "s|^DEPFINDERPYTHON=.*|DEPFINDERPYTHON=\"$W/no-such-python\"|" "$DF" > "$W/df-nopython"
+chmod 755 "$W/df-nopython"
+if command -v python3 > /dev/null; then
+	OUT=$(DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" \
+		"$W/df-nopython" -p "$P/foo-1.0-x86_64-1.txz" 2>&1)
+	RC=$?; ERR=""
+	check "depfinder-python missing: exit status 1" "1" "$RC"
+	check "depfinder-python missing: reported" "1" \
+		"$(echo "$OUT" | grep -c "no-such-python not found")"
+else
+	skip "depfinder-python missing (no python3)"
+fi
+OUT=$(DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" \
+	"$W/df-nopython" "$P/foo-1.0-x86_64-1.txz" 2>/dev/null)
+check "depfinder-python missing: not needed without -p" "bar,glibc" "$OUT"
+
 rundf "$DB" "$SYS" -3 -p "$P/foo-1.0-x86_64-1.txz"
 check "-3 is not an option any more" "1" "$RC"
 rundf "$DB" "$SYS" -v

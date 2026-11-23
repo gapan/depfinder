@@ -106,6 +106,7 @@ version 2.0 ()
   * With -p, "from nspkg import mod" for a namespace package split
     between packages depends on the package providing mod, not on
     either of the packages providing a part of nspkg
+  * With -p, exit with a clear error if depfinder-python is missing
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a

@@ -224,6 +224,10 @@ if [ $PYTHONDEPS -eq 1 ] && ! command -v python3 > /dev/null; then
 	echo "ERROR: python3 is needed to detect python dependencies (-p)" >&2
 	err
 fi
+if [ $PYTHONDEPS -eq 1 ] && [ ! -f "$DEPFINDERPYTHON" ]; then
+	echo "ERROR: $DEPFINDERPYTHON not found" >&2
+	err
+fi
 
 # Create the working directory, with a name that can't be guessed. The
 # package is extracted into its pkg subdirectory, apart from
