@@ -25,7 +25,9 @@
 #
 # Optional imports (only inside try blocks that catch ImportError, so
 # the code works without them) are not dependencies: they are only
-# listed on stderr, for the packager to consider as suggestions.
+# listed on stderr, for the packager to consider as suggestions. The
+# imports in their except blocks are fallbacks, only needed if what the
+# try block imports can't be found.
 #
 # Nothing in the package is run: the files are only parsed (with ast),
 # and modules are looked up the way python itself finds them (with
@@ -53,36 +55,58 @@ def warn(msg):
 # Finding the imports in python files
 #
 
+def catches_import_errors(handler):
+	"""Whether an except clause catches ImportError (or anything that
+	includes it)."""
+	if handler.type is None:
+		return True
+	types = handler.type.elts \
+		if isinstance(handler.type, ast.Tuple) else [handler.type]
+	return any(attr_name(t) in OPTIONAL_EXCEPTIONS for t in types)
+
+
 def handles_import_errors(node):
-	"""Whether a try statement catches ImportError (or anything that
-	includes it), so the imports in its body are optional."""
-	for handler in node.handlers:
-		if handler.type is None:
-			return True
-		types = handler.type.elts \
-			if isinstance(handler.type, ast.Tuple) else [handler.type]
-		if any(attr_name(t) in OPTIONAL_EXCEPTIONS for t in types):
-			return True
-	return False
+	"""Whether a try statement catches ImportError, so the imports in its
+	body are optional."""
+	return any(catches_import_errors(h) for h in node.handlers)
+
+
+def import_names(nodes):
+	"""The absolute imports anywhere in some statements, as dotted names."""
+	names = set()
+	for top in nodes:
+		# (ast.walk isn't recursive)
+		for node in ast.walk(top):
+			if isinstance(node, ast.Import):
+				names |= {alias.name for alias in node.names}
+			elif isinstance(node, ast.ImportFrom) and node.level == 0 \
+			     and node.module:
+				names.add(node.module)
+	return frozenset(names)
 
 
 def collect_imports(tree):
-	"""The absolute imports in a parsed module, as dotted names, in two
-	sets: required, and optional (inside a try block that catches
-	ImportError, so the code works without them).
+	"""The absolute imports in a parsed module, as a set of (dotted name,
+	optional, fallback for) tuples. Optional imports are inside a try
+	block that catches ImportError, so the code works without them.
+	Imports in such an except block are fallbacks, only run when an
+	import in the try block fails (e.g. "import Queue" after "try:
+	import queue"): fallback for is a tuple with a set of names for each
+	try block, and the import is only needed if one name in each set
+	can't be found.
 
 	The tree is walked with a list rather than recursively, since
 	generated code can be nested much deeper than python's recursion
 	limit (e.g. a long chain of "+")."""
-	required = set()
-	optional = set()
-	todo = [(tree, False)]		# (node, inside an optional block?)
+	found = set()
+	# (node, inside an optional block?, fallback for)
+	todo = [(tree, False, ())]
 	while todo:
-		node, opt = todo.pop()
+		node, opt, conds = todo.pop()
 
 		def add(name):
 			if name:
-				(optional if opt else required).add(name)
+				found.add((name, opt, conds))
 
 		if isinstance(node, ast.Import):
 			for alias in node.names:
@@ -104,8 +128,14 @@ def collect_imports(tree):
 				add(arg.value)
 		elif isinstance(node, ast.Try):
 			body_opt = opt or handles_import_errors(node)
-			todo += [(n, body_opt) for n in node.body]
-			todo += [(n, opt) for n in node.handlers + node.orelse + node.finalbody]
+			todo += [(n, body_opt, conds) for n in node.body]
+			tried = import_names(node.body)
+			for handler in node.handlers:
+				if tried and catches_import_errors(handler):
+					todo.append((handler, opt, conds + (tried,)))
+				else:
+					todo.append((handler, opt, conds))
+			todo += [(n, opt, conds) for n in node.orelse + node.finalbody]
 			continue
 		elif isinstance(node, ast.If):
 			# Only the branch that runs, if that can be told: "if
@@ -115,14 +145,14 @@ def collect_imports(tree):
 				known = static_condition(node.test)
 			except RecursionError:
 				known = None
-			todo.append((node.test, opt))
+			todo.append((node.test, opt, conds))
 			if known is not False:
-				todo += [(n, opt) for n in node.body]
+				todo += [(n, opt, conds) for n in node.body]
 			if known is not True:
-				todo += [(n, opt) for n in node.orelse]
+				todo += [(n, opt, conds) for n in node.orelse]
 			continue
-		todo += [(n, opt) for n in ast.iter_child_nodes(node)]
-	return required, optional
+		todo += [(n, opt, conds) for n in ast.iter_child_nodes(node)]
+	return found
 
 
 def attr_name(node):
@@ -205,8 +235,8 @@ def static_condition(node):
 
 
 def find_imports(path):
-	"""Returns the (required, optional) imports of a python file, or None
-	if it isn't valid python 3. Raises OSError if it can't be read."""
+	"""Returns the imports of a python file (see collect_imports), or
+	None if it isn't valid python 3. Raises OSError if it can't be read."""
 	try:
 		with open(path, "rb") as f:
 			tree = ast.parse(f.read(), filename=path)
@@ -621,7 +651,7 @@ def main():
 
 	# Collect the imports of each file, with the directory of the file,
 	# where python looks first for the modules a script imports
-	imports = {}		# dotted name -> (optional?, set of script dirs)
+	uses = []		# (dotted name, optional, fallback for, dir)
 	other_versions = {}	# python version -> number of files skipped
 	for f in files:
 		path = os.path.join(root, f)
@@ -648,11 +678,8 @@ def main():
 		if found is None:
 			warn("could not parse %s as python 3." % os.path.relpath(path, root))
 			continue
-		required, optional = found
-		for name, opt in [(n, False) for n in required] + \
-				 [(n, True) for n in optional - required]:
-			old = imports.get(name, (True, set()))
-			imports[name] = (old[0] and opt, old[1] | {os.path.dirname(path)})
+		uses += [(name, opt, conds, os.path.dirname(path))
+			 for name, opt, conds in found]
 
 	for version in sorted(other_versions):
 		count = other_versions[version]
@@ -672,24 +699,52 @@ def main():
 	def in_stdlib(path):
 		return any(inside(path, d) for d in stdlib) and \
 		       "/site-packages/" not in path and "/dist-packages/" not in path
+
+	# On the system, the package's directories are searched too, so
+	# that namespace packages split between the package and the system
+	# are found
+	paths = []
+	for s, p in zip(syspaths, [os.path.join(root, s.lstrip("/")) for s in syspaths]):
+		paths += [p, s]
+	cache = {}
+
+	def lookup(name, dirs):
+		"""Where a module is: "builtin", "package" (in the package),
+		"system" or None (not found), and its spec on the system."""
+		if (name, dirs) not in cache:
+			top = name.split(".")[0]
+			spec = None
+			if top in builtin or top in ("__future__", "__main__"):
+				where = "builtin"
+			elif top in inpkg_names or \
+			     (spec_in_pkg(name, list(dirs) + pkgpaths)):
+				where = "package"
+			else:
+				spec = find_spec(name, paths)
+				where = None if spec is None else "system"
+			cache[name, dirs] = (where, spec)
+		return cache[name, dirs]
+
+	def spec_in_pkg(name, dirs):
+		spec = find_spec(name, dirs)
+		return spec is not None and spec.origin not in (None, "namespace")
+
+	# Fallback imports are only needed if one of the imports they are a
+	# fallback for can't be found (in each try block)
+	imports = {}		# dotted name -> (optional?, set of script dirs)
+	for name, opt, conds, d in uses:
+		if not all(any(lookup(t, (d,))[0] is None for t in tried)
+			   for tried in conds):
+			continue
+		old = imports.get(name, (True, set()))
+		imports[name] = (old[0] and opt, old[1] | {d})
+
 	for name in sorted(imports):
 		optional, dirs = imports[name]
 		top = name.split(".")[0]
-		if top in builtin or top in ("__future__", "__main__"):
+		where, spec = lookup(name, tuple(sorted(dirs)))
+		if where in ("builtin", "package"):
 			continue
-		# In the package?
-		spec = find_spec(name, sorted(dirs) + pkgpaths)
-		if spec is not None and spec.origin not in (None, "namespace"):
-			continue
-		if top in inpkg_names:
-			continue
-		# On the system? (The package's directories are searched too,
-		# so that namespace packages split between the package and
-		# the system are found.)
-		paths = []
-		for s, p in zip(syspaths, [os.path.join(root, s.lstrip("/")) for s in syspaths]):
-			paths += [p, s]
-		spec = find_spec(name, paths)
 		# Optional imports aren't dependencies. They are listed, except
 		# the ones from python's standard library.
 		if optional:

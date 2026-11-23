@@ -94,6 +94,9 @@ version 2.0 ()
   * With -p, skip the scripts that their #! line runs with another
     python version (/usr/bin/python is python 2), with a warning. The #!
     line of .py modules is ignored.
+  * With -p, imports in an "except ImportError:" block are only needed
+    if something imported in the try block can't be found, which gave
+    warnings about python 2 fallbacks like "import Queue"
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a

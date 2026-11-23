@@ -434,6 +434,31 @@ Requires-Dist: in-the-description
 PYEOF
 mkpkg "$W/pyapp2" "$P/pyapp2-1.0-x86_64-1.txz"
 
+# pyfall: fallback imports, in except ImportError blocks
+mkdir -p "$W/pyfall/usr/share/pyfall"
+cat > "$W/pyfall/usr/share/pyfall/main.py" <<'PYEOF'
+try:
+	import extmod
+except ImportError:
+	import py2fallback	# not needed, extmod is there
+try:
+	import newmissing
+except ImportError:
+	import timesheet	# needed, newmissing isn't there
+try:
+	import newmissing2
+except ImportError:
+	try:
+		import extmod
+	except ImportError:
+		import deepfallback	# not needed, extmod is there
+try:
+	import extmod
+except AttributeError:
+	import notfallback	# not a fallback for a failed import
+PYEOF
+mkpkg "$W/pyfall" "$P/pyfall-1.0-x86_64-1.txz"
+
 # pygen: generated code, nested deeper than python's recursion limit
 mkdir -p "$W/pygen/usr/share/pygen"
 {
@@ -698,6 +723,13 @@ if command -v python3 >/dev/null; then
 		"NOTE: optional python modules, not added as dependencies: optmissing" \
 		"WARNING: not checking the requirements of pyapp2, which is for python 2.7." \
 		"WARNING: python package missingdist, required by pyapp2, not found.")" \
+		"$ERR"
+
+	rundf "$DB" "$SYS" -p "$P/pyfall-1.0-x86_64-1.txz"
+	check "-p: fallback imports" "pyext,timesheet" "$OUT"
+	check "-p: fallback imports: messages" "$(printf '%s\n' \
+		"WARNING: python module notfallback not found." \
+		"NOTE: optional python modules, not added as dependencies: newmissing, newmissing2")" \
 		"$ERR"
 
 	rundf "$DB" "$SYS" -p "$P/pygen-1.0-x86_64-1.txz"

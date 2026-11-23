@@ -130,6 +130,11 @@ Modules imported only inside a //try// block that catches //ImportError//
 are optional, since the code is written to work without them: they are
 not added as dependencies, but listed in a note, as candidates for
 suggested packages (except modules from python's standard library).
+Imports in the //except ImportError:// block are fallbacks, which are
+only needed if something imported in the //try// block can't be found:
+after //try: import queue//, an //import Queue// for python 2 is
+ignored, but after //try: import tomllib// (python 3.11), an
+//import tomli// is needed on older pythons.
 Imports under //if TYPE_CHECKING:// are ignored, and so are imports in
 branches for python 2 (or other versions), when the condition is a
 simple check of the python version (//sys.version_info//,
