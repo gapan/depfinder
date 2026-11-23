@@ -91,6 +91,9 @@ version 2.0 ()
   * With -p, skip the python files in directories for another python
     version (e.g. usr/lib64/python2.7), with a warning, like their
     metadata, instead of checking them against python 3
+  * With -p, skip the scripts that their #! line runs with another
+    python version (/usr/bin/python is python 2), with a warning. The #!
+    line of .py modules is ignored.
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a

@@ -221,9 +221,50 @@ def other_python_version(path):
 	usr/lib64/python2.7/site-packages/foo.py), if it isn't the version of
 	the python running this, or None."""
 	m = re.search(r"(?:^|/)python(\d+\.\d+)/", path)
-	if m and m.group(1) != "%d.%d" % sys.version_info[:2]:
+	if m and not is_this_python(m.group(1)):
 		return m.group(1)
 	return None
+
+
+def is_this_python(version):
+	"""Whether a python version ("3", "3.9") is the one running this."""
+	this = [str(n) for n in sys.version_info[:2]]
+	return version.split(".") == this[:len(version.split("."))]
+
+
+def shebang_python_version(path):
+	"""The python version that the #! line of a script runs it with, if
+	it isn't the version of the python running this, or None. A plain
+	"python" in the system's PATH is python 2 (on Slackware /usr/bin/python
+	is python 2); one elsewhere (e.g. a virtualenv's) could be any."""
+	try:
+		with open(path, "rb") as f:
+			line = f.readline(256).decode("utf-8", "replace")
+	except OSError:
+		return None
+	if not line.startswith("#!"):
+		return None
+	words = line[2:].split()
+	# (#!/usr/bin/env [-S] [options] python...)
+	env = False
+	while words and (os.path.basename(words[0]) == "env" or
+			 words[0].startswith("-")):
+		env = True
+		words = words[1:]
+	if not words:
+		return None
+	m = re.fullmatch(r"python(\d+(?:\.\d+)?)?", os.path.basename(words[0]))
+	if not m:
+		return None
+	version = m.group(1)
+	if not version:
+		if not env and os.path.dirname(words[0]) not in \
+		   ("/usr/bin", "/bin", "/usr/local/bin"):
+			return None
+		version = "2"
+	if is_this_python(version):
+		return None
+	return version
 
 
 def is_test_file(path):
@@ -589,7 +630,13 @@ def main():
 			continue
 		# Files for another python version (e.g. in python2.7/) would
 		# be checked against the wrong python
+		# (and scripts that their #! line runs with another python; the
+		# #! line of a .py module doesn't count, many python 3 modules
+		# still have an old "#!/usr/bin/env python" line, and they are
+		# imported, not run)
 		other = other_python_version(os.path.relpath(path, root))
+		if not other and not path.endswith(".py"):
+			other = shebang_python_version(path)
 		if other:
 			other_versions[other] = other_versions.get(other, 0) + 1
 			continue

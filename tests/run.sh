@@ -405,6 +405,19 @@ mkdir -p "$W/pyapp2/usr/lib/python2.7/site-packages/pyapp2" \
 for f in __init__.py two.py; do
 	printf 'import StringIO\n' > "$W/pyapp2/usr/lib/python2.7/site-packages/pyapp2/$f"
 done
+# scripts run with python 2 by their #! line (/usr/bin/python is python
+# 2), or with python 3
+mkdir -p "$W/pyapp2/usr/bin"
+printf '#!/usr/bin/python\nimport StringIO\nprint "x"\n' > "$W/pyapp2/usr/bin/old1"
+printf '#! /usr/bin/env python2\nimport StringIO\n' > "$W/pyapp2/usr/bin/old2"
+printf '#!/usr/bin/env python2.7\nimport StringIO\n' > "$W/pyapp2/usr/bin/old3"
+printf '#!/usr/bin/env -S python3 -u\nimport extmod\n' > "$W/pyapp2/usr/bin/new"
+# a virtualenv's python, which could be any version
+printf '#!/opt/venv/bin/python\nimport timesheet\n' > "$W/pyapp2/usr/bin/venv"
+# a python 3 module with an old "#!/usr/bin/env python" line, which
+# doesn't count
+printf '#!/usr/bin/env python\nimport nspkg.one\n' > "$W/pyapp2/$PYSITE/pyapp2/shebang.py"
+chmod 755 "$W/pyapp2/usr/bin/"*
 printf 'Name: pyapp2\nRequires-Dist: py2dist\n' \
 	> "$W/pyapp2/usr/lib/python2.7/site-packages/pyapp2-1.0.dist-info/METADATA"
 cat > "$W/pyapp2/$PYSITE/pyapp2-1.0.dist-info/METADATA" <<'PYEOF'
@@ -677,11 +690,12 @@ if command -v python3 >/dev/null; then
 	# (timesheet is installed, but only imported optionally, and json,
 	# from python's standard library, isn't listed as optional)
 	check "-p: imports, namespace packages and metadata" \
-		"nstwo,pyext,python-extdist" "$OUT"
+		"nsone,nstwo,pyext,python-extdist,timesheet" "$OUT"
 	check "-p: warnings" "$(printf '%s\n' \
 		"WARNING: could not parse usr/share/pyapp2/old.py as python 3." \
-		"WARNING: not checking 2 python files, which are for python 2.7." \
-		"NOTE: optional python modules, not added as dependencies: optmissing, timesheet" \
+		"WARNING: not checking 2 python files, which are for python 2." \
+		"WARNING: not checking 3 python files, which are for python 2.7." \
+		"NOTE: optional python modules, not added as dependencies: optmissing" \
 		"WARNING: not checking the requirements of pyapp2, which is for python 2.7." \
 		"WARNING: python package missingdist, required by pyapp2, not found.")" \
 		"$ERR"

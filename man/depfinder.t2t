@@ -118,7 +118,12 @@ distributions required in the package's python metadata
 are reported too, except the ones only needed for extras or for other
 python versions. Python files and metadata in a directory for another
 python version than the system's python 3 (e.g.
-///usr/lib64/python2.7//) are not checked, with a warning.
+///usr/lib64/python2.7//) are not checked, with a warning. So are
+scripts without a //.py// extension whose //#!// line runs them with
+another python version; a plain //python// (///usr/bin/python// or
+//#!/usr/bin/env python//) counts as python 2. The //#!// line of
+//.py// files is ignored, since many python 3 modules still have an
+old //#!/usr/bin/env python// line.
 
 Modules that can't be found in the system are reported as warnings.
 Modules imported only inside a //try// block that catches //ImportError//
