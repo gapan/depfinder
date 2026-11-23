@@ -254,7 +254,7 @@ if [ -z "$STARTDIR" ]; then
 	elif echo "$1" | grep -q "\.tlz$"; then
 		# .tlz packages are lzip compressed. Use plzip if available, like
 		# installpkg does, since it decompresses using multiple threads.
-		if which plzip 1> /dev/null 2> /dev/null; then
+		if command -v plzip > /dev/null; then
 			DECOMPRESS="plzip -d -c"
 		else
 			DECOMPRESS="lzip -d -c"
