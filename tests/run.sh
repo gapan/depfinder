@@ -188,6 +188,13 @@ mkrecord "$DB" pyext-1.0-x86_64-1 "$(rel py/extmod.py)" \
 	"$(rel py/cext.cpython-39-x86_64-linux-gnu.so)" "$(rel py/oldcext.so)"
 mkrecord "$DB" timesheet-1.0-x86_64-1 "$(rel py/timesheet.py)"
 
+# A library to preload, needing libbaz (found through its rpath, so that
+# it loads in every program)
+echo "int baz_func(void); int preload_func(void) { return baz_func(); }" \
+	> "$W/src-preload.c"
+gcc -shared -fPIC -o "$W/libpreload.so" "$W/src-preload.c" \
+	-L"$SYS/$LIB" -Wl,-rpath,"$SYS/$LIB" -Wl,--no-as-needed -lbaz || exit 2
+
 P="$W/pkgs"
 mkdir -p "$P"
 
@@ -367,6 +374,10 @@ if [ -s "$P/slkbuild/foo-1.0-x86_64-1.tlz" ]; then
 else
 	skip "tlz package (as made by slkbuild) (slkbuild not installed)"
 fi
+
+# Preloaded libraries aren't dependencies of the package
+LD_PRELOAD="$W/libpreload.so" rundf "$DB" "$SYS" "$P/foo-1.0-x86_64-1.txz"
+check "LD_PRELOAD is ignored" "bar,glibc" "$OUT"
 
 # A library provided by more than one package
 rundf "$DB" "$SYS" "$P/qux-1.0-x86_64-1.txz"

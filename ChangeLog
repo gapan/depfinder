@@ -39,6 +39,8 @@ version 1.4.5 ()
     and give clearer error messages for invalid -j values
   * Handle spaces in the package path, the packaging directory path,
     the current directory (with -f) and the names of files in the package
+  * Ignore LD_PRELOAD when running ldd, which made the preloaded
+    libraries and their dependencies show up as dependencies
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

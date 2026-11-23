@@ -358,8 +358,11 @@ LDDJOBS=$JOBS
 [ $LDDJOBS -eq 0 ] && LDDJOBS=1
 split -d -a 4 -n l/$LDDJOBS FILES FILES
 for i in $( seq -f "%04.f" 0 $(($LDDJOBS-1)) ); do
+	# (LD_PRELOAD is unset, or ldd would list the preloaded libraries
+	# and their dependencies for every file)
 	( cd "${STARTDIR:-/tmp/depfinder.$$}" && \
-		LANG=C xargs -r -d '\n' ldd < /tmp/depfinder.$$/FILES$i 2> /dev/null ) \
+		LANG=C env -u LD_PRELOAD xargs -r -d '\n' ldd \
+		< /tmp/depfinder.$$/FILES$i 2> /dev/null ) \
 	| grep "=>" \
 	| sed "s/\(.*\) => \/\(.*\) \(.*\)/\2/" \
 	| sed "s/=> not found/NOT FOUND/" \
