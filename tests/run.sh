@@ -394,6 +394,14 @@ mkdir -p "$W/pyapp2/$PYSITE/pyapp2/tests"
 for f in tests/test_main.py tests/helpers.py conftest.py test_it.py it_test.py; do
 	printf 'import timesheet\nimport testonly\n' > "$W/pyapp2/$PYSITE/pyapp2/$f"
 done
+# files for python 2.7, with their metadata
+mkdir -p "$W/pyapp2/usr/lib/python2.7/site-packages/pyapp2" \
+	"$W/pyapp2/usr/lib/python2.7/site-packages/pyapp2-1.0.dist-info"
+for f in __init__.py two.py; do
+	printf 'import StringIO\n' > "$W/pyapp2/usr/lib/python2.7/site-packages/pyapp2/$f"
+done
+printf 'Name: pyapp2\nRequires-Dist: py2dist\n' \
+	> "$W/pyapp2/usr/lib/python2.7/site-packages/pyapp2-1.0.dist-info/METADATA"
 cat > "$W/pyapp2/$PYSITE/pyapp2-1.0.dist-info/METADATA" <<'PYEOF'
 Metadata-Version: 2.1
 Name: pyapp2
@@ -653,7 +661,9 @@ if command -v python3 >/dev/null; then
 		"nstwo,pyext,python-extdist" "$OUT"
 	check "-p: warnings" "$(printf '%s\n' \
 		"WARNING: could not parse usr/share/pyapp2/old.py as python 3." \
+		"WARNING: not checking 2 python files, which are for python 2.7." \
 		"NOTE: optional python modules, not added as dependencies: optmissing, timesheet" \
+		"WARNING: not checking the requirements of pyapp2, which is for python 2.7." \
 		"WARNING: python package missingdist, required by pyapp2, not found.")" \
 		"$ERR"
 

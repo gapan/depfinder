@@ -88,6 +88,9 @@ version 2.0 ()
   * With -p, ignore the imports in branches for other python versions
     (e.g. "if sys.version_info[0] == 2:", "if PY2:"), which gave
     warnings about python 2 modules like StringIO
+  * With -p, skip the python files in directories for another python
+    version (e.g. usr/lib64/python2.7), with a warning, like their
+    metadata, instead of checking them against python 3
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

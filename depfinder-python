@@ -14,6 +14,10 @@
 # the system that provides each of them, one per line. Modules and
 # distributions that can't be found are reported on stderr.
 #
+# Files in a pythonX.Y directory for another python version than the
+# one running this (e.g. python2.7/site-packages) are skipped, with a
+# warning, and so is their metadata.
+#
 # Test files (in test/ or tests/ directories, test_*.py, *_test.py and
 # conftest.py) are skipped, since their imports are only needed to run
 # the tests.
@@ -214,6 +218,16 @@ def find_imports(path):
 	finder = ImportFinder()
 	finder.visit(tree)
 	return finder.required, finder.optional
+
+
+def other_python_version(path):
+	"""The python version of a path in a pythonX.Y directory (e.g.
+	usr/lib64/python2.7/site-packages/foo.py), if it isn't the version of
+	the python running this, or None."""
+	m = re.search(r"(?:^|/)python(\d+\.\d+)/", path)
+	if m and m.group(1) != "%d.%d" % sys.version_info[:2]:
+		return m.group(1)
+	return None
 
 
 def is_test_file(path):
@@ -460,11 +474,10 @@ def declared_requirements(root):
 	own = set()
 	for dirpath, dirnames, filenames in sorted(os.walk(root)):
 		base = os.path.basename(dirpath)
-		m = re.search(r"/python(\d+\.\d+)/", dirpath)
-		if m and m.group(1) != pyver and \
-		   base.endswith((".dist-info", ".egg-info")):
+		other = other_python_version(dirpath + "/")
+		if other and base.endswith((".dist-info", ".egg-info")):
 			warn("not checking the requirements of %s, which is for python %s."
-			     % (dist_name(base), m.group(1)))
+			     % (dist_name(base), other))
 			continue
 		if base.endswith(".dist-info") and "METADATA" in filenames:
 			dist = dist_name(base)
@@ -557,9 +570,16 @@ def main():
 	# Collect the imports of each file, with the directory of the file,
 	# where python looks first for the modules a script imports
 	imports = {}		# dotted name -> (optional?, set of script dirs)
+	other_versions = {}	# python version -> number of files skipped
 	for f in files:
 		path = os.path.join(root, f)
 		if is_test_file(os.path.relpath(path, root)):
+			continue
+		# Files for another python version (e.g. in python2.7/) would
+		# be checked against the wrong python
+		other = other_python_version(os.path.relpath(path, root))
+		if other:
+			other_versions[other] = other_versions.get(other, 0) + 1
 			continue
 		found = find_imports(path)
 		if found is None:
@@ -570,6 +590,12 @@ def main():
 				 [(n, True) for n in optional - required]:
 			old = imports.get(name, (True, set()))
 			imports[name] = (old[0] and opt, old[1] | {os.path.dirname(path)})
+
+	for version in sorted(other_versions):
+		count = other_versions[version]
+		warn("not checking %d python file%s, which %s for python %s."
+		     % (count, "s" if count > 1 else "", "are" if count > 1 else "is",
+			version))
 
 	builtin = set(sys.builtin_module_names)
 	inpkg_names = package_module_names(root)

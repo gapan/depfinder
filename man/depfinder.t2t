@@ -108,7 +108,9 @@ belong to along with all other detected dependencies. Python
 distributions required in the package's python metadata
 (//Requires-Dist// in *.dist-info/METADATA, or *.egg-info/requires.txt)
 are reported too, except the ones only needed for extras or for other
-python versions.
+python versions. Python files and metadata in a directory for another
+python version than the system's python 3 (e.g.
+///usr/lib64/python2.7//) are not checked, with a warning.
 
 Modules that can't be found in the system are reported as warnings.
 Modules imported only inside a //try// block that catches //ImportError//
