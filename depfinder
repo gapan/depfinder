@@ -67,11 +67,14 @@ depfind()
 # Function that finds python files in the current directory, where the
 # current directory is always the packaging directory here. Since
 # python scripts could be all over the place, we're looking everywhere
-# in the package by default.
+# in the package by default. Besides *.py files, these are scripts whose
+# first line is a python #! line. (Reading only the first line is much
+# faster than running file on every file in the package.)
 findpython()
 {
-	LANG=C find ./ -type f -exec file -N -0 {} + 2> /dev/null | \
-	awk -F '\0' 'tolower($2) ~ /python script/ { print $1 }'
+	find ./ -type f ! -name "*.py" -exec awk \
+		'FNR == 1 { if ($0 ~ /^#!.*python/) print FILENAME; nextfile }' {} + \
+		2> /dev/null
 	find ./ \
 	-type f -name "*.py"
 }
