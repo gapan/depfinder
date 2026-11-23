@@ -78,6 +78,8 @@ version 2.0 ()
   * Fix the names of packages with three or more "-" in their name,
     which were cut at the first "-" (e.g. font-bh-lucidatypewriter-75dpi
     became "font"), and garbled with -s
+  * Exit with an error if depfinder-search is missing or fails, instead
+    of printing an empty list
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

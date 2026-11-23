@@ -64,7 +64,9 @@ Run \"depfinder -h\" for help information"
 # UNOWNED<part>.
 depfind()
 {
-	$DEPFINDERSEARCH "$PKGDB" pkglist.log LIBS$1 > DEPS$1
+	if ! $DEPFINDERSEARCH "$PKGDB" pkglist.log LIBS$1 > DEPS$1; then
+		touch FAILED$1
+	fi
 	awk 'FILENAME == ARGV[1] { lib[FNR] = $0; next }
 		$0 == "" { print lib[FNR] }' LIBS$1 DEPS$1 > UNOWNED$1
 }
@@ -208,6 +210,12 @@ fi
 # The package database must be there
 if [ ! -d "$PKGDB" ]; then
 	echo "ERROR: package database $PKGDB not found" >&2
+	err
+fi
+
+# depfinder-search must be there
+if [ ! -x "$DEPFINDERSEARCH" ]; then
+	echo "ERROR: $DEPFINDERSEARCH not found" >&2
 	err
 fi
 
@@ -408,6 +416,10 @@ for i in $( seq -f "%04.f" 0 $MAXFILENO ); do
 	depfind $i &
 done
 wait
+if ls FAILED[0-9]* > /dev/null 2>&1; then
+	echo "ERROR: could not look up the libraries in the package database" >&2
+	err
+fi
 
 # Put all dependencies in a single file
 touch DEPS

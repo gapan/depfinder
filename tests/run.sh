@@ -701,6 +701,23 @@ rundf "$W/no-such-db" "$SYS" "$P/foo-1.0-x86_64-1.txz"
 check "missing package database: exit status 1" "1" "$RC"
 check "missing package database: reported" "1" \
 	"$(echo "$ERR" | grep -c "package database")"
+# depfinder-search missing, or failing
+sed "s|^DEPFINDERSEARCH=.*|DEPFINDERSEARCH=\"$W/no-such-search\"|" "$DF" > "$W/df-nosearch"
+printf '#!/bin/sh\nexit 1\n' > "$W/failing-search"
+chmod 755 "$W/failing-search"
+sed "s|^DEPFINDERSEARCH=.*|DEPFINDERSEARCH=\"$W/failing-search\"|" "$DF" > "$W/df-failsearch"
+chmod 755 "$W/df-nosearch" "$W/df-failsearch"
+OUT=$(DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" \
+	"$W/df-nosearch" "$P/foo-1.0-x86_64-1.txz" 2>&1)
+RC=$?; ERR=""
+check "depfinder-search missing: exit status 1" "1" "$RC"
+check "depfinder-search missing: reported" "1" "$(echo "$OUT" | grep -c "no-such-search not found")"
+OUT=$(DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" \
+	"$W/df-failsearch" "$P/foo-1.0-x86_64-1.txz" 2>&1)
+RC=$?
+check "depfinder-search failing: exit status 1" "1" "$RC"
+check "depfinder-search failing: reported" "1" "$(echo "$OUT" | grep -c "could not look up")"
+
 rundf "$DB" "$SYS" -3 -p "$P/foo-1.0-x86_64-1.txz"
 check "-3 is not an option any more" "1" "$RC"
 rundf "$DB" "$SYS" -v
