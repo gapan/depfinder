@@ -225,20 +225,33 @@ mkdir -p /tmp/depfinder.$$
 ls "$PKGDB" > /tmp/depfinder.$$/pkglist.log
 
 # Extract only if argument is not a directory
-if [ `echo $1 | grep "\.t[gb]z$"` ]; then
-	[ -z $STARTDIR ] && tar xf $1 -C /tmp/depfinder.$$
-elif [ `echo $1 | grep "\.tlz$"` ]; then
-	# .tlz packages are lzip compressed. Use plzip if available, like
-	# installpkg does, since it decompresses using multiple threads.
-	if which plzip 1> /dev/null 2> /dev/null; then
-		plzip -d -c $1 | tar xf - -C /tmp/depfinder.$$
+if [ -z "$STARTDIR" ]; then
+	if [ `echo $1 | grep "\.tgz$"` ]; then
+		DECOMPRESS="gzip -d -c"
+	elif [ `echo $1 | grep "\.tbz$"` ]; then
+		DECOMPRESS="bzip2 -d -c"
+	elif [ `echo $1 | grep "\.tlz$"` ]; then
+		# .tlz packages are lzip compressed. Use plzip if available, like
+		# installpkg does, since it decompresses using multiple threads.
+		if which plzip 1> /dev/null 2> /dev/null; then
+			DECOMPRESS="plzip -d -c"
+		else
+			DECOMPRESS="lzip -d -c"
+		fi
+	elif [ `echo $1 | grep "\.txz$"` ]; then
+		DECOMPRESS="xz -d -c"
+	elif [ `echo $1 | grep "\.tbr$"` ]; then
+		DECOMPRESS="brotli -d -c"
 	else
-		lzip -d -c $1 | tar xf - -C /tmp/depfinder.$$
+		echo "ERROR: $1 is not a package file or a directory!" >&2
+		err
 	fi
-elif [ `echo $1 | grep "\.txz$"` ]; then
-	xz -d -c $1 | tar xf - -C /tmp/depfinder.$$
-elif [ `echo $1 | grep "\.tbr$"` ]; then
-	brotli -c --decompress $1 | tar xf - -C /tmp/depfinder.$$
+	$DECOMPRESS $1 | tar xf - -C /tmp/depfinder.$$
+	STATUS=("${PIPESTATUS[@]}")
+	if [ ${STATUS[0]} -ne 0 ] || [ ${STATUS[1]} -ne 0 ]; then
+		echo "ERROR: could not extract $1" >&2
+		err
+	fi
 fi
 cd /tmp/depfinder.$$
 

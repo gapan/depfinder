@@ -412,7 +412,9 @@ rundf "$DB" "$SYS" "$W/src-main.c"
 check "not a package: exit status 1" "1" "$RC"
 echo "garbage" > "$W/corrupt-1.0-x86_64-1.txz"
 rundf "$DB" "$SYS" "$W/corrupt-1.0-x86_64-1.txz"
-check "package that can't be extracted: exit status 1" "1" "$RC" xfail
+check "package that can't be extracted: exit status 1" "1" "$RC"
+check "package that can't be extracted: reported" "1" \
+	"$(echo "$ERR" | grep -c "could not extract")"
 rundf "$W/no-such-db" "$SYS" "$P/foo-1.0-x86_64-1.txz"
 check "missing package database: exit status 1" "1" "$RC"
 check "missing package database: reported" "1" \

@@ -20,6 +20,8 @@ version 1.4.5 ()
     package database, which added bogus dependencies
   * Don't drop python modules whose name contains the name of a builtin
     module, e.g. "timesheet" (which contains "time")
+  * Exit with an error if the package can't be extracted, instead of
+    reporting no dependencies
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list
