@@ -66,8 +66,9 @@ version 1.4.5 ()
     - modules are looked up the way python finds them, so namespace
       packages (without __init__.py) are found, and compiled modules
       only with a file name suffix that the system's python can load
-    - imports inside try/except ImportError are reported as optional
-      when not found, and imports under "if TYPE_CHECKING:" are ignored
+    - modules imported only inside try/except ImportError are optional:
+      they aren't added as dependencies, but listed in a note, and
+      imports under "if TYPE_CHECKING:" are ignored
     - the requirements in the package's python metadata (*.dist-info,
       *.egg-info) are added to the dependencies
     - modules in the user's home directory (pip --user) aren't used

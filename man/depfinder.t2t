@@ -111,8 +111,10 @@ are reported too, except the ones only needed for extras or for other
 python versions.
 
 Modules that can't be found in the system are reported as warnings.
-Modules imported inside a //try// block that catches //ImportError// are
-reported as "optional", since the code is written to work without them.
+Modules imported only inside a //try// block that catches //ImportError//
+are optional, since the code is written to work without them: they are
+not added as dependencies, but listed in a note, as candidates for
+suggested packages (except modules from python's standard library).
 Imports under //if TYPE_CHECKING:// are ignored. Files that are not
 valid python 3 are reported and skipped.
 

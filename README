@@ -57,8 +57,9 @@ in the package's python metadata, if it has any, are checked too. In
 most cases there is going to be some extra output in the form of
 warnings and the packager might need to do some manual work to sort out
 which python dependencies are optional and which are not (imports that
-the code is written to do without are marked as optional), but at least
-there is little chance that a python dependency will not be reported.
+the code is written to do without are left out and listed separately),
+but at least there is little chance that a python dependency will not
+be reported.
 Python dependency checking is going to make depfinder run a bit slower,
 but it's not really that bad in terms of speed. Support for
 detecting perl dependencies might be a possibility for the future.

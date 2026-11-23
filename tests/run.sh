@@ -345,6 +345,8 @@ from . import relative
 import nspkg.two
 try:
 	import optmissing
+	import timesheet
+	import json
 except ImportError:
 	optmissing = None
 from extmod import TYPE_CHECKING
@@ -352,8 +354,10 @@ if TYPE_CHECKING:
 	import typecheckonly
 x = "import notamodule3"
 PYEOF
-# a module next to the script
-echo "x = 1" > "$W/pyapp2/usr/share/pyapp2/helper.py"
+# a module next to the script, which imports optionally a module that
+# main.py needs, so it is needed anyway
+printf 'try:\n\timport extmod\nexcept ImportError:\n\tpass\n' \
+	> "$W/pyapp2/usr/share/pyapp2/helper.py"
 printf 'print "python 2"\n' > "$W/pyapp2/usr/share/pyapp2/old.py"
 cat > "$W/pyapp2/$PYSITE/pyapp2-1.0.dist-info/METADATA" <<'PYEOF'
 Metadata-Version: 2.1
@@ -592,11 +596,13 @@ if command -v python3 >/dev/null; then
 	check "without -p python is ignored" "" "$OUT"
 
 	rundf "$DB" "$SYS" -p "$P/pyapp2-1.0-x86_64-1.txz"
+	# (timesheet is installed, but only imported optionally, and json,
+	# from python's standard library, isn't listed as optional)
 	check "-p: imports, namespace packages and metadata" \
 		"nstwo,pyext,python-extdist" "$OUT"
 	check "-p: warnings" "$(printf '%s\n' \
 		"WARNING: could not parse usr/share/pyapp2/old.py as python 3." \
-		"WARNING: optional python module optmissing not found." \
+		"NOTE: optional python modules, not added as dependencies: optmissing, timesheet" \
 		"WARNING: python package missingdist, required by pyapp2, not found.")" \
 		"$ERR"
 

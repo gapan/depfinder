@@ -14,6 +14,10 @@
 # the system that provides each of them, one per line. Modules and
 # distributions that can't be found are reported on stderr.
 #
+# Optional imports (only inside try blocks that catch ImportError, so
+# the code works without them) are not dependencies: they are only
+# listed on stderr, for the packager to consider as suggestions.
+#
 # Nothing in the package is run: the files are only parsed (with ast),
 # and modules are looked up the way python itself finds them (with
 # importlib's PathFinder), which doesn't import them either.
@@ -23,6 +27,7 @@ import os
 import platform
 import re
 import sys
+import sysconfig
 from importlib.machinery import PathFinder, EXTENSION_SUFFIXES
 
 # Exceptions that make an import in a try block optional
@@ -462,7 +467,14 @@ def main():
 	inpkg_names = package_module_names(root)
 	needed = set()
 	missing = set()
-	missing_optional = set()
+	optional_modules = set()
+	# python's standard library (site-packages is inside it)
+	stdlib = {os.path.join(os.path.realpath(sysconfig.get_paths()[k]), "")
+		  for k in ("stdlib", "platstdlib")}
+
+	def in_stdlib(path):
+		return any(inside(path, d) for d in stdlib) and \
+		       "/site-packages/" not in path and "/dist-packages/" not in path
 	for name in sorted(imports):
 		optional, dirs = imports[name]
 		top = name.split(".")[0]
@@ -481,8 +493,14 @@ def main():
 		for s, p in zip(syspaths, [os.path.join(root, s.lstrip("/")) for s in syspaths]):
 			paths += [p, s]
 		spec = find_spec(name, paths)
+		# Optional imports aren't dependencies. They are listed, except
+		# the ones from python's standard library.
+		if optional:
+			if spec is None or not all(in_stdlib(f) for f in spec_files(spec)):
+				optional_modules.add(top)
+			continue
 		if spec is None:
-			(missing_optional if optional else missing).add(top)
+			missing.add(top)
 			continue
 		for path in spec_files(spec):
 			if not inside(path, root):
@@ -490,8 +508,13 @@ def main():
 
 	for top in sorted(missing):
 		warn("python module %s not found." % top)
-	for top in sorted(missing_optional - missing):
-		warn("optional python module %s not found." % top)
+	# (a module imported both ways, e.g. import a.b and an optional
+	# import a.c, is needed anyway)
+	required_tops = {n.split(".")[0] for n, (opt, d) in imports.items() if not opt}
+	optional_modules -= required_tops
+	if optional_modules:
+		print("NOTE: optional python modules, not added as dependencies: %s"
+		      % ", ".join(sorted(optional_modules)), file=sys.stderr)
 
 	# The distributions the package declares in its metadata
 	requires, own = declared_requirements(root)
