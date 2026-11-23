@@ -459,6 +459,28 @@ except AttributeError:
 PYEOF
 mkpkg "$W/pyfall" "$P/pyfall-1.0-x86_64-1.txz"
 
+# pyplat: code and modules for other platforms (python's standard
+# library is left out, since the fake package database doesn't have it)
+mkdir -p "$W/pyplat/usr/share/pyplat"
+cat > "$W/pyplat/usr/share/pyplat/main.py" <<'PYEOF'
+if sys.platform == "win32":
+	import winonly
+elif sys.platform.startswith("darwin"):
+	import maconly
+else:
+	import extmod
+if os.name == "nt":
+	import winonly2
+if platform.system() == "Windows":
+	import winonly3
+import msvcrt
+try:
+	import winreg
+except ImportError:
+	import timesheet	# needed, winreg is never there
+PYEOF
+mkpkg "$W/pyplat" "$P/pyplat-1.0-x86_64-1.txz"
+
 # pygen: generated code, nested deeper than python's recursion limit
 mkdir -p "$W/pygen/usr/share/pygen"
 {
@@ -731,6 +753,10 @@ if command -v python3 >/dev/null; then
 		"WARNING: python module notfallback not found." \
 		"NOTE: optional python modules, not added as dependencies: newmissing, newmissing2")" \
 		"$ERR"
+
+	rundf "$DB" "$SYS" -p "$P/pyplat-1.0-x86_64-1.txz"
+	check "-p: other platforms" "pyext,timesheet" "$OUT"
+	check "-p: other platforms: no warnings" "" "$ERR"
 
 	rundf "$DB" "$SYS" -p "$P/pygen-1.0-x86_64-1.txz"
 	check "-p: deeply nested code" "pyext" "$OUT"

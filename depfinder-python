@@ -47,6 +47,15 @@ OPTIONAL_EXCEPTIONS = {"ImportError", "ModuleNotFoundError", "Exception",
 		       "BaseException"}
 
 
+# Modules of python's standard library on other platforms (e.g. msvcrt on
+# Windows), which are never installed here. Python 3.10 and later list
+# the standard library for all platforms; for older ones, these are the
+# ones of python 3.9 that only exist on Windows or macOS.
+STDLIB_NAMES = getattr(sys, "stdlib_module_names", None) or \
+	{"_msi", "_overlapped", "_scproxy", "_winapi", "msilib", "msvcrt", "nt",
+	 "winreg", "winsound"}
+
+
 def warn(msg):
 	print("WARNING: " + msg, file=sys.stderr)
 
@@ -161,10 +170,10 @@ def attr_name(node):
 		node.attr if isinstance(node, ast.Attribute) else None
 
 
-def is_sys(node, name):
-	"""Whether node is sys.<name>."""
+def is_sys(node, name, module="sys"):
+	"""Whether node is sys.<name> (or <module>.<name>)."""
 	return isinstance(node, ast.Attribute) and node.attr == name and \
-	       isinstance(node.value, ast.Name) and node.value.id == "sys"
+	       isinstance(node.value, ast.Name) and node.value.id == module
 
 
 def static_value(node):
@@ -172,7 +181,8 @@ def static_value(node):
 	code: constants, tuples of constants, and the python version
 	(sys.version_info, sys.version_info[0], sys.version_info[:2],
 	sys.version_info.major and .minor, sys.hexversion), the one python
-	3 runs with. Raises ValueError for anything else."""
+	3 runs with, and the platform (sys.platform, os.name,
+	platform.system()). Raises ValueError for anything else."""
 	if isinstance(node, ast.Constant) and \
 	   isinstance(node.value, (int, str)):
 		return node.value
@@ -182,6 +192,13 @@ def static_value(node):
 		return tuple(sys.version_info)
 	if is_sys(node, "hexversion"):
 		return sys.hexversion
+	if is_sys(node, "platform"):
+		return sys.platform
+	if is_sys(node, "name", "os"):
+		return os.name
+	if isinstance(node, ast.Call) and not node.args and not node.keywords \
+	   and is_sys(node.func, "system", "platform"):
+		return platform.system()
 	if isinstance(node, ast.Attribute) and is_sys(node.value, "version_info") \
 	   and node.attr in ("major", "minor", "micro"):
 		return getattr(sys.version_info, node.attr)
@@ -208,6 +225,7 @@ def static_condition(node):
 	"""True or False if a condition is known without running the code,
 	or None. Known are TYPE_CHECKING (False), PY2 and PY3 (as in six and
 	many compatibility modules), comparisons of the python version, and
+	comparisons of the platform (also sys.platform.startswith(...)), and
 	not/and/or of those."""
 	name = attr_name(node)
 	if name == "TYPE_CHECKING" or name == "PY2":
@@ -224,6 +242,15 @@ def static_condition(node):
 				True if all(v is True for v in values) else None
 		return True if True in values else \
 			False if all(v is False for v in values) else None
+	if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) \
+	   and node.func.attr in ("startswith", "endswith") and \
+	   len(node.args) == 1 and not node.keywords:
+		try:
+			value = static_value(node.func.value)
+			arg = static_value(node.args[0])
+			return getattr(value, node.func.attr)(arg)
+		except (ValueError, TypeError, AttributeError):
+			return None
 	if isinstance(node, ast.Compare) and len(node.ops) == 1 and \
 	   type(node.ops[0]) in COMPARISONS:
 		try:
@@ -710,7 +737,9 @@ def main():
 
 	def lookup(name, dirs):
 		"""Where a module is: "builtin", "package" (in the package),
-		"system" or None (not found), and its spec on the system."""
+		"system", "other" (python's standard library on another
+		platform, e.g. msvcrt) or None (not found), and its spec on
+		the system."""
 		if (name, dirs) not in cache:
 			top = name.split(".")[0]
 			spec = None
@@ -721,7 +750,8 @@ def main():
 				where = "package"
 			else:
 				spec = find_spec(name, paths)
-				where = None if spec is None else "system"
+				where = "system" if spec is not None else \
+					"other" if top in STDLIB_NAMES else None
 			cache[name, dirs] = (where, spec)
 		return cache[name, dirs]
 
@@ -733,7 +763,7 @@ def main():
 	# fallback for can't be found (in each try block)
 	imports = {}		# dotted name -> (optional?, set of script dirs)
 	for name, opt, conds, d in uses:
-		if not all(any(lookup(t, (d,))[0] is None for t in tried)
+		if not all(any(lookup(t, (d,))[0] in (None, "other") for t in tried)
 			   for tried in conds):
 			continue
 		old = imports.get(name, (True, set()))
@@ -743,7 +773,7 @@ def main():
 		optional, dirs = imports[name]
 		top = name.split(".")[0]
 		where, spec = lookup(name, tuple(sorted(dirs)))
-		if where in ("builtin", "package"):
+		if where in ("builtin", "package", "other"):
 			continue
 		# Optional imports aren't dependencies. They are listed, except
 		# the ones from python's standard library.

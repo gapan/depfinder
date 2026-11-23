@@ -138,7 +138,10 @@ ignored, but after //try: import tomllib// (python 3.11), an
 Imports under //if TYPE_CHECKING:// are ignored, and so are imports in
 branches for python 2 (or other versions), when the condition is a
 simple check of the python version (//sys.version_info//,
-//sys.hexversion//, //PY2//, //PY3//). So are test files
+//sys.hexversion//, //PY2//, //PY3//), and imports for other platforms
+(//sys.platform//, //os.name//, //platform.system()//). Modules of
+python's standard library on other platforms (e.g. //msvcrt// on
+Windows) are never reported. So are test files
 (in //test// or //tests// directories, //test_*.py//, //*_test.py// and
 //conftest.py//), since their imports are only needed to run the
 tests, and so is documentation (in ///usr/doc// and ///usr/share/doc//), such as examples. Files that are not
