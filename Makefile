@@ -25,8 +25,9 @@ install:
 		$(DESTDIR)/usr/bin/depfinder
 	install -m 755 depfinder-search/depfinder-search $(DESTDIR)/usr/libexec/
 	install -m 755 depfinder-python $(DESTDIR)/usr/libexec/
-	[ -f man/depfinder.man ] && \
-		install -D -m 644 man/depfinder.man $(DESTDIR)/usr/man/man1/depfinder.1
+	if [ -f man/depfinder.man ]; then \
+		install -D -m 644 man/depfinder.man $(DESTDIR)/usr/man/man1/depfinder.1; \
+	fi
 
 check: depfinder-search
 	tests/run.sh

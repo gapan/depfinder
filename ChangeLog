@@ -74,6 +74,7 @@ version 1.4.5 ()
     - modules in the user's home directory (pip --user) aren't used
     - files that aren't valid python 3 are reported
     - -p exits with an error if python3 isn't installed
+  * Don't make "make install" fail when the manpage wasn't built
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list
