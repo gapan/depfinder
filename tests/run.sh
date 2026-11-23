@@ -373,20 +373,20 @@ check "DEPFINDERNOEXIT=1: lists the deps that were found" "bar,glibc" "$OUT" xfa
 
 # A package shipping its own library
 rundf "$DB" "$SYS" "$P/selfy-1.0-x86_64-1.txz"
-check "own library, package not installed" "glibc" "$OUT" xfail
+check "own library, package not installed" "glibc" "$OUT"
 
 rundf "$DB2" "$SYS2" "$P/selfy-1.0-x86_64-1.txz"
 check "own library, same version installed" "glibc" "$OUT"
 
 rundf "$DB2" "$SYS2" -s "$P/selfy-1.0-x86_64-1.txz"
 check "own library, same version installed, -s" \
-	"glibc >= 2.33-x86_64-1" "$OUT" xfail
+	"glibc >= 2.33-x86_64-1" "$OUT"
 
 rundf "$DB2" "$SYS2" "$P/selfy-1.1-x86_64-1.txz"
-check "own library, older version installed" "glibc" "$OUT" xfail
+check "own library, older version installed" "glibc" "$OUT"
 
 rundf "$DB2" "$SYS2" "$P/package-selfy"
-check "own library, packaging directory" "glibc" "$OUT" xfail
+check "own library, packaging directory" "glibc" "$OUT"
 
 # Python dependencies
 if command -v python3 >/dev/null; then

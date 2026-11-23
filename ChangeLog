@@ -9,6 +9,13 @@ version 1.4.5 ()
   * The location of the package database can be set with the
     DEPFINDERPKGDB environment variable
   * Add a test suite, run with "make check"
+  * Fix excluding libraries that are included in the package itself,
+    which made depfinder fail when the package was not installed. They
+    are now matched by their soname, read with readelf.
+  * Exclude the package itself from the dependency list whatever version
+    of it is installed, and by exact name only. For packaging
+    directories the name is taken from install/slack-desc.
+  * Don't print an empty line with -s
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

@@ -244,6 +244,17 @@ cd /tmp/depfinder.$$
 
 PKGNAME=`basename $1 | sed "s/\.t[gblx]z\|\.tbr\|\/$//"`
 
+# The name of the package without version, used to exclude the package
+# itself from the dependency list. For a package file it comes from the
+# file name (name-version-arch-build). For a packaging directory it comes
+# from install/slack-desc, if there is one.
+if [ -z "$STARTDIR" ]; then
+	SELFNAME=`echo $PKGNAME | sed "s/-[^-]*-[^-]*-[^-]*$//"`
+else
+	SELFNAME=`sed -n "s/^\([^ #:]\+\):.*/\1/p" $STARTDIR/install/slack-desc \
+		2> /dev/null | head -n 1`
+fi
+
 # Find all binaries and libs in the package
 [ -z $STARTDIR ] || cd $STARTDIR
 touch /tmp/depfinder.$$/FILES
@@ -348,17 +359,33 @@ done
 # linux-gate.so.1 is always a dead-end so we don't look for that at all
 sort LIBSM | uniq | grep -v "linux-gate\.so" > LIBS
 
-# Find which libraries are included in the package
-find $STARTDIR | grep "\.so" | \
-sed "s/\(.*\)\/\(.*\)\.so\(.*\)/\2\.so/" >> INCLUDED
+# Find which libraries are included in the package. Binaries refer to
+# libraries by their soname (e.g. libfoo.so.1), which is usually a
+# symlink that isn't in the package (makepkg moves symlinks into
+# doinst.sh), so use the soname recorded in each library, and the file
+# name itself for libraries without one.
+touch INCLUDED
+find $STARTDIR -name "*.so*" | sed "s|.*/||" >> INCLUDED
+for i in `find $STARTDIR -type f -name "*.so*"`; do
+	LANG=C readelf -d $i 2> /dev/null | \
+	sed -n "s/.*Library soname: \[\(.*\)\].*/\1/p" >> INCLUDED
+done
 
-# Exclude the included libs from the search list
-if [ -f INCLUDED ]; then
-	for i in `cat INCLUDED`; do 
-		sed -i "/^$i$/d" LIBS
-		sed -i "/\t$i NOT FOUND/d" LIBS
-	done
-fi
+# Exclude the included libs from the search list. ldd reports each
+# library as the path where it was found, ending with its soname, or as
+# "<soname> NOT FOUND".
+awk 'FILENAME == "INCLUDED" { included[$0] = 1; next }
+	{
+		name = $0
+		if (name ~ / NOT FOUND$/) {
+			sub(/^[ \t]+/, "", name)
+			sub(/ NOT FOUND$/, "", name)
+		} else {
+			sub(/.*\//, "", name)
+		}
+		if (!(name in included)) print
+	}' INCLUDED LIBS > LIBS.new
+mv LIBS.new LIBS
 
 # Check if any dependencies are not found and bail out if they are
 if [[ `grep "NOT FOUND" LIBS` ]]; then
@@ -409,10 +436,20 @@ for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
 	cat DEPS$i >> DEPS
 done
 
-# Exclude the present package from the dependency list
-sed -i "s/|${PKGNAME}//" DEPS
-sed -i "s/${PKGNAME}|//" DEPS
-sed -i "s/${PKGNAME}//" DEPS
+# Exclude the present package from the dependency list, whatever
+# version of it is installed, and drop entries left empty
+awk -v self="$SELFNAME" '{
+		n = split($0, alt, "|")
+		line = ""
+		for (j = 1; j <= n; j++) {
+			name = alt[j]
+			sub(/-[^-]*-[^-]*-[^-]*$/, "", name)
+			if (self != "" && name == self) continue
+			line = (line == "" ? alt[j] : line "|" alt[j])
+		}
+		if (line != "") print line
+	}' DEPS > DEPS.new
+mv DEPS.new DEPS
 
 if [ $VERSIONINFO -eq 1 ]; then
 	sort DEPS | uniq | \
