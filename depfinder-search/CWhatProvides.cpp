@@ -59,19 +59,31 @@ void CWhatProvides::search_package(const std::string& pkgdb, const std::string& 
 
 	while ( getline(_ifpkg, _instr) ) {
 		if ( _file_list ) {
-			auto _found = _index.find(_instr);
-			if ( _found == _index.end() )
-				continue;
-			for ( size_t i : _found->second ) {
-				std::vector<std::string>& p = _providers[i];
-				if ( p.empty() || p.back() != package )
-					p.push_back(package);
-			}
+			add_provider(_instr, package);
+			// Some packages (glibc, aaa_glibc-solibs) have files
+			// in an "incoming" directory, which doinst.sh moves
+			// to the directory above, e.g. lib64/incoming/libc-2.33.so
+			// is installed as lib64/libc-2.33.so
+			size_t _incoming = _instr.find("/incoming/");
+			if ( _incoming != std::string::npos )
+				add_provider(_instr.erase(_incoming, 9), package);
 		} else {
 			std::transform(_instr.begin(), _instr.end(), _instr.begin(), ::tolower);
 			if ( _instr.compare(0, 10, "file list:") == 0 )
 				_file_list = true;
 		}
+	}
+}
+
+void CWhatProvides::add_provider(const std::string& path, const std::string& package)
+{	// If path is one of the requested files, package provides it.
+	auto _found = _index.find(path);
+	if ( _found == _index.end() )
+		return;
+	for ( size_t i : _found->second ) {
+		std::vector<std::string>& p = _providers[i];
+		if ( p.empty() || p.back() != package )
+			p.push_back(package);
 	}
 }
 

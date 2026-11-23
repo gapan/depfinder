@@ -46,6 +46,10 @@ version 1.4.5 ()
   * Warn about libraries and python modules that no installed package
     provides (e.g. installed by hand in /usr/local), instead of leaving
     them out silently
+  * Find the libraries that packages list in an "incoming" directory,
+    which their doinst.sh moves to the directory above. glibc and
+    aaa_glibc-solibs do this since Slackware 15.0, so they were never
+    listed as dependencies.
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

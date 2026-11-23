@@ -21,6 +21,7 @@ public:
 	void	print(std::ostream& out) const;
 protected:
 	void	search_package(const std::string& pkgdb, const std::string& package);
+	void	add_provider(const std::string& path, const std::string& package);
 
 	// The requested files, in order, and the packages providing each
 	std::vector<std::string>			_files;

@@ -163,6 +163,11 @@ UNOWNEDLIB=$(mklib "$SYS/$LIB" unowned 1)
 ln -s "$UNOWNEDLIB" "$SYS/$LIB/libunowned.so.1"
 ln -s "$UNOWNEDLIB" "$SYS/$LIB/libunowned.so"
 
+# A library whose package lists it in an "incoming" directory, like
+# glibc does (its doinst.sh moves the files to the directory above)
+INCLIB=$(mklib "$SYS/$LIB" inc 1)
+ln -s "$INCLIB" "$SYS/$LIB/libinc.so.1"; ln -s "$INCLIB" "$SYS/$LIB/libinc.so"
+
 # A library that exists only at build time, so binaries linked against
 # it have a missing dependency
 mkdir -p "$W/gone"
@@ -179,6 +184,7 @@ mkrecord "$DB" glibc-2.33-x86_64-1 $GLIBC_FILES
 mkrecord "$DB" bar-2.0-x86_64-1 "$(rel $LIB/$BARLIB)" usr/doc/bar-2.0/README
 mkrecord "$DB" baz-1.0-x86_64-1 "$(rel $LIB/$BAZLIB)"
 mkrecord "$DB" baz-solibs-1.0-x86_64-1 "$(rel $LIB/$BAZLIB)"
+mkrecord "$DB" inc-1.0-x86_64-1 "$(rel $LIB/incoming/)" "$(rel $LIB/incoming/$INCLIB)"
 # Have files whose paths contain the path of libbar, which must not
 # make them providers of it
 mkrecord "$DB" barbackup-1.0-x86_64-1 "$(rel $LIB/$BARLIB).bak"
@@ -227,6 +233,10 @@ mkpkg "$W/outside" "$P/outside-1.0-x86_64-1.txz"
 mkbin "$W/helpers/usr/lib/helpers/helper" "$SYS/$LIB" bar
 mkbin "$W/helpers/usr/games/game" "$SYS/$LIB" baz
 mkpkg "$W/helpers" "$P/helpers-1.0-x86_64-1.txz"
+
+# incfoo: needs libinc
+mkbin "$W/incfoo/usr/bin/incfoo" "$SYS/$LIB" inc
+mkpkg "$W/incfoo" "$P/incfoo-1.0-x86_64-1.txz"
 
 # unowned: needs libbar and libunowned, which no package provides
 mkbin "$W/unowned/usr/bin/unowned" "$SYS/$LIB" bar unowned
@@ -434,6 +444,11 @@ check "missing library: exit status 1" "1" "$RC"
 check "missing library: no dependency list" "" "$OUT"
 check "missing library: reported" "1" \
 	"$(echo "$ERR" | grep -c "libgone\.so\.1")"
+
+# A library listed in an "incoming" directory in its package record
+rundf "$DB" "$SYS" "$P/incfoo-1.0-x86_64-1.txz"
+check "library in an incoming directory" "glibc,inc" "$OUT"
+check "library in an incoming directory: no warning" "" "$ERR"
 
 # Libraries that no package provides
 rundf "$DB" "$SYS" "$P/unowned-1.0-x86_64-1.txz"
