@@ -767,6 +767,23 @@ check "spaces: -f -s writes slack-required" \
 	"$(printf 'bar >= 2.0-x86_64-1\nglibc >= 2.33-x86_64-1')" \
 	"$(cat "$RUNDIR/slack-required" 2>&1)"
 
+# -f in a directory that can't be written to (root can write anywhere)
+if [ "$(id -u)" -ne 0 ]; then
+	mkdir "$W/readonly"
+	chmod 555 "$W/readonly"
+	for opt in -f "-f -s"; do
+		OUT=$(cd "$W/readonly" && DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" \
+			"$DF" $opt "$P/foo-1.0-x86_64-1.txz" 2>&1)
+		RC=$?; ERR=""
+		check "$opt in a read-only directory: exit status 1" "1" "$RC"
+		check "$opt in a read-only directory: reported" "1" \
+			"$(echo "$OUT" | grep -c "ERROR: could not write")"
+	done
+	chmod 755 "$W/readonly"
+else
+	skip "-f in a read-only directory (running as root)"
+fi
+
 # A package path starting with "-" (given after "--")
 mkdir "$W/dash"
 cp "$P/foo-1.0-x86_64-1.txz" "$W/dash/-foo-1.0-x86_64-1.txz"

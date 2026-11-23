@@ -98,6 +98,7 @@ version 2.0 ()
     skipped
   * With -p, skip python files in the documentation (usr/doc,
     usr/share/doc), such as examples, which aren't part of the program
+  * Exit with an error if -f can't write the .dep or slack-required file
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

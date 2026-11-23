@@ -474,7 +474,10 @@ if [ $VERSIONINFO -eq 1 ]; then
 	# If requesting version info, output the deps to a
 	# slack-required file or to stdout
 	if [ $CREATEDEPFILE -eq 1 ]; then
-		cp DEPSNAMES "$CWD/slack-required"
+		if ! cp DEPSNAMES "$CWD/slack-required"; then
+			echo "ERROR: could not write $CWD/slack-required" >&2
+			err
+		fi
 	else
 		cat DEPSNAMES
 	fi
@@ -488,11 +491,14 @@ else
 		if [ -n "$STARTDIR" ] && [ -n "$SELFNAME" ]; then
 			DEPFILENAME=$SELFNAME
 		fi
-		cat DEPSNAMES | \
-		tr "\n" " " | \
-		sed "s/ /,/g" | \
-		sed "s/,$/\n/" | \
-		sed "s/^,//" > "$CWD/$DEPFILENAME.dep"
+		if ! cat DEPSNAMES | \
+		   tr "\n" " " | \
+		   sed "s/ /,/g" | \
+		   sed "s/,$/\n/" | \
+		   sed "s/^,//" > "$CWD/$DEPFILENAME.dep"; then
+			echo "ERROR: could not write $CWD/$DEPFILENAME.dep" >&2
+			err
+		fi
 	else
 		cat DEPSNAMES | \
 		tr "\n" " " | \
