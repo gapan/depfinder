@@ -109,14 +109,17 @@ mkrecord()
 # install/doinst.sh and deletes them, so it packages a copy of the
 # directory.
 #
-# pkgtools can't make .tbr packages; only slkbuild's makepkg_internal
-# can. That is a function inside /usr/bin/slkbuild, so it is taken from
-# there and run (it's skipped if slkbuild isn't installed).
+# With "slkbuild" as a third argument it uses slkbuild's
+# makepkg_internal instead, which makes packages in GNU tar format. That
+# is a function inside /usr/bin/slkbuild, so it is taken from there and
+# run (it fails if slkbuild isn't installed). It is always used for .tbr,
+# which pkgtools can't make.
 mkpkg()
 {
 	local dir=$1 out=$2 copy tool=/sbin/makepkg rc
-	if [ "${out##*.}" = tbr ]; then
-		[ -f /usr/bin/slkbuild ] && command -v brotli >/dev/null || return 1
+	if [ "$3" = slkbuild ] || [ "${out##*.}" = tbr ]; then
+		[ -f /usr/bin/slkbuild ] || return 1
+		[ "${out##*.}" = tbr ] && ! command -v brotli >/dev/null && return 1
 		tool=makepkg_internal
 	fi
 	copy=$(mktemp -d "$W/mkpkg.XXXXXX")
@@ -187,11 +190,12 @@ mkdir -p "$P"
 # foo: a binary needing libbar
 mkbin "$W/foo/usr/bin/foo" "$SYS/$LIB" bar
 mkpkg "$W/foo" "$P/foo-1.0-x86_64-1.txz"
-# The same package in every format
-mkdir -p "$P/formats"
+# The same package in every format, and as a .tlz from slkbuild
+mkdir -p "$P/formats" "$P/slkbuild"
 for ext in tgz tbz tlz txz tbr; do
 	mkpkg "$W/foo" "$P/formats/foo-1.0-x86_64-1.$ext"
 done
+mkpkg "$W/foo" "$P/slkbuild/foo-1.0-x86_64-1.tlz" slkbuild
 
 # qux: needs libbaz, available from two packages
 mkbin "$W/qux/usr/bin/qux" "$SYS/$LIB" baz
@@ -329,6 +333,12 @@ for ext in tgz tbz tlz txz tbr; do
 		skip "$name (compression tool not installed)"
 	fi
 done
+if [ -s "$P/slkbuild/foo-1.0-x86_64-1.tlz" ]; then
+	rundf "$DB" "$SYS" "$P/slkbuild/foo-1.0-x86_64-1.tlz"
+	check "tlz package (as made by slkbuild)" "bar,glibc" "$OUT"
+else
+	skip "tlz package (as made by slkbuild) (slkbuild not installed)"
+fi
 
 # A library provided by more than one package
 rundf "$DB" "$SYS" "$P/qux-1.0-x86_64-1.txz"
