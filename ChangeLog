@@ -54,6 +54,7 @@ version 1.4.5 ()
     of using a predictable name in /tmp, and extract the package into a
     subdirectory of it, so files in the package can't overwrite
     depfinder's own files
+  * Remove the working directory when interrupted or killed
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

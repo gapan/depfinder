@@ -111,6 +111,17 @@ cleanup()
 	fi
 }
 
+# Function to clean up when depfinder is killed: stops the jobs running
+# in the background, so they don't write into the working directory
+# while it is removed, and exits with the status of signal number $1
+interrupted()
+{
+	kill `jobs -p` 2> /dev/null
+	wait
+	cleanup
+	exit $((128 + $1))
+}
+
 # Function to cleanly exit on error (just to be sure)
 err()
 {
@@ -221,6 +232,9 @@ if [ -z "$DFTMP" ]; then
 	echo "ERROR: could not create a temporary directory" >&2
 	err
 fi
+trap "interrupted 1" HUP
+trap "interrupted 2" INT
+trap "interrupted 15" TERM
 [ $DEBUG -eq 0 ] || echo "DEBUG: working directory is $DFTMP" >&2
 mkdir "$DFTMP/pkg"
 ls "$PKGDB" > "$DFTMP/pkglist.log"

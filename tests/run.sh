@@ -464,6 +464,24 @@ check "DEBUG=1 keeps the working directory" "1" \
 	"$(ls "$W/tmp" | grep -c "^depfinder\.")"
 rm -rf "$W/tmp"
 
+# Killed while depfinder-search runs: the working directory is removed.
+# (A depfinder-search that only signals that it started and waits.)
+mkdir "$W/tmp"
+printf '#!/bin/sh\ntouch "%s"\nsleep 5\n' "$W/started" > "$W/slow-search"
+chmod 755 "$W/slow-search"
+sed "s|^DEPFINDERSEARCH=.*|DEPFINDERSEARCH=\"$W/slow-search\"|" "$DF" > "$W/df-slow"
+chmod 755 "$W/df-slow"
+TMPDIR="$W/tmp" DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" \
+	"$W/df-slow" "$P/foo-1.0-x86_64-1.txz" > /dev/null 2>&1 &
+pid=$!
+for i in $(seq 50); do [ -e "$W/started" ] && break; sleep 0.1; done
+kill -TERM $pid
+wait $pid
+RC=$?; ERR=""
+check "killed: exit status 143" "143" "$RC"
+check "killed: working directory removed" "" "$(ls "$W/tmp")"
+rm -rf "$W/tmp"
+
 # A library listed in an "incoming" directory in its package record
 rundf "$DB" "$SYS" "$P/incfoo-1.0-x86_64-1.txz"
 check "library in an incoming directory" "glibc,inc" "$OUT"
