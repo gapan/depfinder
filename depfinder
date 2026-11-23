@@ -526,7 +526,12 @@ else
 	# If not requesting version info, output the deps to a
 	# .dep file or to stdout
 	if [ $CREATEDEPFILE -eq 1 ]; then
+		# (for a packaging directory, named after the package if
+		# install/slack-desc names it, not after the directory)
 		DEPFILENAME=$PKGNAME
+		if [ -n "$STARTDIR" ] && [ -n "$SELFNAME" ]; then
+			DEPFILENAME=$SELFNAME
+		fi
 		cat DEPSNAMES | \
 		tr "\n" " " | \
 		sed "s/ /,/g" | \

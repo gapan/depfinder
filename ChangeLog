@@ -55,6 +55,8 @@ version 1.4.5 ()
     subdirectory of it, so files in the package can't overwrite
     depfinder's own files
   * Remove the working directory when interrupted or killed
+  * With -f on a packaging directory, name the .dep file after the
+    package named in install/slack-desc instead of after the directory
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

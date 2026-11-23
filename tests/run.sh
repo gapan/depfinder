@@ -267,6 +267,8 @@ ln -s "$SELFYLIB" "$W/selfy/$LIB/libselfy.so.1"
 mkpkg "$W/selfy" "$P/selfy-1.0-x86_64-1.txz"
 mkpkg "$W/selfy" "$P/selfy-1.1-x86_64-1.txz"
 mkdir -p "$P/package-selfy" && cp -a "$W/selfy/." "$P/package-selfy/"
+mkdir -p "$P/package-selfy/install"
+echo "selfy: selfy (a test package)" > "$P/package-selfy/install/slack-desc"
 
 # A database and system root where selfy 1.0 is installed
 SYS2="$W/sys2"
@@ -513,6 +515,9 @@ check "own library, older version installed" "glibc" "$OUT"
 
 rundf "$DB2" "$SYS2" "$P/package-selfy"
 check "own library, packaging directory" "glibc" "$OUT"
+rundf "$DB2" "$SYS2" -f "$P/package-selfy"
+check "-f on a directory: .dep named from slack-desc" "glibc" \
+	"$(cat "$RUNDIR/selfy.dep" 2>&1)"
 
 # Python dependencies
 if command -v python3 >/dev/null; then
@@ -543,6 +548,9 @@ fi
 rundf "$DB" "$SYS" -f "$W/with space/spacey-1.0-x86_64-1.txz"
 check "spaces: -f writes a .dep file" "bar,glibc" \
 	"$(cat "$RUNDIR/spacey-1.0-x86_64-1.dep" 2>&1)"
+rundf "$DB" "$SYS" -f "$W/with space/package-spacey"
+check "spaces: -f on a directory without slack-desc" "bar,glibc" \
+	"$(cat "$RUNDIR/package-spacey.dep" 2>&1)"
 rundf "$DB" "$SYS" -f -s "$W/with space/spacey-1.0-x86_64-1.txz"
 check "spaces: -f -s writes slack-required" \
 	"$(printf 'bar >= 2.0-x86_64-1\nglibc >= 2.33-x86_64-1')" \
