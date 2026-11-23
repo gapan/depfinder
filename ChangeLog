@@ -16,6 +16,8 @@ version 1.4.5 ()
     of it is installed, and by exact name only. For packaging
     directories the name is taken from install/slack-desc.
   * Don't print an empty line with -s
+  * With DEPFINDERNOEXIT=1, don't look up the missing libraries in the
+    package database, which added bogus dependencies
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

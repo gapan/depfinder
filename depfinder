@@ -396,6 +396,8 @@ if [[ `grep "NOT FOUND" LIBS` ]]; then
 	if [ "x$DEPFINDERNOEXIT" != "x1" ]; then
 		err
 	fi
+	# Carry on with the libraries that were found
+	sed -i "/ NOT FOUND$/d" LIBS
 fi
 
 # Append the list of python modules to the list of libraries that are

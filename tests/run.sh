@@ -369,7 +369,7 @@ check "missing library: reported" "1" \
 	"$(echo "$ERR" | grep -c "libgone\.so\.1")"
 
 DEPFINDERNOEXIT=1 rundf "$DB" "$SYS" "$P/broken-1.0-x86_64-1.txz"
-check "DEPFINDERNOEXIT=1: lists the deps that were found" "bar,glibc" "$OUT" xfail
+check "DEPFINDERNOEXIT=1: lists the deps that were found" "bar,glibc" "$OUT"
 
 # A package shipping its own library
 rundf "$DB" "$SYS" "$P/selfy-1.0-x86_64-1.txz"
