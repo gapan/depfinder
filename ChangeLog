@@ -37,6 +37,8 @@ version 1.4.5 ()
     right .dep file name
   * Fix -j with a leading zero (e.g. -j 08) and with more than 99 jobs,
     and give clearer error messages for invalid -j values
+  * Handle spaces in the package path, the packaging directory path,
+    the current directory (with -f) and the names of files in the package
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

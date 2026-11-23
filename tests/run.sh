@@ -239,6 +239,18 @@ mkrecord "$DB2" selfy-1.0-x86_64-1 "${SYS2#/}/$LIB/$SELFYLIB"
 # The records of $DB point to $SYS; point the copies to $SYS2 instead
 sed -i "s|^${SYS#/}/|${SYS2#/}/|" "$DB2"/*
 
+# Spaces in paths: a package file and a packaging directory in a
+# directory with a space, containing a binary and a python script with
+# spaces in their names
+mkbin "$W/spacey/usr/bin/foo bar" "$SYS/$LIB" bar
+mkdir -p "$W/spacey/usr/share/spacey"
+printf '#!/usr/bin/python3\nimport extmod\n' > "$W/spacey/usr/share/spacey/py app"
+mkdir -p "$W/with space"
+# (makepkg can't write to a path with a space)
+mkpkg "$W/spacey" "$P/spacey-1.0-x86_64-1.txz"
+cp "$P/spacey-1.0-x86_64-1.txz" "$W/with space/"
+cp -a "$W/spacey" "$W/with space/package-spacey"
+
 # pyapp: python scripts, checked with -p
 mkdir -p "$W/pyapp/usr/bin" "$W/pyapp/usr/lib$SUF/python3/site-packages"
 cat > "$W/pyapp/usr/bin/pyapp" <<'EOF'
@@ -268,7 +280,8 @@ mkpkg "$W/pyapp" "$P/pyapp-1.0-x86_64-1.txz"
 rundf()
 {
 	local db=$1 sys=$2; shift 2
-	RUNDIR=$(mktemp -d "$W/run.XXXXXX")
+	# (a directory with a space, to check that -f handles that)
+	RUNDIR=$(mktemp -d "$W/run dir.XXXXXX")
 	OUT=$(cd "$RUNDIR" && DEPFINDERPKGDB="$db" \
 		LD_LIBRARY_PATH="$sys/$LIB" PYTHONPATH="$sys/py" \
 		"$DF" "$@" 2>"$RUNDIR/.stderr")
@@ -429,6 +442,23 @@ if command -v python3 >/dev/null; then
 else
 	skip "python tests (python3 not installed)"
 fi
+
+# Spaces in paths
+rundf "$DB" "$SYS" "$W/with space/spacey-1.0-x86_64-1.txz"
+check "spaces: package file" "bar,glibc" "$OUT"
+rundf "$DB" "$SYS" "$W/with space/package-spacey"
+check "spaces: packaging directory" "bar,glibc" "$OUT"
+if command -v python3 >/dev/null; then
+	rundf "$DB" "$SYS" -p "$W/with space/spacey-1.0-x86_64-1.txz"
+	check "spaces: python script" "bar,glibc,pyext" "$OUT"
+fi
+rundf "$DB" "$SYS" -f "$W/with space/spacey-1.0-x86_64-1.txz"
+check "spaces: -f writes a .dep file" "bar,glibc" \
+	"$(cat "$RUNDIR/spacey-1.0-x86_64-1.dep" 2>&1)"
+rundf "$DB" "$SYS" -f -s "$W/with space/spacey-1.0-x86_64-1.txz"
+check "spaces: -f -s writes slack-required" \
+	"$(printf 'bar >= 2.0-x86_64-1\nglibc >= 2.33-x86_64-1')" \
+	"$(cat "$RUNDIR/slack-required" 2>&1)"
 
 # Options and errors
 rundf "$DB" "$SYS" "$P/does-not-exist.txz"

@@ -82,7 +82,7 @@ findpython()
 # Function that parses python scripts for modules that it imports
 parsepython()
 {
-	sed "s/;/\n/g" $1 | \
+	sed "s/;/\n/g" "$1" | \
 	sed -e :a -e '/\\$/N; s/\\\n//; ta' | \
 	sed "s/[ \t]\+/ /g" | \
 	grep "^ *import \|^ *from .* import " | \
@@ -185,18 +185,18 @@ if [ $# -gt 1 ]; then
 fi
 
 # test if the package file is there
-if [ ! -d $1 ] && [ ! -f $1 ] ; then
+if [ ! -d "$1" ] && [ ! -f "$1" ] ; then
 	arg=$1
 	echo "ERROR: $arg not found" >&2
 	err
 fi
 
 # test if the files is actually a directory...
-if [ -d $1 ]; then
-	STARTDIR=`readlink -f $1`/
+if [ -d "$1" ]; then
+	STARTDIR=`readlink -f "$1"`/
 else
 	# ... or has the .tgz|tbz|tlz extension (is a package file)
-	if [ ! `echo $1 | grep "\.t[gblx]z$\|\.tbr$"` ]; then
+	if ! echo "$1" | grep -q "\.t[gblx]z$\|\.tbr$"; then
 		arg=$1
 		echo "ERROR: $arg is not a package file or a directory!" >&2
 		err
@@ -218,11 +218,11 @@ ls "$PKGDB" > /tmp/depfinder.$$/pkglist.log
 
 # Extract only if argument is not a directory
 if [ -z "$STARTDIR" ]; then
-	if [ `echo $1 | grep "\.tgz$"` ]; then
+	if echo "$1" | grep -q "\.tgz$"; then
 		DECOMPRESS="gzip -d -c"
-	elif [ `echo $1 | grep "\.tbz$"` ]; then
+	elif echo "$1" | grep -q "\.tbz$"; then
 		DECOMPRESS="bzip2 -d -c"
-	elif [ `echo $1 | grep "\.tlz$"` ]; then
+	elif echo "$1" | grep -q "\.tlz$"; then
 		# .tlz packages are lzip compressed. Use plzip if available, like
 		# installpkg does, since it decompresses using multiple threads.
 		if which plzip 1> /dev/null 2> /dev/null; then
@@ -230,15 +230,15 @@ if [ -z "$STARTDIR" ]; then
 		else
 			DECOMPRESS="lzip -d -c"
 		fi
-	elif [ `echo $1 | grep "\.txz$"` ]; then
+	elif echo "$1" | grep -q "\.txz$"; then
 		DECOMPRESS="xz -d -c"
-	elif [ `echo $1 | grep "\.tbr$"` ]; then
+	elif echo "$1" | grep -q "\.tbr$"; then
 		DECOMPRESS="brotli -d -c"
 	else
 		echo "ERROR: $1 is not a package file or a directory!" >&2
 		err
 	fi
-	$DECOMPRESS $1 | tar xf - -C /tmp/depfinder.$$
+	$DECOMPRESS "$1" | tar xf - -C /tmp/depfinder.$$
 	STATUS=("${PIPESTATUS[@]}")
 	if [ ${STATUS[0]} -ne 0 ] || [ ${STATUS[1]} -ne 0 ]; then
 		echo "ERROR: could not extract $1" >&2
@@ -247,21 +247,21 @@ if [ -z "$STARTDIR" ]; then
 fi
 cd /tmp/depfinder.$$
 
-PKGNAME=`basename $1 | sed "s/\.t[gblx]z$\|\.tbr$//"`
+PKGNAME=`basename "$1" | sed "s/\.t[gblx]z$\|\.tbr$//"`
 
 # The name of the package without version, used to exclude the package
 # itself from the dependency list. For a package file it comes from the
 # file name (name-version-arch-build). For a packaging directory it comes
 # from install/slack-desc, if there is one.
 if [ -z "$STARTDIR" ]; then
-	SELFNAME=`echo $PKGNAME | sed "s/-[^-]*-[^-]*-[^-]*$//"`
+	SELFNAME=`echo "$PKGNAME" | sed "s/-[^-]*-[^-]*-[^-]*$//"`
 else
-	SELFNAME=`sed -n "s/^\([^ #:]\+\):.*/\1/p" $STARTDIR/install/slack-desc \
+	SELFNAME=`sed -n "s/^\([^ #:]\+\):.*/\1/p" "$STARTDIR/install/slack-desc" \
 		2> /dev/null | head -n 1`
 fi
 
 # Find all binaries and libs in the package
-[ -z $STARTDIR ] || cd $STARTDIR
+[ -z "$STARTDIR" ] || cd "$STARTDIR"
 # (file is run on many files at once; -0 puts a NUL after each name)
 if [ $CHECKALLFILES -eq 0 ]; then
 	# usually only in standard locations
@@ -286,9 +286,9 @@ if [ $PYTHONDEPS -eq 1 ]; then
 
 	# Determine which python modules are imported (used)
 	touch /tmp/depfinder.$$/PYTHONMODULESRAW
-	for i in `cat /tmp/depfinder.$$/PYTHONFILES`; do
-		parsepython $i >> /tmp/depfinder.$$/PYTHONMODULESRAW
-	done
+	while IFS= read -r i; do
+		parsepython "$i" >> /tmp/depfinder.$$/PYTHONMODULESRAW
+	done < /tmp/depfinder.$$/PYTHONFILES
 
 	# Sort and clean modules list
 	cat -A /tmp/depfinder.$$/PYTHONMODULESRAW | \
@@ -358,7 +358,7 @@ LDDJOBS=$JOBS
 [ $LDDJOBS -eq 0 ] && LDDJOBS=1
 split -d -a 4 -n l/$LDDJOBS FILES FILES
 for i in $( seq -f "%04.f" 0 $(($LDDJOBS-1)) ); do
-	( cd ${STARTDIR:-/tmp/depfinder.$$} && \
+	( cd "${STARTDIR:-/tmp/depfinder.$$}" && \
 		LANG=C xargs -r -d '\n' ldd < /tmp/depfinder.$$/FILES$i 2> /dev/null ) \
 	| grep "=>" \
 	| sed "s/\(.*\) => \/\(.*\) \(.*\)/\2/" \
@@ -378,8 +378,8 @@ sort LIBSM | uniq | grep -v "linux-gate\.so" > LIBS
 # doinst.sh), so use the soname recorded in each library, and the file
 # name itself for libraries without one.
 touch INCLUDED
-find $STARTDIR -name "*.so*" | sed "s|.*/||" >> INCLUDED
-LANG=C find $STARTDIR -type f -name "*.so*" -exec readelf -d {} + 2> /dev/null | \
+find "${STARTDIR:-./}" -name "*.so*" | sed "s|.*/||" >> INCLUDED
+LANG=C find "${STARTDIR:-./}" -type f -name "*.so*" -exec readelf -d {} + 2> /dev/null | \
 sed -n "s/.*Library soname: \[\(.*\)\].*/\1/p" >> INCLUDED
 
 # Exclude the included libs from the search list. ldd reports each
@@ -479,7 +479,7 @@ if [ $VERSIONINFO -eq 1 ]; then
 	# If requesting version info, output the deps to a
 	# slack-required file or to stdout
 	if [ $CREATEDEPFILE -eq 1 ]; then
-		cp DEPSNAMES $CWD/slack-required
+		cp DEPSNAMES "$CWD/slack-required"
 	else
 		cat DEPSNAMES
 	fi
@@ -492,7 +492,7 @@ else
 		tr "\n" " " | \
 		sed "s/ /,/g" | \
 		sed "s/,$/\n/" | \
-		sed "s/^,//" > $CWD/$DEPFILENAME.dep
+		sed "s/^,//" > "$CWD/$DEPFILENAME.dep"
 	else
 		cat DEPSNAMES | \
 		tr "\n" " " | \
