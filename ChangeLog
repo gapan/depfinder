@@ -1,4 +1,4 @@
-version 1.4.5 ()
+version 2.0 ()
   * Update brotli command for newer brotli release
   * Always use python 3 for python dependency detection and remove the
     -3 option
