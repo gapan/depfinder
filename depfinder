@@ -106,8 +106,8 @@ parsepython()
 # Function that cleans up temp files
 cleanup()
 {
-	if [ $DEBUG -eq 0 ]; then
-		rm -rf /tmp/depfinder.$$
+	if [ $DEBUG -eq 0 ] && [ -n "$DFTMP" ]; then
+		rm -rf "$DFTMP"
 	fi
 }
 
@@ -213,12 +213,17 @@ if [ ! -d "$PKGDB" ]; then
 	err
 fi
 
-# Cleanup any leftover files before really doing anything
-cleanup
-
-# Create temp dir and extract package
-mkdir -p /tmp/depfinder.$$
-ls "$PKGDB" > /tmp/depfinder.$$/pkglist.log
+# Create the working directory, with a name that can't be guessed. The
+# package is extracted into its pkg subdirectory, apart from
+# depfinder's own files.
+DFTMP=`mktemp -d "${TMPDIR:-/tmp}/depfinder.XXXXXX"`
+if [ -z "$DFTMP" ]; then
+	echo "ERROR: could not create a temporary directory" >&2
+	err
+fi
+[ $DEBUG -eq 0 ] || echo "DEBUG: working directory is $DFTMP" >&2
+mkdir "$DFTMP/pkg"
+ls "$PKGDB" > "$DFTMP/pkglist.log"
 
 # Extract only if argument is not a directory
 if [ -z "$STARTDIR" ]; then
@@ -242,14 +247,15 @@ if [ -z "$STARTDIR" ]; then
 		echo "ERROR: $1 is not a package file or a directory!" >&2
 		err
 	fi
-	$DECOMPRESS "$1" | tar xf - -C /tmp/depfinder.$$
+	$DECOMPRESS "$1" | tar xf - -C "$DFTMP/pkg"
 	STATUS=("${PIPESTATUS[@]}")
 	if [ ${STATUS[0]} -ne 0 ] || [ ${STATUS[1]} -ne 0 ]; then
 		echo "ERROR: could not extract $1" >&2
 		err
 	fi
 fi
-cd /tmp/depfinder.$$
+# The root of the package's files
+PKGROOT=${STARTDIR:-$DFTMP/pkg/}
 
 PKGNAME=`basename "$1" | sed "s/\.t[gblx]z$\|\.tbr$//"`
 
@@ -265,7 +271,7 @@ else
 fi
 
 # Find all binaries and libs in the package
-[ -z "$STARTDIR" ] || cd "$STARTDIR"
+cd "$PKGROOT"
 # (file is run on many files at once; -0 puts a NUL after each name)
 if [ $CHECKALLFILES -eq 0 ]; then
 	# usually only in standard locations. usr/lib and lib are searched
@@ -279,68 +285,68 @@ else
 	SEARCHDIRS="./"
 fi
 LANG=C find $SEARCHDIRS -type f -exec file -N -0 {} + 2> /dev/null | \
-awk -F '\0' '$2 ~ /^: ELF / { print $1 }' > /tmp/depfinder.$$/FILES
+awk -F '\0' '$2 ~ /^: ELF / { print $1 }' > "$DFTMP/FILES"
 
 # Look for python dependencies
 if [ $PYTHONDEPS -eq 1 ]; then
 	# Determine in which directories python looks for modules
 	python3 -c "import sys; print(sys.path)" | \
 	sed "s/'\|,\|\[\|\]//g" | \
-	sed "s/ /\n/g" > /tmp/depfinder.$$/PYTHONDIRS
+	sed "s/ /\n/g" > "$DFTMP/PYTHONDIRS"
 
 	# Find all python scripts in the package
-	touch /tmp/depfinder.$$/PYTHONFILES
-	findpython >> /tmp/depfinder.$$/PYTHONFILES
+	touch "$DFTMP/PYTHONFILES"
+	findpython >> "$DFTMP/PYTHONFILES"
 
 	# Determine which python modules are imported (used)
-	touch /tmp/depfinder.$$/PYTHONMODULESRAW
+	touch "$DFTMP/PYTHONMODULESRAW"
 	while IFS= read -r i; do
-		parsepython "$i" >> /tmp/depfinder.$$/PYTHONMODULESRAW
-	done < /tmp/depfinder.$$/PYTHONFILES
+		parsepython "$i" >> "$DFTMP/PYTHONMODULESRAW"
+	done < "$DFTMP/PYTHONFILES"
 
 	# Sort and clean modules list
-	cat -A /tmp/depfinder.$$/PYTHONMODULESRAW | \
+	cat -A "$DFTMP/PYTHONMODULESRAW" | \
 	sort | sed 's/\^M\$\|\$//' | \
-	uniq > /tmp/depfinder.$$/PYTHONMODULESSORTED
+	uniq > "$DFTMP/PYTHONMODULESSORTED"
 	
 	# Find which modules are included in the package and create a
 	# list with the ones that are not
-	touch /tmp/depfinder.$$/PYTHONMODULES
-	for i in `cat /tmp/depfinder.$$/PYTHONMODULESSORTED`; do
+	touch "$DFTMP/PYTHONMODULES"
+	for i in `cat "$DFTMP/PYTHONMODULESSORTED"`; do
 		FOUND=`find ./ -type f | grep "/$i\.py$\|/$i/__init__\.py$\|/$i\(\.[^/]*\)\?\.so$"`
 		if [[ ! "$FOUND" ]]; then
-			echo "$i" >> /tmp/depfinder.$$/PYTHONMODULES
+			echo "$i" >> "$DFTMP/PYTHONMODULES"
 		fi
 	done
 
 	# Remove python built-in modules from the list
 	python3 -c "import sys; print(sys.builtin_module_names)" | \
-	sed "s/'\|,\|(\|)//g" > /tmp/depfinder.$$/PYTHONBUILTIN
-	for i in `cat /tmp/depfinder.$$/PYTHONBUILTIN`; do
-		sed -i "/^$i$/d" /tmp/depfinder.$$/PYTHONMODULES
+	sed "s/'\|,\|(\|)//g" > "$DFTMP/PYTHONBUILTIN"
+	for i in `cat "$DFTMP/PYTHONBUILTIN"`; do
+		sed -i "/^$i$/d" "$DFTMP/PYTHONMODULES"
 	done
 
 	# Find the specific python files that provide the needed python modules
-	touch /tmp/depfinder.$$/PYTHONNEEDEDMODULES
-	for dir in `cat /tmp/depfinder.$$/PYTHONDIRS`; do
+	touch "$DFTMP/PYTHONNEEDEDMODULES"
+	for dir in `cat "$DFTMP/PYTHONDIRS"`; do
 		if [ -d $dir ]; then
-			for i in `cat /tmp/depfinder.$$/PYTHONMODULES`; do
+			for i in `cat "$DFTMP/PYTHONMODULES"`; do
 				if [ -f $dir/$i.py ]; then
 					echo "$dir/$i.py" \
-					>> /tmp/depfinder.$$/PYTHONNEEDEDMODULES
-					sed -i "/^${i}$/d" /tmp/depfinder.$$/PYTHONMODULES
+					>> "$DFTMP/PYTHONNEEDEDMODULES"
+					sed -i "/^${i}$/d" "$DFTMP/PYTHONMODULES"
 				elif [ -f $dir/$i/__init__.py ]; then
 					echo "$dir/$i/__init__.py" \
-					>> /tmp/depfinder.$$/PYTHONNEEDEDMODULES
-					sed -i "/^${i}$/d" /tmp/depfinder.$$/PYTHONMODULES
+					>> "$DFTMP/PYTHONNEEDEDMODULES"
+					sed -i "/^${i}$/d" "$DFTMP/PYTHONMODULES"
 				else
 					# compiled modules may be named either module.so or
 					# module.<abi-tag>.so, e.g. module.cpython-39-x86_64-linux-gnu.so
 					SOFILE=`ls $dir/$i.so $dir/$i.*.so 2> /dev/null | head -n 1`
 					if [ -n "$SOFILE" ]; then
 						echo "$SOFILE" \
-						>> /tmp/depfinder.$$/PYTHONNEEDEDMODULES
-						sed -i "/^${i}$/d" /tmp/depfinder.$$/PYTHONMODULES
+						>> "$DFTMP/PYTHONNEEDEDMODULES"
+						sed -i "/^${i}$/d" "$DFTMP/PYTHONMODULES"
 					fi
 				fi
 			done
@@ -349,12 +355,12 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	# Display a warning for python modules that cannot be located in
 	# the system. These are not errors because the modules could be
 	# optional.
-	for i in `cat /tmp/depfinder.$$/PYTHONMODULES`; do
+	for i in `cat "$DFTMP/PYTHONMODULES"`; do
 		echo "WARNING: python module $i not found." >&2
 	done
 fi
 
-cd /tmp/depfinder.$$
+cd "$DFTMP"
 
 # Dump the dependencies to a file. ldd is run on many files at once, in
 # $JOBS parallel jobs. File names in FILES are relative to the package
@@ -368,9 +374,9 @@ split -d -a 4 -n l/$LDDJOBS FILES FILES
 for i in $( seq -f "%04.f" 0 $(($LDDJOBS-1)) ); do
 	# (LD_PRELOAD is unset, or ldd would list the preloaded libraries
 	# and their dependencies for every file)
-	( cd "${STARTDIR:-/tmp/depfinder.$$}" && \
+	( cd "$PKGROOT" && \
 		LANG=C env -u LD_PRELOAD xargs -r -d '\n' ldd \
-		< /tmp/depfinder.$$/FILES$i 2> /dev/null ) \
+		< "$DFTMP/FILES$i" 2> /dev/null ) \
 	| grep "=>" \
 	| sed "s/\(.*\) => \/\(.*\) \(.*\)/\2/" \
 	| sed "s/=> not found/NOT FOUND/" \
@@ -389,8 +395,8 @@ sort LIBSM | uniq | grep -v "linux-gate\.so" > LIBS
 # doinst.sh), so use the soname recorded in each library, and the file
 # name itself for libraries without one.
 touch INCLUDED
-find "${STARTDIR:-./}" -name "*.so*" | sed "s|.*/||" >> INCLUDED
-LANG=C find "${STARTDIR:-./}" -type f -name "*.so*" -exec readelf -d {} + 2> /dev/null | \
+find "$PKGROOT" -name "*.so*" | sed "s|.*/||" >> INCLUDED
+LANG=C find "$PKGROOT" -type f -name "*.so*" -exec readelf -d {} + 2> /dev/null | \
 sed -n "s/.*Library soname: \[\(.*\)\].*/\1/p" >> INCLUDED
 
 # Exclude the included libs from the search list. ldd reports each

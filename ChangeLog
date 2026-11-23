@@ -50,6 +50,10 @@ version 1.4.5 ()
     which their doinst.sh moves to the directory above. glibc and
     aaa_glibc-solibs do this since Slackware 15.0, so they were never
     listed as dependencies.
+  * Create the working directory with mktemp (it honours TMPDIR) instead
+    of using a predictable name in /tmp, and extract the package into a
+    subdirectory of it, so files in the package can't overwrite
+    depfinder's own files
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

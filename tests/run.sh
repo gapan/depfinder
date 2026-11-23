@@ -234,6 +234,14 @@ mkbin "$W/helpers/usr/lib/helpers/helper" "$SYS/$LIB" bar
 mkbin "$W/helpers/usr/games/game" "$SYS/$LIB" baz
 mkpkg "$W/helpers" "$P/helpers-1.0-x86_64-1.txz"
 
+# clash: has files at the top of the package with the names of
+# depfinder's own working files
+mkbin "$W/clash/usr/bin/clash" "$SYS/$LIB" bar
+for f in pkglist.log FILES LIBS DEPS INCLUDED; do
+	echo "nothing" > "$W/clash/$f"
+done
+mkpkg "$W/clash" "$P/clash-1.0-x86_64-1.txz"
+
 # incfoo: needs libinc
 mkbin "$W/incfoo/usr/bin/incfoo" "$SYS/$LIB" inc
 mkpkg "$W/incfoo" "$P/incfoo-1.0-x86_64-1.txz"
@@ -444,6 +452,17 @@ check "missing library: exit status 1" "1" "$RC"
 check "missing library: no dependency list" "" "$OUT"
 check "missing library: reported" "1" \
 	"$(echo "$ERR" | grep -c "libgone\.so\.1")"
+
+# The working directory
+rundf "$DB" "$SYS" "$P/clash-1.0-x86_64-1.txz"
+check "package files named like depfinder's working files" "bar,glibc" "$OUT"
+mkdir "$W/tmp"
+TMPDIR="$W/tmp" rundf "$DB" "$SYS" "$P/foo-1.0-x86_64-1.txz"
+check "TMPDIR is used and cleaned up" "bar,glibc:" "$OUT:$(ls "$W/tmp")"
+TMPDIR="$W/tmp" DEBUG=1 rundf "$DB" "$SYS" "$P/foo-1.0-x86_64-1.txz"
+check "DEBUG=1 keeps the working directory" "1" \
+	"$(ls "$W/tmp" | grep -c "^depfinder\.")"
+rm -rf "$W/tmp"
 
 # A library listed in an "incoming" directory in its package record
 rundf "$DB" "$SYS" "$P/incfoo-1.0-x86_64-1.txz"
