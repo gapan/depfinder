@@ -18,6 +18,8 @@ version 1.4.5 ()
   * Don't print an empty line with -s
   * With DEPFINDERNOEXIT=1, don't look up the missing libraries in the
     package database, which added bogus dependencies
+  * Don't drop python modules whose name contains the name of a builtin
+    module, e.g. "timesheet" (which contains "time")
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

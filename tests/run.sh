@@ -398,7 +398,7 @@ if command -v python3 >/dev/null; then
 	check "-p warns only about missing modules" \
 		"WARNING: python module missingmod not found." "$ERR"
 	check "-p: modules containing a builtin module name" \
-		"pyext,timesheet" "$OUT" xfail
+		"pyext,timesheet" "$OUT"
 	rundf "$DB" "$SYS" "$P/pyapp-1.0-x86_64-1.txz"
 	check "without -p python is ignored" "" "$OUT"
 else

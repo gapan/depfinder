@@ -307,7 +307,7 @@ if [ $PYTHONDEPS -eq 1 ]; then
 	python3 -c "import sys; print(sys.builtin_module_names)" | \
 	sed "s/'\|,\|(\|)//g" > /tmp/depfinder.$$/PYTHONBUILTIN
 	for i in `cat /tmp/depfinder.$$/PYTHONBUILTIN`; do
-		sed -i "/$i/d" /tmp/depfinder.$$/PYTHONMODULES
+		sed -i "/^$i$/d" /tmp/depfinder.$$/PYTHONMODULES
 	done
 
 	# Find the specific python files that provide the needed python modules
