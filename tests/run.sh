@@ -217,6 +217,11 @@ mkbin "$W/outside/opt/outside/bin/outside" "$SYS/$LIB" bar
 mkbin "$W/outside/usr/bin/plain" "$SYS/$LIB"
 mkpkg "$W/outside" "$P/outside-1.0-x86_64-1.txz"
 
+# helpers: programs in usr/lib/<name> (also on 64-bit) and usr/games
+mkbin "$W/helpers/usr/lib/helpers/helper" "$SYS/$LIB" bar
+mkbin "$W/helpers/usr/games/game" "$SYS/$LIB" baz
+mkpkg "$W/helpers" "$P/helpers-1.0-x86_64-1.txz"
+
 # broken: needs a library that isn't installed anywhere
 mkbin "$W/broken/usr/bin/broken" "$W/gone:$SYS/$LIB" gone bar
 mkpkg "$W/broken" "$P/broken-1.0-x86_64-1.txz"
@@ -409,6 +414,9 @@ rundf "$DB" "$SYS" "$P/outside-1.0-x86_64-1.txz"
 check "ELF files outside standard dirs are ignored" "glibc" "$OUT"
 rundf "$DB" "$SYS" -a "$P/outside-1.0-x86_64-1.txz"
 check "-a checks all files" "bar,glibc" "$OUT"
+rundf "$DB" "$SYS" "$P/helpers-1.0-x86_64-1.txz"
+check "programs in usr/lib/<name> and usr/games" \
+	"bar,baz|baz-solibs,glibc" "$OUT"
 
 # Missing libraries
 rundf "$DB" "$SYS" "$P/broken-1.0-x86_64-1.txz"

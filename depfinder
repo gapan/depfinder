@@ -264,8 +264,12 @@ fi
 [ -z "$STARTDIR" ] || cd "$STARTDIR"
 # (file is run on many files at once; -0 puts a NUL after each name)
 if [ $CHECKALLFILES -eq 0 ]; then
-	# usually only in standard locations
-	SEARCHDIRS="sbin usr/sbin usr/bin bin usr/lib${LIBDIRSUFFIX} lib${LIBDIRSUFFIX} usr/libexec"
+	# usually only in standard locations. usr/lib and lib are searched
+	# on 64-bit too, since many packages put programs in usr/lib/<name>.
+	SEARCHDIRS="sbin usr/sbin usr/bin bin usr/libexec usr/games usr/lib lib"
+	if [ -n "$LIBDIRSUFFIX" ]; then
+		SEARCHDIRS="$SEARCHDIRS usr/lib${LIBDIRSUFFIX} lib${LIBDIRSUFFIX}"
+	fi
 else
 	# or anywhere in the package if -a is specified
 	SEARCHDIRS="./"

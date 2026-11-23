@@ -41,6 +41,8 @@ version 1.4.5 ()
     the current directory (with -f) and the names of files in the package
   * Ignore LD_PRELOAD when running ldd, which made the preloaded
     libraries and their dependencies show up as dependencies
+  * Also look for binaries in usr/lib and lib on 64-bit systems (many
+    packages put programs in usr/lib/<name>), and in usr/games
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list
