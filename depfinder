@@ -139,14 +139,18 @@ fi
 # check which switches are used
 while getopts  ":hvfsapj:" flag
 do
-	# if switch is unknown or if asking for help
-	if [ $flag = "?" ] || [ $flag = "h" ]; then
+	# if switch is unknown show help and fail
+	if [ $flag = "?" ]; then
 		help_msg
 		err
 	fi
+	if [ $flag = "h" ]; then
+		help_msg
+		exit 0
+	fi
 	if [ $flag = "v" ]; then
 		ver_msg
-		err
+		exit 0
 	fi
 	if [ $flag = "f" ]; then
 		CREATEDEPFILE=1

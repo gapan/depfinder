@@ -422,8 +422,13 @@ check "missing package database: reported" "1" \
 rundf "$DB" "$SYS" -3 -p "$P/foo-1.0-x86_64-1.txz"
 check "-3 is not an option any more" "1" "$RC"
 rundf "$DB" "$SYS" -v
-check "-v exit status" "0" "$RC" xfail
+check "-v exit status" "0" "$RC"
 check "-v shows the version" "1" "$(echo "$OUT" | grep -c "depfinder version")"
+rundf "$DB" "$SYS" -h
+check "-h exit status" "0" "$RC"
+check "-h shows the usage" "1" "$(echo "$OUT" | grep -c "^usage:")"
+rundf "$DB" "$SYS" -x "$P/foo-1.0-x86_64-1.txz"
+check "unknown option: exit status 1" "1" "$RC"
 
 echo
 echo "$PASS passed, $FAIL failed, $XFAIL expected failures," \
