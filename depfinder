@@ -53,7 +53,7 @@ ver_msg()
 {
 echo \
 "depfinder version $VERSION (c) 2009-2026 George Vlahavas
-Run "depfinder -h" for help information"
+Run \"depfinder -h\" for help information"
 }
 
 # Routine to find out which packages each library (or python module) in
