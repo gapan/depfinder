@@ -381,24 +381,27 @@ def inside(path, root):
 
 
 def package_module_names(root):
-	"""The names of all modules anywhere in the package: python files,
-	packages (directories with __init__.py) and compiled modules. Some
-	applications put their modules in their own directory and add it to
-	sys.path, so modules there count as included in the package too."""
+	"""The names of all top-level modules anywhere in the package: python
+	files, packages (directories with __init__.py) and compiled modules.
+	Some applications put their modules in their own directory and add
+	it to sys.path, so modules there count as included in the package
+	too. The modules inside a package don't count (e.g. foo/yaml.py
+	isn't the yaml module)."""
 	names = set()
 	for dirpath, dirnames, filenames in os.walk(root):
+		if "__init__.py" in filenames:
+			if not os.path.isfile(os.path.join(os.path.dirname(dirpath),
+							   "__init__.py")):
+				names.add(os.path.basename(dirpath))
+			continue
 		for f in filenames:
 			if f.endswith(".py"):
 				names.add(f[:-3])
-			elif f == "__init__.py":
-				pass
 			else:
 				for suffix in EXTENSION_SUFFIXES:
 					if f.endswith(suffix):
 						names.add(f[:-len(suffix)])
 						break
-		if "__init__.py" in filenames:
-			names.add(os.path.basename(dirpath))
 	return names
 
 
@@ -677,8 +680,10 @@ def main():
 	pkgpaths = [p for p in pkgpaths if os.path.isdir(p)]
 
 	# Collect the imports of each file, with the directory of the file,
-	# where python looks first for the modules a script imports
-	uses = []		# (dotted name, optional, fallback for, dir)
+	# where python looks first for the modules a script imports (but
+	# not for the modules inside a package, e.g. foo/yaml.py importing
+	# yaml)
+	uses = []		# (dotted name, optional, fallback for, dirs)
 	other_versions = {}	# python version -> number of files skipped
 	for f in files:
 		path = os.path.join(root, f)
@@ -705,8 +710,9 @@ def main():
 		if found is None:
 			warn("could not parse %s as python 3." % os.path.relpath(path, root))
 			continue
-		uses += [(name, opt, conds, os.path.dirname(path))
-			 for name, opt, conds in found]
+		d = os.path.dirname(path)
+		dirs = () if os.path.isfile(os.path.join(d, "__init__.py")) else (d,)
+		uses += [(name, opt, conds, dirs) for name, opt, conds in found]
 
 	for version in sorted(other_versions):
 		count = other_versions[version]
@@ -762,12 +768,12 @@ def main():
 	# Fallback imports are only needed if one of the imports they are a
 	# fallback for can't be found (in each try block)
 	imports = {}		# dotted name -> (optional?, set of script dirs)
-	for name, opt, conds, d in uses:
-		if not all(any(lookup(t, (d,))[0] in (None, "other") for t in tried)
+	for name, opt, conds, dirs in uses:
+		if not all(any(lookup(t, dirs)[0] in (None, "other") for t in tried)
 			   for tried in conds):
 			continue
 		old = imports.get(name, (True, set()))
-		imports[name] = (old[0] and opt, old[1] | {d})
+		imports[name] = (old[0] and opt, old[1] | set(dirs))
 
 	for name in sorted(imports):
 		optional, dirs = imports[name]

@@ -100,6 +100,9 @@ version 2.0 ()
   * With -p, ignore the imports for other platforms (e.g. "if
     sys.platform == 'win32':") and the modules of python's standard
     library on other platforms (e.g. msvcrt), which gave warnings
+  * With -p, a module inside a package of the package (e.g. foo/yaml.py)
+    no longer hides the installed module with the same name (yaml),
+    which was then missing from the dependencies
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a

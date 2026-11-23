@@ -481,6 +481,15 @@ except ImportError:
 PYEOF
 mkpkg "$W/pyplat" "$P/pyplat-1.0-x86_64-1.txz"
 
+# pyshadow: modules inside a package named like installed modules,
+# which don't hide them
+mkdir -p "$W/pyshadow/$PYSITE/shadow"
+: > "$W/pyshadow/$PYSITE/shadow/__init__.py"
+echo "import timesheet" > "$W/pyshadow/$PYSITE/shadow/timesheet.py"
+echo "import extmod" > "$W/pyshadow/$PYSITE/shadow/api.py"
+: > "$W/pyshadow/$PYSITE/shadow/extmod.py"
+mkpkg "$W/pyshadow" "$P/pyshadow-1.0-x86_64-1.txz"
+
 # pygen: generated code, nested deeper than python's recursion limit
 mkdir -p "$W/pygen/usr/share/pygen"
 {
@@ -757,6 +766,10 @@ if command -v python3 >/dev/null; then
 	rundf "$DB" "$SYS" -p "$P/pyplat-1.0-x86_64-1.txz"
 	check "-p: other platforms" "pyext,timesheet" "$OUT"
 	check "-p: other platforms: no warnings" "" "$ERR"
+
+	rundf "$DB" "$SYS" -p "$P/pyshadow-1.0-x86_64-1.txz"
+	check "-p: modules inside a package don't hide installed ones" \
+		"pyext,timesheet" "$OUT"
 
 	rundf "$DB" "$SYS" -p "$P/pygen-1.0-x86_64-1.txz"
 	check "-p: deeply nested code" "pyext" "$OUT"
