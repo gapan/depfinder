@@ -27,6 +27,8 @@ version 1.4.5 ()
     instead of once per library (e.g. graphviz: 9.8s -> 0.9s)
   * Match libraries to the files of installed packages exactly, instead
     of any file whose path contains the library's path
+  * Faster: file and readelf are run on many files at once, and ldd too,
+    split in -j parallel jobs (e.g. graphviz: 0.9s -> 0.45s)
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

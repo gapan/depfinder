@@ -70,10 +70,8 @@ depfind()
 # in the package by default.
 findpython()
 {
-	LANG=C find ./ \
-	-type f -exec bash -c \
-	"file -b \"{}\" | grep -i \"python script\" 1>/dev/null && echo \"{}\"" \; \
-	2> /dev/null
+	LANG=C find ./ -type f -exec file -N -0 {} + 2> /dev/null | \
+	awk -F '\0' 'tolower($2) ~ /python script/ { print $1 }'
 	find ./ \
 	-type f -name "*.py"
 }
@@ -264,19 +262,16 @@ fi
 
 # Find all binaries and libs in the package
 [ -z $STARTDIR ] || cd $STARTDIR
-touch /tmp/depfinder.$$/FILES
+# (file is run on many files at once; -0 puts a NUL after each name)
 if [ $CHECKALLFILES -eq 0 ]; then
 	# usually only in standard locations
-	find \
-	{sbin,usr/sbin,usr/bin,bin,usr/lib${LIBDIRSUFFIX},lib${LIBDIRSUFFIX},usr/libexec} \
-	-type f -exec bash -c \
-	"file {} | grep -q ELF && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
+	SEARCHDIRS="sbin usr/sbin usr/bin bin usr/lib${LIBDIRSUFFIX} lib${LIBDIRSUFFIX} usr/libexec"
 else
 	# or anywhere in the package if -a is specified
-	find ./ \
-	-type f -exec bash -c \
-	"file {} | grep -q ELF && echo "{}" >> /tmp/depfinder.$$/FILES" \; 2> /dev/null
+	SEARCHDIRS="./"
 fi
+LANG=C find $SEARCHDIRS -type f -exec file -N -0 {} + 2> /dev/null | \
+awk -F '\0' '$2 ~ /^: ELF / { print $1 }' > /tmp/depfinder.$$/FILES
 
 # Look for python dependencies
 if [ $PYTHONDEPS -eq 1 ]; then
@@ -353,15 +348,21 @@ fi
 
 cd /tmp/depfinder.$$
 
-# Dump the dependencies to a file
-touch LIBSM
-for i in `cat FILES`; do
-	LANG=C ldd ${STARTDIR}${i} 2> /dev/null \
+# Dump the dependencies to a file. ldd is run on many files at once, in
+# $JOBS parallel jobs. File names in FILES are relative to the package
+# root.
+split -d -n l/$JOBS FILES FILES
+for i in $( seq -f "%02.f" 0 $(($JOBS-1)) ); do
+	( cd ${STARTDIR:-/tmp/depfinder.$$} && \
+		LANG=C xargs -r -d '\n' ldd < /tmp/depfinder.$$/FILES$i 2> /dev/null ) \
 	| grep "=>" \
 	| sed "s/\(.*\) => \/\(.*\) \(.*\)/\2/" \
 	| sed "s/=> not found/NOT FOUND/" \
-        | grep -v "=>" >> LIBSM
+	| grep -v "=>" > LIBSM$i &
 done
+wait
+touch LIBSM
+cat LIBSM[0-9]* >> LIBSM 2> /dev/null
 
 # linux-gate.so.1 is always a dead-end so we don't look for that at all
 sort LIBSM | uniq | grep -v "linux-gate\.so" > LIBS
@@ -373,10 +374,8 @@ sort LIBSM | uniq | grep -v "linux-gate\.so" > LIBS
 # name itself for libraries without one.
 touch INCLUDED
 find $STARTDIR -name "*.so*" | sed "s|.*/||" >> INCLUDED
-for i in `find $STARTDIR -type f -name "*.so*"`; do
-	LANG=C readelf -d $i 2> /dev/null | \
-	sed -n "s/.*Library soname: \[\(.*\)\].*/\1/p" >> INCLUDED
-done
+LANG=C find $STARTDIR -type f -name "*.so*" -exec readelf -d {} + 2> /dev/null | \
+sed -n "s/.*Library soname: \[\(.*\)\].*/\1/p" >> INCLUDED
 
 # Exclude the included libs from the search list. ldd reports each
 # library as the path where it was found, ending with its soname, or as
