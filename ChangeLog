@@ -23,6 +23,10 @@ version 1.4.5 ()
   * Exit with an error if the package can't be extracted, instead of
     reporting no dependencies
   * Exit with status 0 after -h and -v
+  * Much faster: the package database is read once for all libraries,
+    instead of once per library (e.g. graphviz: 9.8s -> 0.9s)
+  * Match libraries to the files of installed packages exactly, instead
+    of any file whose path contains the library's path
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

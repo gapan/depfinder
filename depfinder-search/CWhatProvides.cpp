@@ -2,46 +2,87 @@
 
 #include <fstream>
 #include <algorithm>
-#include "defs.h"
+#include <climits>
+#include <cstdlib>
+#include <sys/stat.h>
 #include "CWhatProvides.h"
 
-CWhatProvides::CWhatProvides(std::string& file, std::string& shellpid, const std::string& pkgdb)
+// The path of a file as it appears in a package's file list: without the
+// leading "/", and if the file is a symlink, the file it points to, since
+// symlinks usually aren't in the file list (makepkg puts them in
+// doinst.sh).
+static std::string record_path(const std::string& file)
 {
-	// Mangle the request to be more easily seachable.
-	if ( file.find(".new") == file.length() - 1 && (int)file.find(".new") != -1 )
-		file.erase(file.length() - 4);
+	std::string	path = file[0] == '/' ? file : "/" + file;
+	struct stat	st;
+	char		resolved[PATH_MAX];
 
-	// Go through all installed packages.
-	std::ifstream	_logfile;
-	std::string	_inputstr;
-	_logfile.open(TMPFILE("/pkglist.log", shellpid).c_str(), std::ios_base::in);
-	while ( !_logfile.eof() ) {
-		getline(_logfile, _inputstr);
-		if ( _inputstr.length() > 0 ) search_package(pkgdb + "/" + _inputstr, file);
-	}
-	_logfile.close();
+	if ( lstat(path.c_str(), &st) == 0 && S_ISLNK(st.st_mode) &&
+	     realpath(path.c_str(), resolved) != NULL )
+		path = resolved;
+	size_t		start = path.find_first_not_of('/');
+
+	return start == std::string::npos ? "" : path.substr(start);
 }
 
-void CWhatProvides::search_package(const std::string& package, const std::string& file)
-{	// Search a specific package for the requested file.
-	std::ifstream	_ifpkg;
+CWhatProvides::CWhatProvides(const std::string& pkgdb,
+	const std::string& pkglist, const std::string& filelist)
+{
+	std::ifstream	_in;
+	std::string	_line;
+
+	_in.open(filelist.c_str(), std::ios_base::in);
+	while ( getline(_in, _line) ) {
+		if ( _line.empty() )
+			continue;
+		_index[record_path(_line)].push_back(_files.size());
+		_files.push_back(_line);
+	}
+	_in.close();
+	_providers.resize(_files.size());
+	if ( _files.empty() )
+		return;
+
+	// Go through all installed packages, once.
+	_in.open(pkglist.c_str(), std::ios_base::in);
+	while ( getline(_in, _line) ) {
+		if ( !_line.empty() )
+			search_package(pkgdb, _line);
+	}
+	_in.close();
+}
+
+void CWhatProvides::search_package(const std::string& pkgdb, const std::string& package)
+{	// Look up every line of the package's file list.
+	std::ifstream	_ifpkg((pkgdb + "/" + package).c_str(), std::ios_base::in);
 	std::string	_instr;
 	bool		_file_list = false;
-	_ifpkg.open(package.c_str(), std::ios_base::in);
 
-	while ( _ifpkg.is_open() && !_ifpkg.eof() ) {
-		getline(_ifpkg, _instr);
-		std::string	_original_fname = _instr;
-		
+	while ( getline(_ifpkg, _instr) ) {
 		if ( _file_list ) {
-			_instr = "/" + _instr;
-			if ( (int)_instr.find(file) != -1 )
-				std::cout << package.substr((int)package.rfind('/') + 1) << "\n";
-		} else {
-			std::transform(_instr.begin(), _instr.end(), _instr.begin(), tolower);
-			if ( !_instr.find("file list:") ) {
-				_file_list = true;
+			auto _found = _index.find(_instr);
+			if ( _found == _index.end() )
+				continue;
+			for ( size_t i : _found->second ) {
+				std::vector<std::string>& p = _providers[i];
+				if ( p.empty() || p.back() != package )
+					p.push_back(package);
 			}
+		} else {
+			std::transform(_instr.begin(), _instr.end(), _instr.begin(), ::tolower);
+			if ( _instr.compare(0, 10, "file list:") == 0 )
+				_file_list = true;
 		}
+	}
+}
+
+void CWhatProvides::print(std::ostream& out) const
+{
+	for ( const std::vector<std::string>& p : _providers ) {
+		if ( p.empty() )
+			continue;
+		for ( size_t i = 0; i < p.size(); i++ )
+			out << (i ? "|" : "") << p[i];
+		out << "\n";
 	}
 }

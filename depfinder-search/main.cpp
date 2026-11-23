@@ -5,29 +5,20 @@
 // See COPYING for license information.
 
 #include <iostream>
-#include <getopt.h>
-#include <vector>
-#include "defs.h"
 #include "CWhatProvides.h"
-
-#define SET_ACTION(action) _action = action
 
 int main(int argc, char* argv[])
 {
-	std::vector<std::string>	_files;
-	std::string			_arg_whatprovides;
-	std::string			_shell_pid;
-	std::string			_pkgdb = PKGDB;
-
-	if ( argc < 3 ) {
-		std::cerr << "usage: depfinder-search <file> <shell-pid> [package-db-dir]\n";
+	if ( argc != 4 ) {
+		std::cerr << "usage: depfinder-search <package-db-dir> <package-list> <file-list>\n"
+			"Prints, for each file in <file-list> (one per line) that an installed\n"
+			"package provides, a line with the providing packages separated by \"|\".\n"
+			"<package-list> names the package records in <package-db-dir> to read.\n";
 		return 1;
 	}
-	_arg_whatprovides = argv[1];
-	_shell_pid = argv[2];
-	if ( argc > 3 )
-		_pkgdb = argv[3];
 
-	CWhatProvides	_ori(_arg_whatprovides, _shell_pid, _pkgdb);
+	std::ios_base::sync_with_stdio(false);
+	CWhatProvides	_ori(argv[1], argv[2], argv[3]);
+	_ori.print(std::cout);
 	return 0;
 }

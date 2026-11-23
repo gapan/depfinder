@@ -173,6 +173,10 @@ mkrecord "$DB" glibc-2.33-x86_64-1 $GLIBC_FILES
 mkrecord "$DB" bar-2.0-x86_64-1 "$(rel $LIB/$BARLIB)" usr/doc/bar-2.0/README
 mkrecord "$DB" baz-1.0-x86_64-1 "$(rel $LIB/$BAZLIB)"
 mkrecord "$DB" baz-solibs-1.0-x86_64-1 "$(rel $LIB/$BAZLIB)"
+# Have files whose paths contain the path of libbar, which must not
+# make them providers of it
+mkrecord "$DB" barbackup-1.0-x86_64-1 "$(rel $LIB/$BARLIB).bak"
+mkrecord "$DB" barcopy-1.0-x86_64-1 "opt/copy/$(rel $LIB/$BARLIB)"
 # Has file names containing "NOT" and "FOUND"
 mkrecord "$DB" decoy-1.0-x86_64-1 usr/doc/decoy/NOTES usr/doc/decoy/FOUNDERS
 # python modules installed in a python path directory

@@ -11,9 +11,11 @@ else
 	CXXFLAGS = -O3 -fPIC -fomit-frame-pointer
 endif
 
-depfinder-search:
-	g++ -c $(CCEXTRAS) $(CXXFLAGS) CWhatProvides.cpp -o CWhatProvides.o
+depfinder-search: main.cpp CWhatProvides.o CWhatProvides.h
 	g++ $(CCEXTRAS) $(CXXFLAGS) -o depfinder-search main.cpp CWhatProvides.o
+
+CWhatProvides.o: CWhatProvides.cpp CWhatProvides.h
+	g++ -c $(CCEXTRAS) $(CXXFLAGS) CWhatProvides.cpp -o CWhatProvides.o
 
 clean:
 	rm -f CWhatProvides.o

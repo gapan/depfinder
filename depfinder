@@ -55,23 +55,13 @@ echo \
 Run "depfinder -h" for help information"
 }
 
-# Routine to find out where each dependency comes from and output to
-# a file. The C++ code "borrowed" from zpm makes all the difference
-# compared to requiredbuilder here.
+# Routine to find out which packages each library (or python module) in
+# a part of the list comes from. depfinder-search reads the package
+# database once for the whole list and prints a line per library, with
+# the packages providing it separated by "|" ("either of").
 depfind()
 {
-	touch DEPS$1
-	for i in `cat LIBS$1`; do
-		[ -h /$i ] && i=`readlink -e /$i`
-		$DEPFINDERSEARCH  $i $$ "$PKGDB" | uniq > TMP$1
-		if [ `cat TMP$1 | wc -l` -gt 1 ];then
-			cat TMP$1 | tr '\n' ' ' | \
-			sed "s/ /|/g" | sed "s/|$//" >> DEPS$1
-			echo "" >> DEPS$1
-		else
-			cat TMP$1 >> DEPS$1
-		fi
-	done
+	$DEPFINDERSEARCH "$PKGDB" pkglist.log LIBS$1 > DEPS$1
 }
 
 # Function that finds python files in the current directory, where the
