@@ -40,9 +40,9 @@ OPTIONS:
     -a,          Checks all files in the directory tree instead of
                  following the FHS
     -p,          Attempts to detect python dependencies.
-    -j [jobs],   The number of parallel depfinder jobs to run. Faster
-                 if it matches the number of your CPUs/cores
-                 (default: 1)
+    -j [jobs],   The number of parallel depfinder jobs to run. Can help
+                 with large packages; best set to the number of your
+                 CPUs/cores (default: 1)
     -v,          Show version information
     -h,          This help message"
 }
