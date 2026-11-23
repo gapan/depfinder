@@ -367,6 +367,21 @@ from extmod import TYPE_CHECKING
 if TYPE_CHECKING:
 	import typecheckonly
 x = "import notamodule3"
+import sys
+if sys.version_info[0] == 2:
+	import py2only1
+elif sys.version_info < (3, 0):
+	import py2only2
+else:
+	import extmod
+if sys.hexversion < 0x03000000 or not PY3:
+	import py2only3
+if six.PY2:
+	import py2only4
+if sys.version_info[:2] >= (3, 0) and PY3:
+	pass
+else:
+	import py2only5
 PYEOF
 # a module next to the script, which imports optionally a module that
 # main.py needs, so it is needed anyway

@@ -85,6 +85,9 @@ version 2.0 ()
     imports (pytest, nose, mock...) made test tools dependencies
   * With -p, read the name of python metadata directories without a
     version (foo.egg-info) correctly
+  * With -p, ignore the imports in branches for other python versions
+    (e.g. "if sys.version_info[0] == 2:", "if PY2:"), which gave
+    warnings about python 2 modules like StringIO
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

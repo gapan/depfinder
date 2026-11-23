@@ -27,6 +27,7 @@
 # importlib's PathFinder), which doesn't import them either.
 
 import ast
+import operator
 import os
 import platform
 import re
@@ -110,15 +111,96 @@ class ImportFinder(ast.NodeVisitor):
 			self.visit(part)
 
 	def visit_If(self, node):
-		# "if TYPE_CHECKING:" imports are only for type checkers
-		test = node.test
-		name = test.id if isinstance(test, ast.Name) else \
-			test.attr if isinstance(test, ast.Attribute) else None
-		if name == "TYPE_CHECKING":
+		# Only the branch that runs, if that can be told: "if
+		# TYPE_CHECKING:" imports are only for type checkers, and
+		# imports for other python versions aren't needed.
+		self.visit(node.test)
+		known = static_condition(node.test)
+		if known is not False:
+			for stmt in node.body:
+				self.visit(stmt)
+		if known is not True:
 			for stmt in node.orelse:
 				self.visit(stmt)
-			return
-		self.generic_visit(node)
+
+
+def attr_name(node):
+	"""The name of a Name or Attribute node (e.g. "PY2" for six.PY2)."""
+	return node.id if isinstance(node, ast.Name) else \
+		node.attr if isinstance(node, ast.Attribute) else None
+
+
+def is_sys(node, name):
+	"""Whether node is sys.<name>."""
+	return isinstance(node, ast.Attribute) and node.attr == name and \
+	       isinstance(node.value, ast.Name) and node.value.id == "sys"
+
+
+def static_value(node):
+	"""The value of an expression that is known without running the
+	code: constants, tuples of constants, and the python version
+	(sys.version_info, sys.version_info[0], sys.version_info[:2],
+	sys.version_info.major and .minor, sys.hexversion), the one python
+	3 runs with. Raises ValueError for anything else."""
+	if isinstance(node, ast.Constant) and \
+	   isinstance(node.value, (int, str)):
+		return node.value
+	if isinstance(node, ast.Tuple):
+		return tuple(static_value(e) for e in node.elts)
+	if is_sys(node, "version_info"):
+		return tuple(sys.version_info)
+	if is_sys(node, "hexversion"):
+		return sys.hexversion
+	if isinstance(node, ast.Attribute) and is_sys(node.value, "version_info") \
+	   and node.attr in ("major", "minor", "micro"):
+		return getattr(sys.version_info, node.attr)
+	if isinstance(node, ast.Subscript) and is_sys(node.value, "version_info"):
+		index = node.slice
+		if isinstance(index, ast.Index):	# python < 3.9
+			index = index.value
+		if isinstance(index, ast.Slice):
+			if index.step is not None:
+				raise ValueError
+			lower = static_value(index.lower) if index.lower else None
+			upper = static_value(index.upper) if index.upper else None
+			return tuple(sys.version_info)[lower:upper]
+		return tuple(sys.version_info)[static_value(index)]
+	raise ValueError
+
+
+COMPARISONS = {ast.Eq: operator.eq, ast.NotEq: operator.ne,
+	       ast.Lt: operator.lt, ast.LtE: operator.le,
+	       ast.Gt: operator.gt, ast.GtE: operator.ge}
+
+
+def static_condition(node):
+	"""True or False if a condition is known without running the code,
+	or None. Known are TYPE_CHECKING (False), PY2 and PY3 (as in six and
+	many compatibility modules), comparisons of the python version, and
+	not/and/or of those."""
+	name = attr_name(node)
+	if name == "TYPE_CHECKING" or name == "PY2":
+		return False
+	if name == "PY3":
+		return True
+	if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
+		value = static_condition(node.operand)
+		return None if value is None else not value
+	if isinstance(node, ast.BoolOp):
+		values = [static_condition(v) for v in node.values]
+		if isinstance(node.op, ast.And):
+			return False if False in values else \
+				True if all(v is True for v in values) else None
+		return True if True in values else \
+			False if all(v is False for v in values) else None
+	if isinstance(node, ast.Compare) and len(node.ops) == 1 and \
+	   type(node.ops[0]) in COMPARISONS:
+		try:
+			return COMPARISONS[type(node.ops[0])](
+				static_value(node.left), static_value(node.comparators[0]))
+		except (ValueError, TypeError, IndexError):
+			return None
+	return None
 
 
 def find_imports(path):
