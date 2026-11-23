@@ -690,6 +690,27 @@ if command -v python3 >/dev/null; then
 	check "-p: egg-info metadata" "python-plainegg" "$OUT"
 	check "-p: egg-info metadata: no warnings" "" "$ERR"
 
+	# Files that can't be read (a packaging directory owned by someone
+	# else; root can read anything)
+	if [ "$(id -u)" -ne 0 ]; then
+		mkdir -p "$W/package-unread/usr/share/unread" \
+			"$W/package-unread/$PYSITE/unread-1.0.dist-info"
+		echo "import extmod" > "$W/package-unread/usr/share/unread/ok.py"
+		echo "import timesheet" > "$W/package-unread/usr/share/unread/secret.py"
+		echo "Requires-Dist: missingdist" \
+			> "$W/package-unread/$PYSITE/unread-1.0.dist-info/METADATA"
+		chmod 000 "$W/package-unread/usr/share/unread/secret.py" \
+			"$W/package-unread/$PYSITE/unread-1.0.dist-info/METADATA"
+		rundf "$DB" "$SYS" -p "$W/package-unread"
+		check "-p: unreadable files are skipped" "pyext" "$OUT"
+		check "-p: unreadable files are reported" "$(printf '%s\n' \
+			"WARNING: could not read usr/share/unread/secret.py." \
+			"WARNING: could not read $PYSITE/unread-1.0.dist-info/METADATA.")" \
+			"$ERR"
+	else
+		skip "-p: unreadable files (running as root)"
+	fi
+
 	# Modules installed in the user's home are not used
 	mkdir -p "$W/home"
 	USERSITE=$(HOME="$W/home" python3 -c \

@@ -205,7 +205,7 @@ def static_condition(node):
 
 def find_imports(path):
 	"""Returns the (required, optional) imports of a python file, or None
-	if it isn't valid python 3."""
+	if it isn't valid python 3. Raises OSError if it can't be read."""
 	try:
 		with open(path, "rb") as f:
 			tree = ast.parse(f.read(), filename=path)
@@ -457,6 +457,17 @@ def requirement(line, extra_marker, env):
 	return m.group(1)
 
 
+def read_lines(path, root):
+	"""The lines of a text file in the package, or none, with a warning,
+	if it can't be read."""
+	try:
+		with open(path, "rb") as f:
+			return f.read().decode("utf-8", "replace").splitlines()
+	except OSError:
+		warn("could not read %s." % os.path.relpath(path, root))
+		return []
+
+
 def declared_requirements(root):
 	"""The distributions that the package metadata requires, as
 	{normalized name: (name, package distribution)}, and the normalized
@@ -477,28 +488,26 @@ def declared_requirements(root):
 		if base.endswith(".dist-info") and "METADATA" in filenames:
 			dist = dist_name(base)
 			lines = []
-			with open(os.path.join(dirpath, "METADATA"), "rb") as f:
-				for line in f.read().decode("utf-8", "replace").splitlines():
-					if not line.strip():
-						break
-					if line.lower().startswith("requires-dist:"):
-						lines.append((line.split(":", 1)[1], None))
+			for line in read_lines(os.path.join(dirpath, "METADATA"), root):
+				if not line.strip():
+					break
+				if line.lower().startswith("requires-dist:"):
+					lines.append((line.split(":", 1)[1], None))
 		elif base.endswith(".egg-info"):
 			dist = dist_name(base)
 			lines = []
 			if "requires.txt" in filenames:
 				section = None
-				with open(os.path.join(dirpath, "requires.txt"), "rb") as f:
-					for line in f.read().decode("utf-8", "replace").splitlines():
-						if line.strip().startswith("["):
-							# [extra], [extra:marker] or [:marker]
-							section = line.strip()[1:-1]
-							continue
-						if section is None:
-							lines.append((line, None))
-						elif section.startswith(":"):
-							lines.append((line, section[1:]))
-						# extras are optional
+				for line in read_lines(os.path.join(dirpath, "requires.txt"), root):
+					if line.strip().startswith("["):
+						# [extra], [extra:marker] or [:marker]
+						section = line.strip()[1:-1]
+						continue
+					if section is None:
+						lines.append((line, None))
+					elif section.startswith(":"):
+						lines.append((line, section[1:]))
+					# extras are optional
 		else:
 			continue
 		own.add(normalize(dist))
@@ -576,7 +585,11 @@ def main():
 		if other:
 			other_versions[other] = other_versions.get(other, 0) + 1
 			continue
-		found = find_imports(path)
+		try:
+			found = find_imports(path)
+		except OSError:
+			warn("could not read %s." % os.path.relpath(path, root))
+			continue
 		if found is None:
 			warn("could not parse %s as python 3." % os.path.relpath(path, root))
 			continue
