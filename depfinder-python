@@ -214,6 +214,16 @@ def normalize(name):
 	return re.sub(r"[-_.]+", "-", name).lower()
 
 
+def dist_name(entry):
+	"""The distribution name in the name of a metadata directory or
+	file: name-version.dist-info, name-version-py3.9.egg-info, or
+	name.egg-info without a version."""
+	for ext in (".dist-info", ".egg-info"):
+		if entry.endswith(ext):
+			entry = entry[:-len(ext)]
+	return entry.split("-", 1)[0]
+
+
 def marker_env():
 	impl = sys.implementation
 	iv = impl.version
@@ -372,10 +382,10 @@ def declared_requirements(root):
 		if m and m.group(1) != pyver and \
 		   base.endswith((".dist-info", ".egg-info")):
 			warn("not checking the requirements of %s, which is for python %s."
-			     % (base.split("-", 1)[0], m.group(1)))
+			     % (dist_name(base), m.group(1)))
 			continue
 		if base.endswith(".dist-info") and "METADATA" in filenames:
-			dist = base.split("-", 1)[0]
+			dist = dist_name(base)
 			lines = []
 			with open(os.path.join(dirpath, "METADATA"), "rb") as f:
 				for line in f.read().decode("utf-8", "replace").splitlines():
@@ -384,7 +394,7 @@ def declared_requirements(root):
 					if line.lower().startswith("requires-dist:"):
 						lines.append((line.split(":", 1)[1], None))
 		elif base.endswith(".egg-info"):
-			dist = base.split("-", 1)[0]
+			dist = dist_name(base)
 			lines = []
 			if "requires.txt" in filenames:
 				section = None
@@ -423,9 +433,7 @@ def find_distribution(name, paths):
 					  (".egg-info", "PKG-INFO")):
 				if not entry.endswith(ext):
 					continue
-				# (name-version.dist-info, name-version-py3.9.egg-info)
-				stem = entry[:-len(ext)].split("-", 1)[0]
-				if normalize(stem) == name:
+				if normalize(dist_name(entry)) == name:
 					full = os.path.join(path, entry)
 					if os.path.isdir(full):
 						full = os.path.join(full, meta)

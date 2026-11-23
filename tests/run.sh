@@ -221,6 +221,10 @@ mkrecord "$DB" nstwo-1.0-x86_64-1 "$(rel py/nspkg/)" "$(rel py/nspkg/two.py)"
 mkdir -p "$SYS/py/ext_dist-1.0.dist-info" "$SYS/py/extdist"
 echo "Name: ext-dist" > "$SYS/py/ext_dist-1.0.dist-info/METADATA"
 : > "$SYS/py/extdist/__init__.py"
+# ... and one with egg-info metadata, without a version in its name
+mkdir -p "$SYS/py/plain_egg.egg-info"
+echo "Name: plain-egg" > "$SYS/py/plain_egg.egg-info/PKG-INFO"
+mkrecord "$DB" python-plainegg-1.0-x86_64-1 "$(rel py/plain_egg.egg-info/PKG-INFO)"
 mkrecord "$DB" python-extdist-1.0-x86_64-1 \
 	"$(rel py/ext_dist-1.0.dist-info/METADATA)" "$(rel py/extdist/__init__.py)"
 
@@ -388,6 +392,14 @@ Requires-Dist: pyapp2
 Requires-Dist: in-the-description
 PYEOF
 mkpkg "$W/pyapp2" "$P/pyapp2-1.0-x86_64-1.txz"
+
+# eggy: egg-info metadata without a version in its name, requiring
+# itself, an installed distribution, and others only for extras or for
+# python 2
+mkdir -p "$W/eggy/$PYSITE/eggy.egg-info"
+printf '%s\n' eggy Plain.Egg '[docs]' sphinxthing \
+	"[:python_version < '3']" py2thing > "$W/eggy/$PYSITE/eggy.egg-info/requires.txt"
+mkpkg "$W/eggy" "$P/eggy-1.0-x86_64-1.txz"
 
 #
 # Test helpers
@@ -629,6 +641,10 @@ if command -v python3 >/dev/null; then
 		"NOTE: optional python modules, not added as dependencies: optmissing, timesheet" \
 		"WARNING: python package missingdist, required by pyapp2, not found.")" \
 		"$ERR"
+
+	rundf "$DB" "$SYS" -p "$P/eggy-1.0-x86_64-1.txz"
+	check "-p: egg-info metadata" "python-plainegg" "$OUT"
+	check "-p: egg-info metadata: no warnings" "" "$ERR"
 
 	# Modules installed in the user's home are not used
 	mkdir -p "$W/home"

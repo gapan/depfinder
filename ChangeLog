@@ -83,6 +83,8 @@ version 2.0 ()
   * With -p, skip the test files that python packages often ship (in
     test/ or tests/ directories, test_*.py, *_test.py, conftest.py), whose
     imports (pytest, nose, mock...) made test tools dependencies
+  * With -p, read the name of python metadata directories without a
+    version (foo.egg-info) correctly
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list
