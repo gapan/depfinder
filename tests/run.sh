@@ -48,6 +48,7 @@ PASS=0; FAIL=0; XFAIL=0; XPASS=0; SKIP=0
 DF="$W/depfinder"
 sed -e "s|^LIBDIRSUFFIX=.*|LIBDIRSUFFIX=\"$SUF\"|" \
     -e "s|^DEPFINDERSEARCH=.*|DEPFINDERSEARCH=\"$SEARCH\"|" \
+    -e "s|^DEPFINDERPYTHON=.*|DEPFINDERPYTHON=\"$TOPDIR/depfinder-python\"|" \
     "$TOPDIR/depfinder" > "$DF"
 chmod 755 "$DF"
 
@@ -191,14 +192,31 @@ mkrecord "$DB" barbackup-1.0-x86_64-1 "$(rel $LIB/$BARLIB).bak"
 mkrecord "$DB" barcopy-1.0-x86_64-1 "opt/copy/$(rel $LIB/$BARLIB)"
 # Has file names containing "NOT" and "FOUND"
 mkrecord "$DB" decoy-1.0-x86_64-1 usr/doc/decoy/NOTES usr/doc/decoy/FOUNDERS
-# python modules installed in a python path directory
+# python modules installed in a python path directory. Compiled modules
+# are named either module.so or module.<tag>.so, with the tag of the
+# python that runs the tests (e.g. module.cpython-39-x86_64-linux-gnu.so)
+PYEXT=$(python3 -c 'import importlib.machinery as m
+print(m.EXTENSION_SUFFIXES[0])' 2>/dev/null)
+PYEXT=${PYEXT:-.cpython-39-x86_64-linux-gnu.so}
 echo "x = 1" > "$SYS/py/extmod.py"
-: > "$SYS/py/cext.cpython-39-x86_64-linux-gnu.so"
+: > "$SYS/py/cext$PYEXT"
 : > "$SYS/py/oldcext.so"
 echo "x = 1" > "$SYS/py/timesheet.py"
 mkrecord "$DB" pyext-1.0-x86_64-1 "$(rel py/extmod.py)" \
-	"$(rel py/cext.cpython-39-x86_64-linux-gnu.so)" "$(rel py/oldcext.so)"
+	"$(rel py/cext$PYEXT)" "$(rel py/oldcext.so)"
 mkrecord "$DB" timesheet-1.0-x86_64-1 "$(rel py/timesheet.py)"
+# A namespace package (no __init__.py), split between two packages
+mkdir -p "$SYS/py/nspkg"
+echo "x = 1" > "$SYS/py/nspkg/one.py"
+echo "x = 1" > "$SYS/py/nspkg/two.py"
+mkrecord "$DB" nsone-1.0-x86_64-1 "$(rel py/nspkg/)" "$(rel py/nspkg/one.py)"
+mkrecord "$DB" nstwo-1.0-x86_64-1 "$(rel py/nspkg/)" "$(rel py/nspkg/two.py)"
+# An installed python distribution, with its metadata
+mkdir -p "$SYS/py/ext_dist-1.0.dist-info" "$SYS/py/extdist"
+echo "Name: ext-dist" > "$SYS/py/ext_dist-1.0.dist-info/METADATA"
+: > "$SYS/py/extdist/__init__.py"
+mkrecord "$DB" python-extdist-1.0-x86_64-1 \
+	"$(rel py/ext_dist-1.0.dist-info/METADATA)" "$(rel py/extdist/__init__.py)"
 
 # A library to preload, needing libbaz (found through its rpath, so that
 # it loads in every program)
@@ -308,8 +326,48 @@ import timesheet
 EOF
 chmod 755 "$W/pyapp/usr/bin/pyapp"
 echo "x = 1" > "$W/pyapp/usr/lib$SUF/python3/site-packages/inpkg.py"
-: > "$W/pyapp/usr/lib$SUF/python3/site-packages/pkgext.cpython-39-x86_64-linux-gnu.so"
+: > "$W/pyapp/usr/lib$SUF/python3/site-packages/pkgext$PYEXT"
 mkpkg "$W/pyapp" "$P/pyapp-1.0-x86_64-1.txz"
+
+# pyapp2: imports that a line-based parser gets wrong, optional imports,
+# namespace packages, python metadata and a python 2 file
+PYSITE="usr/lib$SUF/python3/site-packages"
+mkdir -p "$W/pyapp2/usr/share/pyapp2" "$W/pyapp2/$PYSITE/pyapp2-1.0.dist-info"
+cat > "$W/pyapp2/usr/share/pyapp2/main.py" <<'PYEOF'
+"""Docs mentioning
+import notamodule
+"""
+# import notamodule2
+from extmod import (one,
+	two)
+import helper
+from . import relative
+import nspkg.two
+try:
+	import optmissing
+except ImportError:
+	optmissing = None
+from extmod import TYPE_CHECKING
+if TYPE_CHECKING:
+	import typecheckonly
+x = "import notamodule3"
+PYEOF
+# a module next to the script
+echo "x = 1" > "$W/pyapp2/usr/share/pyapp2/helper.py"
+printf 'print "python 2"\n' > "$W/pyapp2/usr/share/pyapp2/old.py"
+cat > "$W/pyapp2/$PYSITE/pyapp2-1.0.dist-info/METADATA" <<'PYEOF'
+Metadata-Version: 2.1
+Name: pyapp2
+Version: 1.0
+Requires-Dist: Ext.Dist (>=1.0)
+Requires-Dist: missingdist
+Requires-Dist: extradist ; extra == "docs"
+Requires-Dist: py2only ; python_version < "3"
+Requires-Dist: pyapp2
+
+Requires-Dist: in-the-description
+PYEOF
+mkpkg "$W/pyapp2" "$P/pyapp2-1.0-x86_64-1.txz"
 
 #
 # Test helpers
@@ -532,6 +590,43 @@ if command -v python3 >/dev/null; then
 		"pyext,timesheet" "$OUT"
 	rundf "$DB" "$SYS" "$P/pyapp-1.0-x86_64-1.txz"
 	check "without -p python is ignored" "" "$OUT"
+
+	rundf "$DB" "$SYS" -p "$P/pyapp2-1.0-x86_64-1.txz"
+	check "-p: imports, namespace packages and metadata" \
+		"nstwo,pyext,python-extdist" "$OUT"
+	check "-p: warnings" "$(printf '%s\n' \
+		"WARNING: could not parse usr/share/pyapp2/old.py as python 3." \
+		"WARNING: optional python module optmissing not found." \
+		"WARNING: python package missingdist, required by pyapp2, not found.")" \
+		"$ERR"
+
+	# Modules installed in the user's home are not used
+	mkdir -p "$W/home"
+	USERSITE=$(HOME="$W/home" python3 -c \
+		'import site; print(site.getusersitepackages())')
+	case "$USERSITE" in
+		"$W/home/"*)
+			mkdir -p "$USERSITE"
+			echo "x = 1" > "$USERSITE/missingmod.py"
+			HOME="$W/home" rundf "$DB" "$SYS" -p "$P/pyapp-1.0-x86_64-1.txz"
+			check "-p: modules in the user's home are ignored" \
+				"WARNING: python module missingmod not found." "$ERR"
+			;;
+		*)
+			skip "-p: modules in the user's home (no user site directory)"
+			;;
+	esac
+
+	# Without python3 (a PATH with everything else)
+	mkdir -p "$W/nopython"
+	for f in /usr/bin/* /bin/*; do
+		case "${f##*/}" in python*) continue ;; esac
+		[ -e "$W/nopython/${f##*/}" ] || ln -s "$f" "$W/nopython/"
+	done
+	PATH="$W/nopython" rundf "$DB" "$SYS" -p "$P/pyapp-1.0-x86_64-1.txz"
+	check "-p without python3: exit status 1" "1" "$RC"
+	check "-p without python3: reported" "1" \
+		"$(echo "$ERR" | grep -c "python3 is needed")"
 else
 	skip "python tests (python3 not installed)"
 fi

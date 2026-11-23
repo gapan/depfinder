@@ -97,22 +97,35 @@ binaries in a non-standard location.
 
 : **-p**
 Attempts to discover python dependencies. Using this switch, depfinder
-searches for all files that can be recognized as python scripts.
-All python files that are detected are parsed for modules that they
-import and depfinder ultimately reports which packages these modules
-belong to along with all other detected dependencies. The list of
-reported python dependencies might not be final. Some python
-packages might be reported as dependencies, while actually being
-optional dependencies. This is because an //import// command in python
-might be executed after a conditional statement, or only after some
-certain action is taken by the end user etc. For example, a python
-module might only be providing extra functionality to an application and
-it may be imported only after it has been established that it is
-present in the system. If it isn't, it won't be imported at all, so the
-application will work without it anyway, albeit with some missing
-functionality perhaps. It's up to the packager to determine which of
-the reported python dependencies are actually dependencies and which
-ones should merely be suggested packages.
+searches for all files that can be recognized as python scripts
+(files ending in //.py// and files starting with a python //#!// line).
+They are parsed with python's own parser (nothing in the package is
+run) for the modules they import, and each module that is not in the
+package itself is looked up the way python finds it, in the python
+3 module path of the system (modules in the user's home directory are
+not used). depfinder then reports which packages these modules
+belong to along with all other detected dependencies. Python
+distributions required in the package's python metadata
+(//Requires-Dist// in *.dist-info/METADATA, or *.egg-info/requires.txt)
+are reported too, except the ones only needed for extras or for other
+python versions.
+
+Modules that can't be found in the system are reported as warnings.
+Modules imported inside a //try// block that catches //ImportError// are
+reported as "optional", since the code is written to work without them.
+Imports under //if TYPE_CHECKING:// are ignored. Files that are not
+valid python 3 are reported and skipped.
+
+The list of reported python dependencies might still not be final.
+Some python packages might be reported as dependencies, while actually
+being optional dependencies, for example when an //import// is only
+executed after some certain action is taken by the end user, and
+modules imported by a name computed at run time can't be detected at
+all. It's up to the packager to determine which of the reported python
+dependencies are actually dependencies and which ones should merely be
+suggested packages.
+
+**-p** needs python 3.
 
 : **-j** //jobs//
 Specifies the number of parallel depfinder jobs to run. It can help

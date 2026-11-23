@@ -58,6 +58,21 @@ version 1.4.5 ()
   * With -f on a packaging directory, name the .dep file after the
     package named in install/slack-desc instead of after the directory
   * Handle package paths starting with "-"
+  * Rewrite python dependency detection (-p) as a python script,
+    depfinder-python, installed in /usr/libexec:
+    - python files are parsed with python's ast module instead of sed,
+      so multi-line imports, imports in strings and comments, relative
+      imports and __import__("name") are handled correctly
+    - modules are looked up the way python finds them, so namespace
+      packages (without __init__.py) are found, and compiled modules
+      only with a file name suffix that the system's python can load
+    - imports inside try/except ImportError are reported as optional
+      when not found, and imports under "if TYPE_CHECKING:" are ignored
+    - the requirements in the package's python metadata (*.dist-info,
+      *.egg-info) are added to the dependencies
+    - modules in the user's home directory (pip --user) aren't used
+    - files that aren't valid python 3 are reported
+    - -p exits with an error if python3 isn't installed
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

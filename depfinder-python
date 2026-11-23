@@ -1,0 +1,511 @@
+#!/usr/bin/python3
+#
+# depfinder-python - finds the python modules that a package needs.
+#
+# Part of depfinder. Licensed under the GPL v3.
+#
+# usage: depfinder-python <package-root> <python-file-list>
+#
+# Reads the python files listed in <python-file-list> (one per line,
+# relative to <package-root>, where the package's files are), finds
+# which modules they import and which python distributions the package
+# declares in its metadata (*.dist-info/METADATA, *.egg-info/requires.txt)
+# that are not in the package itself, and prints the path of the file on
+# the system that provides each of them, one per line. Modules and
+# distributions that can't be found are reported on stderr.
+#
+# Nothing in the package is run: the files are only parsed (with ast),
+# and modules are looked up the way python itself finds them (with
+# importlib's PathFinder), which doesn't import them either.
+
+import ast
+import os
+import platform
+import re
+import sys
+from importlib.machinery import PathFinder, EXTENSION_SUFFIXES
+
+# Exceptions that make an import in a try block optional
+OPTIONAL_EXCEPTIONS = {"ImportError", "ModuleNotFoundError", "Exception",
+		       "BaseException"}
+
+
+def warn(msg):
+	print("WARNING: " + msg, file=sys.stderr)
+
+
+#
+# Finding the imports in python files
+#
+
+class ImportFinder(ast.NodeVisitor):
+	"""Collects the absolute imports of a module, as dotted names, in
+	two sets: required, and optional (inside a try block that catches
+	ImportError, so the code works without them)."""
+
+	def __init__(self):
+		self.required = set()
+		self.optional = set()
+		self._optional_depth = 0
+
+	def _add(self, name):
+		if not name:
+			return
+		if self._optional_depth:
+			self.optional.add(name)
+		else:
+			self.required.add(name)
+
+	def visit_Import(self, node):
+		for alias in node.names:
+			self._add(alias.name)
+
+	def visit_ImportFrom(self, node):
+		# relative imports (from . import x) are always in the package
+		if node.level == 0:
+			self._add(node.module)
+
+	def visit_Call(self, node):
+		# __import__("name") and importlib.import_module("name"),
+		# when the name is given as a string
+		func = node.func
+		fname = func.id if isinstance(func, ast.Name) else \
+			func.attr if isinstance(func, ast.Attribute) else None
+		if fname in ("__import__", "import_module") and node.args and \
+		   isinstance(node.args[0], ast.Constant) and \
+		   isinstance(node.args[0].value, str) and \
+		   not node.args[0].value.startswith("."):
+			self._add(node.args[0].value)
+		self.generic_visit(node)
+
+	def visit_Try(self, node):
+		catches = False
+		for handler in node.handlers:
+			if handler.type is None:
+				catches = True
+				continue
+			types = handler.type.elts \
+				if isinstance(handler.type, ast.Tuple) else [handler.type]
+			for t in types:
+				name = t.id if isinstance(t, ast.Name) else \
+					t.attr if isinstance(t, ast.Attribute) else None
+				if name in OPTIONAL_EXCEPTIONS:
+					catches = True
+		if catches:
+			self._optional_depth += 1
+		for stmt in node.body:
+			self.visit(stmt)
+		if catches:
+			self._optional_depth -= 1
+		for part in node.handlers + node.orelse + node.finalbody:
+			self.visit(part)
+
+	def visit_If(self, node):
+		# "if TYPE_CHECKING:" imports are only for type checkers
+		test = node.test
+		name = test.id if isinstance(test, ast.Name) else \
+			test.attr if isinstance(test, ast.Attribute) else None
+		if name == "TYPE_CHECKING":
+			for stmt in node.orelse:
+				self.visit(stmt)
+			return
+		self.generic_visit(node)
+
+
+def find_imports(path):
+	"""Returns the (required, optional) imports of a python file, or None
+	if it isn't valid python 3."""
+	try:
+		with open(path, "rb") as f:
+			tree = ast.parse(f.read(), filename=path)
+	except (SyntaxError, ValueError, UnicodeDecodeError):
+		return None
+	finder = ImportFinder()
+	finder.visit(tree)
+	return finder.required, finder.optional
+
+
+#
+# Finding modules
+#
+
+def find_spec(dotted, paths):
+	"""Finds a module the way python does, without importing anything.
+	For namespace packages (directories without __init__.py, which can
+	be split between packages) it goes down the dotted name as far as
+	possible. Returns the spec, or None."""
+	parts = dotted.split(".")
+	try:
+		spec = PathFinder.find_spec(parts[0], paths)
+		i = 1
+		while spec is not None and spec.origin in (None, "namespace") and \
+		      i < len(parts):
+			sub = PathFinder.find_spec(".".join(parts[:i + 1]),
+				list(spec.submodule_search_locations))
+			if sub is None:
+				break
+			spec = sub
+			i += 1
+	except (ImportError, ValueError):
+		return None
+	return spec
+
+
+def spec_files(spec):
+	"""The files (or, for namespace packages, directories, with a
+	trailing "/" as in package records) that provide a module."""
+	if spec.origin not in (None, "namespace"):
+		return [spec.origin]
+	return [os.path.join(loc, "") for loc in spec.submodule_search_locations]
+
+
+def inside(path, root):
+	return os.path.realpath(path).startswith(root)
+
+
+def package_module_names(root):
+	"""The names of all modules anywhere in the package: python files,
+	packages (directories with __init__.py) and compiled modules. Some
+	applications put their modules in their own directory and add it to
+	sys.path, so modules there count as included in the package too."""
+	names = set()
+	for dirpath, dirnames, filenames in os.walk(root):
+		for f in filenames:
+			if f.endswith(".py"):
+				names.add(f[:-3])
+			elif f == "__init__.py":
+				pass
+			else:
+				for suffix in EXTENSION_SUFFIXES:
+					if f.endswith(suffix):
+						names.add(f[:-len(suffix)])
+						break
+		if "__init__.py" in filenames:
+			names.add(os.path.basename(dirpath))
+	return names
+
+
+#
+# Python metadata (declared requirements)
+#
+
+def normalize(name):
+	return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def marker_env():
+	impl = sys.implementation
+	iv = impl.version
+	implver = "%d.%d.%d" % (iv.major, iv.minor, iv.micro)
+	if iv.releaselevel != "final":
+		implver += iv.releaselevel[0] + str(iv.serial)
+	return {
+		"implementation_name": impl.name,
+		"implementation_version": implver,
+		"os_name": os.name,
+		"platform_machine": platform.machine(),
+		"platform_python_implementation": platform.python_implementation(),
+		"platform_release": platform.release(),
+		"platform_system": platform.system(),
+		"platform_version": platform.version(),
+		"python_full_version": platform.python_version(),
+		"python_version": "%d.%d" % sys.version_info[:2],
+		"sys_platform": sys.platform,
+		# requirements for extras are optional
+		"extra": "",
+	}
+
+
+MARKER_TOKEN = re.compile(r"""\s*(?:
+	(?P<str>'[^']*'|"[^"]*") |
+	(?P<op><=|>=|==|!=|~=|===|<|>|not\s+in\b|in\b|\(|\)|and\b|or\b) |
+	(?P<var>[A-Za-z_][A-Za-z0-9_.]*))""", re.X)
+
+
+def version_key(v):
+	return [int(x) if x.isdigit() else x for x in re.split(r"[.]", v)]
+
+
+def compare(left, op, right):
+	if op in ("in", "not in"):
+		result = left in right
+		return result if op == "in" else not result
+	if op == "===":
+		return left == right
+	if re.match(r"^\d+(\.\d+)*$", left) and re.match(r"^\d+(\.\d+)*(\.\*)?$", right):
+		lk = version_key(left)
+		if right.endswith(".*"):
+			rk = version_key(right[:-2])
+			eq = lk[:len(rk)] == rk
+			if op == "==":
+				return eq
+			if op == "!=":
+				return not eq
+		rk = version_key(right)
+		if op == "~=":
+			return lk >= rk and lk[:len(rk) - 1] == rk[:len(rk) - 1]
+		lk += [0] * (len(rk) - len(lk))
+		rk += [0] * (len(lk) - len(rk))
+		left, right = lk, rk
+	return {"<": left < right, "<=": left <= right, "==": left == right,
+		"!=": left != right, ">=": left >= right, ">": left > right,
+		"~=": left >= right}[op]
+
+
+def evaluate_marker(marker, env):
+	"""Evaluates a PEP 508 environment marker. Raises ValueError if it
+	can't be parsed."""
+	tokens = []
+	pos = 0
+	marker = marker.strip()
+	while pos < len(marker):
+		m = MARKER_TOKEN.match(marker, pos)
+		if not m or m.end() == pos:
+			raise ValueError(marker)
+		pos = m.end()
+		if m.group("str"):
+			tokens.append(("val", m.group("str")[1:-1]))
+		elif m.group("op"):
+			tokens.append(("op", re.sub(r"\s+", " ", m.group("op"))))
+		else:
+			if m.group("var") not in env:
+				raise ValueError(marker)
+			tokens.append(("val", env[m.group("var")]))
+	tokens.append(("end", None))
+	i = 0
+
+	def expr_or():
+		nonlocal i
+		result = expr_and()
+		while tokens[i] == ("op", "or"):
+			i += 1
+			result = expr_and() or result
+		return result
+
+	def expr_and():
+		nonlocal i
+		result = expr_atom()
+		while tokens[i] == ("op", "and"):
+			i += 1
+			result = expr_atom() and result
+		return result
+
+	def expr_atom():
+		nonlocal i
+		if tokens[i] == ("op", "("):
+			i += 1
+			result = expr_or()
+			if tokens[i] != ("op", ")"):
+				raise ValueError(marker)
+			i += 1
+			return result
+		if tokens[i][0] != "val" or tokens[i + 1][0] != "op" or \
+		   tokens[i + 2][0] != "val":
+			raise ValueError(marker)
+		result = compare(tokens[i][1], tokens[i + 1][1], tokens[i + 2][1])
+		i += 3
+		return result
+
+	result = expr_or()
+	if tokens[i][0] != "end":
+		raise ValueError(marker)
+	return result
+
+
+REQUIREMENT_NAME = re.compile(r"^\s*([A-Za-z0-9][A-Za-z0-9._-]*)")
+
+
+def requirement(line, extra_marker, env):
+	"""The name in a requirement line, if it applies here (no extra and
+	a true marker), or None."""
+	line = line.split("#", 1)[0].strip()
+	m = REQUIREMENT_NAME.match(line)
+	if not m:
+		return None
+	markers = [extra_marker] if extra_marker else []
+	if ";" in line:
+		markers.append(line.split(";", 1)[1])
+	for marker in markers:
+		try:
+			if not evaluate_marker(marker, env):
+				return None
+		except ValueError:
+			# can't tell, so it might be needed
+			pass
+	return m.group(1)
+
+
+def declared_requirements(root):
+	"""The distributions that the package metadata requires, as
+	{normalized name: (name, package distribution)}, and the normalized
+	names of the distributions in the package. Metadata for another
+	python version (e.g. in usr/lib64/python2.7) is skipped, with a
+	warning, since its requirements are for that python."""
+	env = marker_env()
+	pyver = env["python_version"]
+	requires = {}
+	own = set()
+	for dirpath, dirnames, filenames in sorted(os.walk(root)):
+		base = os.path.basename(dirpath)
+		m = re.search(r"/python(\d+\.\d+)/", dirpath)
+		if m and m.group(1) != pyver and \
+		   base.endswith((".dist-info", ".egg-info")):
+			warn("not checking the requirements of %s, which is for python %s."
+			     % (base.split("-", 1)[0], m.group(1)))
+			continue
+		if base.endswith(".dist-info") and "METADATA" in filenames:
+			dist = base.split("-", 1)[0]
+			lines = []
+			with open(os.path.join(dirpath, "METADATA"), "rb") as f:
+				for line in f.read().decode("utf-8", "replace").splitlines():
+					if not line.strip():
+						break
+					if line.lower().startswith("requires-dist:"):
+						lines.append((line.split(":", 1)[1], None))
+		elif base.endswith(".egg-info"):
+			dist = base.split("-", 1)[0]
+			lines = []
+			if "requires.txt" in filenames:
+				section = None
+				with open(os.path.join(dirpath, "requires.txt"), "rb") as f:
+					for line in f.read().decode("utf-8", "replace").splitlines():
+						if line.strip().startswith("["):
+							# [extra], [extra:marker] or [:marker]
+							section = line.strip()[1:-1]
+							continue
+						if section is None:
+							lines.append((line, None))
+						elif section.startswith(":"):
+							lines.append((line, section[1:]))
+						# extras are optional
+		else:
+			continue
+		own.add(normalize(dist))
+		for line, marker in lines:
+			name = requirement(line, marker, env)
+			if name:
+				requires.setdefault(normalize(name), (name, dist))
+	for name in own:
+		requires.pop(name, None)
+	return requires, own
+
+
+def find_distribution(name, paths):
+	"""The metadata file of an installed distribution, or None."""
+	for path in paths:
+		try:
+			entries = os.listdir(path)
+		except OSError:
+			continue
+		for entry in sorted(entries):
+			for ext, meta in ((".dist-info", "METADATA"),
+					  (".egg-info", "PKG-INFO")):
+				if not entry.endswith(ext):
+					continue
+				# (name-version.dist-info, name-version-py3.9.egg-info)
+				stem = entry[:-len(ext)].split("-", 1)[0]
+				if normalize(stem) == name:
+					full = os.path.join(path, entry)
+					if os.path.isdir(full):
+						full = os.path.join(full, meta)
+					if os.path.exists(full):
+						return full
+	return None
+
+
+#
+# Main
+#
+
+def main():
+	if len(sys.argv) != 3:
+		print("usage: depfinder-python <package-root> <python-file-list>",
+		      file=sys.stderr)
+		return 1
+	# (file names that aren't valid UTF-8 are passed through as they are)
+	sys.stdout.reconfigure(errors="surrogateescape")
+	sys.stderr.reconfigure(errors="surrogateescape")
+	root = os.path.join(os.path.realpath(sys.argv[1]), "")
+	with open(sys.argv[2], "rb") as f:
+		files = [l for l in f.read().decode("utf-8", "surrogateescape").split("\n") if l]
+
+	# Where python looks for modules on this system (without this
+	# script's own directory)
+	here = os.path.dirname(os.path.realpath(__file__))
+	syspaths = [p for p in sys.path
+		    if p and os.path.realpath(p) != here and os.path.isdir(p)]
+	# The same directories in the package, and any other
+	# site-packages directories in it (e.g. for another python version)
+	pkgpaths = [os.path.join(root, p.lstrip("/")) for p in syspaths]
+	for dirpath, dirnames, filenames in os.walk(root):
+		if os.path.basename(dirpath) in ("site-packages", "dist-packages"):
+			pkgpaths.append(dirpath)
+			dirnames[:] = []
+	pkgpaths = [p for p in pkgpaths if os.path.isdir(p)]
+
+	# Collect the imports of each file, with the directory of the file,
+	# where python looks first for the modules a script imports
+	imports = {}		# dotted name -> (optional?, set of script dirs)
+	for f in files:
+		path = os.path.join(root, f)
+		found = find_imports(path)
+		if found is None:
+			warn("could not parse %s as python 3." % os.path.relpath(path, root))
+			continue
+		required, optional = found
+		for name, opt in [(n, False) for n in required] + \
+				 [(n, True) for n in optional - required]:
+			old = imports.get(name, (True, set()))
+			imports[name] = (old[0] and opt, old[1] | {os.path.dirname(path)})
+
+	builtin = set(sys.builtin_module_names)
+	inpkg_names = package_module_names(root)
+	needed = set()
+	missing = set()
+	missing_optional = set()
+	for name in sorted(imports):
+		optional, dirs = imports[name]
+		top = name.split(".")[0]
+		if top in builtin or top in ("__future__", "__main__"):
+			continue
+		# In the package?
+		spec = find_spec(name, sorted(dirs) + pkgpaths)
+		if spec is not None and spec.origin not in (None, "namespace"):
+			continue
+		if top in inpkg_names:
+			continue
+		# On the system? (The package's directories are searched too,
+		# so that namespace packages split between the package and
+		# the system are found.)
+		paths = []
+		for s, p in zip(syspaths, [os.path.join(root, s.lstrip("/")) for s in syspaths]):
+			paths += [p, s]
+		spec = find_spec(name, paths)
+		if spec is None:
+			(missing_optional if optional else missing).add(top)
+			continue
+		for path in spec_files(spec):
+			if not inside(path, root):
+				needed.add(path)
+
+	for top in sorted(missing):
+		warn("python module %s not found." % top)
+	for top in sorted(missing_optional - missing):
+		warn("optional python module %s not found." % top)
+
+	# The distributions the package declares in its metadata
+	requires, own = declared_requirements(root)
+	for name in sorted(requires):
+		meta = find_distribution(name, syspaths)
+		if meta is None:
+			warn("python package %s, required by %s, not found." % requires[name])
+		else:
+			needed.add(meta)
+
+	for path in sorted(needed):
+		print(path)
+	return 0
+
+
+if __name__ == "__main__":
+	sys.exit(main())

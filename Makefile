@@ -24,6 +24,7 @@ install:
 	sed -i "s/^LIBDIRSUFFIX=.*/LIBDIRSUFFIX=\"$(LIBDIRSUFFIX)\"/" \
 		$(DESTDIR)/usr/bin/depfinder
 	install -m 755 depfinder-search/depfinder-search $(DESTDIR)/usr/libexec/
+	install -m 755 depfinder-python $(DESTDIR)/usr/libexec/
 	[ -f man/depfinder.man ] && \
 		install -D -m 644 man/depfinder.man $(DESTDIR)/usr/man/man1/depfinder.1
 

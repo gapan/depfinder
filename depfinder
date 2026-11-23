@@ -20,6 +20,7 @@ JOBS=1
 STARTDIR=""
 DEBUG=${DEBUG:-0}
 DEPFINDERSEARCH="/usr/libexec/depfinder-search"
+DEPFINDERPYTHON="/usr/libexec/depfinder-python"
 LIBDIRSUFFIX=""
 # The installed package database. Can be overridden for testing.
 PKGDB=${DEPFINDERPKGDB:-/var/lib/pkgtools/packages}
@@ -81,26 +82,6 @@ findpython()
 		2> /dev/null
 	find ./ \
 	-type f -name "*.py"
-}
-
-# Function that parses python scripts for modules that it imports
-parsepython()
-{
-	sed "s/;/\n/g" "$1" | \
-	sed -e :a -e '/\\$/N; s/\\\n//; ta' | \
-	sed "s/[ \t]\+/ /g" | \
-	grep "^ *import \|^ *from .* import " | \
-	sed "s/#/@COMMENT@/" | \
-	sed "s/\(.*\)@COMMENT@.*/\1/" | \
-	sed "s/from \(.*\) import .*/\1/" | \
-	sed "s/^ *import \(.*\)/\1/" | \
-	sed "s/\(.*\) as .*/\1/"  | \
-	sed "s/^[ \t]*//;s/[ \t]*$//" | \
-	sed "/ [^,]\+ /d" | \
-	sed "s/,/\n/g" | \
-	sed "s/^[ \t]*//" | \
-	sed "s/\./@MODULESEPARATOR@/" | \
-	sed "s/\(.*\)@MODULESEPARATOR@.*/\1/" 
 }
 
 # Function that cleans up temp files
@@ -230,6 +211,12 @@ if [ ! -d "$PKGDB" ]; then
 	err
 fi
 
+# -p needs python 3
+if [ $PYTHONDEPS -eq 1 ] && ! command -v python3 > /dev/null; then
+	echo "ERROR: python3 is needed to detect python dependencies (-p)" >&2
+	err
+fi
+
 # Create the working directory, with a name that can't be guessed. The
 # package is extracted into its pkg subdirectory, apart from
 # depfinder's own files.
@@ -307,77 +294,19 @@ fi
 LANG=C find $SEARCHDIRS -type f -exec file -N -0 {} + 2> /dev/null | \
 awk -F '\0' '$2 ~ /^: ELF / { print $1 }' > "$DFTMP/FILES"
 
-# Look for python dependencies
+# Look for python dependencies: depfinder-python parses the python
+# files for the modules they import (and reads the requirements in the
+# package's python metadata), and lists the files on the system that
+# provide them. It warns about the ones it can't find.
 if [ $PYTHONDEPS -eq 1 ]; then
-	# Determine in which directories python looks for modules
-	python3 -c "import sys; print(sys.path)" | \
-	sed "s/'\|,\|\[\|\]//g" | \
-	sed "s/ /\n/g" > "$DFTMP/PYTHONDIRS"
-
-	# Find all python scripts in the package
-	touch "$DFTMP/PYTHONFILES"
-	findpython >> "$DFTMP/PYTHONFILES"
-
-	# Determine which python modules are imported (used)
-	touch "$DFTMP/PYTHONMODULESRAW"
-	while IFS= read -r i; do
-		parsepython "$i" >> "$DFTMP/PYTHONMODULESRAW"
-	done < "$DFTMP/PYTHONFILES"
-
-	# Sort and clean modules list
-	cat -A "$DFTMP/PYTHONMODULESRAW" | \
-	sort | sed 's/\^M\$\|\$//' | \
-	uniq > "$DFTMP/PYTHONMODULESSORTED"
-	
-	# Find which modules are included in the package and create a
-	# list with the ones that are not
-	touch "$DFTMP/PYTHONMODULES"
-	for i in `cat "$DFTMP/PYTHONMODULESSORTED"`; do
-		FOUND=`find ./ -type f | grep "/$i\.py$\|/$i/__init__\.py$\|/$i\(\.[^/]*\)\?\.so$"`
-		if [[ ! "$FOUND" ]]; then
-			echo "$i" >> "$DFTMP/PYTHONMODULES"
-		fi
-	done
-
-	# Remove python built-in modules from the list
-	python3 -c "import sys; print(sys.builtin_module_names)" | \
-	sed "s/'\|,\|(\|)//g" > "$DFTMP/PYTHONBUILTIN"
-	for i in `cat "$DFTMP/PYTHONBUILTIN"`; do
-		sed -i "/^$i$/d" "$DFTMP/PYTHONMODULES"
-	done
-
-	# Find the specific python files that provide the needed python modules
-	touch "$DFTMP/PYTHONNEEDEDMODULES"
-	for dir in `cat "$DFTMP/PYTHONDIRS"`; do
-		if [ -d $dir ]; then
-			for i in `cat "$DFTMP/PYTHONMODULES"`; do
-				if [ -f $dir/$i.py ]; then
-					echo "$dir/$i.py" \
-					>> "$DFTMP/PYTHONNEEDEDMODULES"
-					sed -i "/^${i}$/d" "$DFTMP/PYTHONMODULES"
-				elif [ -f $dir/$i/__init__.py ]; then
-					echo "$dir/$i/__init__.py" \
-					>> "$DFTMP/PYTHONNEEDEDMODULES"
-					sed -i "/^${i}$/d" "$DFTMP/PYTHONMODULES"
-				else
-					# compiled modules may be named either module.so or
-					# module.<abi-tag>.so, e.g. module.cpython-39-x86_64-linux-gnu.so
-					SOFILE=`ls $dir/$i.so $dir/$i.*.so 2> /dev/null | head -n 1`
-					if [ -n "$SOFILE" ]; then
-						echo "$SOFILE" \
-						>> "$DFTMP/PYTHONNEEDEDMODULES"
-						sed -i "/^${i}$/d" "$DFTMP/PYTHONMODULES"
-					fi
-				fi
-			done
-		fi
-	done
-	# Display a warning for python modules that cannot be located in
-	# the system. These are not errors because the modules could be
-	# optional.
-	for i in `cat "$DFTMP/PYTHONMODULES"`; do
-		echo "WARNING: python module $i not found." >&2
-	done
+	findpython > "$DFTMP/PYTHONFILES"
+	# (-s: modules installed in the user's home don't count)
+	python3 -s "$DEPFINDERPYTHON" "$PKGROOT" "$DFTMP/PYTHONFILES" \
+		> "$DFTMP/PYTHONNEEDEDMODULES"
+	if [ $? -ne 0 ]; then
+		echo "ERROR: could not detect the python dependencies" >&2
+		err
+	fi
 fi
 
 cd "$DFTMP"
