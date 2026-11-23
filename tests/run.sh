@@ -325,6 +325,17 @@ check "-s adds version information" \
 
 rundf "$DB" "$SYS" -j4 "$P/foo-1.0-x86_64-1.txz"
 check "-j4 gives the same result" "bar,glibc" "$OUT"
+rundf "$DB" "$SYS" -j 08 "$P/foo-1.0-x86_64-1.txz"
+check "-j with a leading zero" "bar,glibc" "$OUT"
+rundf "$DB" "$SYS" -j 200 "$P/foo-1.0-x86_64-1.txz"
+check "-j 200" "bar,glibc" "$OUT"
+check "-j 200: no errors" "" "$ERR"
+rundf "$DB" "$SYS" -j 0 "$P/foo-1.0-x86_64-1.txz"
+check "-j 0: exit status 1" "1" "$RC"
+check "-j 0: reported" "1" "$(echo "$ERR" | grep -c "at least 1")"
+rundf "$DB" "$SYS" -j abc "$P/foo-1.0-x86_64-1.txz"
+check "-j abc: exit status 1" "1" "$RC"
+check "-j abc: reported" "1" "$(echo "$ERR" | grep -c "needs a number")"
 
 for ext in tgz tbz tlz txz tbr; do
 	pkg="$P/formats/foo-1.0-x86_64-1.$ext"

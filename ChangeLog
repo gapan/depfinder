@@ -35,6 +35,8 @@ version 1.4.5 ()
   * Only treat .tgz/.tbz/.tlz/.txz/.tbr at the end of the file name as
     the package extension, so e.g. foo.tbz2-1.0-x86_64-1.txz gets the
     right .dep file name
+  * Fix -j with a leading zero (e.g. -j 08) and with more than 99 jobs,
+    and give clearer error messages for invalid -j values
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

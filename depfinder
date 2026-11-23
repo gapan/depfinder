@@ -155,21 +155,19 @@ do
 		PYTHONDEPS=1
 	fi
 	if [ $flag = "j" ]; then
-		# we check if it's a number
-		if [ `echo $OPTARG` -eq `echo $OPTARG` 2> /dev/null ]; then 
-			# and if it's in range (positive number)
-			if [ $OPTARG -ge 1 2> /dev/null ]; then
-			# and only then change the default value
-			JOBS=$OPTARG
-			# if it's out of range show help
-			else
+		# it must be a number...
+		case "$OPTARG" in
+			""|*[!0-9]*)
 				help_msg
-				echo "ERROR: Number of jobs must be greater than one" >&2
+				echo "ERROR: -j needs a number of jobs, not \"$OPTARG\"" >&2
 				err
-			fi
-		# if it's not a number show help
-		else
+				;;
+		esac
+		# ... in decimal, even with leading zeros, and at least 1
+		JOBS=$((10#$OPTARG))
+		if [ $JOBS -lt 1 ]; then
 			help_msg
+			echo "ERROR: The number of jobs must be at least 1" >&2
 			err
 		fi
 	fi
@@ -353,8 +351,13 @@ cd /tmp/depfinder.$$
 # Dump the dependencies to a file. ldd is run on many files at once, in
 # $JOBS parallel jobs. File names in FILES are relative to the package
 # root.
-split -d -n l/$JOBS FILES FILES
-for i in $( seq -f "%02.f" 0 $(($JOBS-1)) ); do
+# There's no point in more jobs than files.
+TOTALFILES=`wc -l < FILES`
+LDDJOBS=$JOBS
+[ $LDDJOBS -gt $TOTALFILES ] && LDDJOBS=$TOTALFILES
+[ $LDDJOBS -eq 0 ] && LDDJOBS=1
+split -d -a 4 -n l/$LDDJOBS FILES FILES
+for i in $( seq -f "%04.f" 0 $(($LDDJOBS-1)) ); do
 	( cd ${STARTDIR:-/tmp/depfinder.$$} && \
 		LANG=C xargs -r -d '\n' ldd < /tmp/depfinder.$$/FILES$i 2> /dev/null ) \
 	| grep "=>" \
@@ -431,10 +434,10 @@ let MAXFILENO=$JOBS-1
 
 # Split the libraries list in parts for running multiple jobs
 let LINES=($TOTALLINES/$JOBS)+1
-split -d -l $LINES LIBS LIBS
+split -d -a 4 -l $LINES LIBS LIBS
 
 # Find the dependencies (run multiple jobs if -j # is set)
-for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
+for i in $( seq -f "%04.f" 0 $MAXFILENO ); do
 	touch LIBS$i
 	depfind $i &
 done
@@ -442,7 +445,7 @@ wait
 
 # Put all dependencies in a single file
 touch DEPS
-for i in $( seq -f "%02.f" 0 $MAXFILENO ); do
+for i in $( seq -f "%04.f" 0 $MAXFILENO ); do
 	cat DEPS$i >> DEPS
 done
 
