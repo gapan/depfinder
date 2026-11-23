@@ -20,7 +20,8 @@
 #
 # Test files (in test/ or tests/ directories, test_*.py, *_test.py and
 # conftest.py) are skipped, since their imports are only needed to run
-# the tests.
+# the tests, and so is documentation (usr/doc, usr/share/doc), such as
+# examples.
 #
 # Optional imports (only inside try blocks that catch ImportError, so
 # the code works without them) are not dependencies: they are only
@@ -235,6 +236,12 @@ def is_test_file(path):
 	       name == "conftest.py" or \
 	       (name.startswith("test_") and name.endswith(".py")) or \
 	       name.endswith("_test.py")
+
+
+def is_doc_file(path):
+	"""Whether a file is documentation (e.g. an example in
+	usr/doc/foo-1.0/examples), which isn't run as part of the package."""
+	return path.startswith(("usr/doc/", "usr/share/doc/"))
 
 
 #
@@ -577,7 +584,8 @@ def main():
 	other_versions = {}	# python version -> number of files skipped
 	for f in files:
 		path = os.path.join(root, f)
-		if is_test_file(os.path.relpath(path, root)):
+		if is_test_file(os.path.relpath(path, root)) or \
+		   is_doc_file(os.path.relpath(path, root)):
 			continue
 		# Files for another python version (e.g. in python2.7/) would
 		# be checked against the wrong python

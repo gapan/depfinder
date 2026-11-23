@@ -96,6 +96,8 @@ version 2.0 ()
   * Fix -p failing on python files that can't be read (e.g. in a
     packaging directory owned by another user): they are reported and
     skipped
+  * With -p, skip python files in the documentation (usr/doc,
+    usr/share/doc), such as examples, which aren't part of the program
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

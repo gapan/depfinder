@@ -394,6 +394,11 @@ mkdir -p "$W/pyapp2/$PYSITE/pyapp2/tests"
 for f in tests/test_main.py tests/helpers.py conftest.py test_it.py it_test.py; do
 	printf 'import timesheet\nimport testonly\n' > "$W/pyapp2/$PYSITE/pyapp2/$f"
 done
+# examples in the documentation, which need a module that isn't
+# installed, but isn't a dependency
+mkdir -p "$W/pyapp2/usr/doc/pyapp2-1.0/examples" "$W/pyapp2/usr/share/doc/pyapp2"
+echo "import docmod" > "$W/pyapp2/usr/doc/pyapp2-1.0/examples/demo.py"
+echo "import docmod" > "$W/pyapp2/usr/share/doc/pyapp2/demo.py"
 # files for python 2.7, with their metadata
 mkdir -p "$W/pyapp2/usr/lib/python2.7/site-packages/pyapp2" \
 	"$W/pyapp2/usr/lib/python2.7/site-packages/pyapp2-1.0.dist-info"
