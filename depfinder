@@ -438,15 +438,24 @@ awk -v self="$SELFNAME" '{
 	}' DEPS > DEPS.new
 mv DEPS.new DEPS
 
-if [ $VERSIONINFO -eq 1 ]; then
-	sort DEPS | uniq | \
-	sed ':a;s/\([^ \|]\+\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/\1 >= \2/g;ta' \
-	> DEPSNAMES
-else
-	sort DEPS | uniq | \
-	sed ':a;s/\([^ \|]\+\)-\(\([^ \|-]\+\)-\([^ \|-]\+\)-\([^ \|-]\+\)\|?\)/\1/g;ta'  \
-	> DEPSNAMES
-fi
+# Split each package into its name and version-arch-build (the last
+# three parts separated by "-"; names may contain "-" too), and keep the
+# name, or "name >= version-arch-build" with -s
+sort DEPS | uniq | \
+awk -v versions=$VERSIONINFO '{
+		n = split($0, alt, "|")
+		line = ""
+		for (j = 1; j <= n; j++) {
+			name = alt[j]
+			if (match(name, /-[^-]*-[^-]*-[^-]*$/)) {
+				ver = substr(name, RSTART + 1)
+				name = substr(name, 1, RSTART - 1)
+				if (versions == 1) name = name " >= " ver
+			}
+			line = (j == 1 ? name : line "|" name)
+		}
+		print line
+	}' > DEPSNAMES
 
 # Output dependencies list
 if [ $VERSIONINFO -eq 1 ]; then

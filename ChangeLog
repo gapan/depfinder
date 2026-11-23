@@ -75,6 +75,9 @@ version 2.0 ()
     - files that aren't valid python 3 are reported
     - -p exits with an error if python3 isn't installed
   * Don't make "make install" fail when the manpage wasn't built
+  * Fix the names of packages with three or more "-" in their name,
+    which were cut at the first "-" (e.g. font-bh-lucidatypewriter-75dpi
+    became "font"), and garbled with -s
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

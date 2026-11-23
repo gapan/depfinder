@@ -158,6 +158,10 @@ ln -s "$BARLIB" "$SYS/$LIB/libbar.so.1"; ln -s "$BARLIB" "$SYS/$LIB/libbar.so"
 BAZLIB=$(mklib "$SYS/$LIB" baz 2)
 ln -s "$BAZLIB" "$SYS/$LIB/libbaz.so.2"; ln -s "$BAZLIB" "$SYS/$LIB/libbaz.so"
 
+# libdash, from two packages with several "-" in their names
+DASHLIB=$(mklib "$SYS/$LIB" dash 1)
+ln -s "$DASHLIB" "$SYS/$LIB/libdash.so.1"; ln -s "$DASHLIB" "$SYS/$LIB/libdash.so"
+
 # A library that is installed but that no package provides (e.g. built
 # and installed by hand)
 UNOWNEDLIB=$(mklib "$SYS/$LIB" unowned 1)
@@ -185,6 +189,8 @@ mkrecord "$DB" glibc-2.33-x86_64-1 $GLIBC_FILES
 mkrecord "$DB" bar-2.0-x86_64-1 "$(rel $LIB/$BARLIB)" usr/doc/bar-2.0/README
 mkrecord "$DB" baz-1.0-x86_64-1 "$(rel $LIB/$BAZLIB)"
 mkrecord "$DB" baz-solibs-1.0-x86_64-1 "$(rel $LIB/$BAZLIB)"
+mkrecord "$DB" a-b-c-d-1.0-x86_64-1 "$(rel $LIB/$DASHLIB)"
+mkrecord "$DB" a-b-c-d-solibs-1.0-x86_64-1 "$(rel $LIB/$DASHLIB)"
 mkrecord "$DB" inc-1.0-x86_64-1 "$(rel $LIB/incoming/)" "$(rel $LIB/incoming/$INCLIB)"
 # Have files whose paths contain the path of libbar, which must not
 # make them providers of it
@@ -259,6 +265,10 @@ for f in pkglist.log FILES LIBS DEPS INCLUDED; do
 	echo "nothing" > "$W/clash/$f"
 done
 mkpkg "$W/clash" "$P/clash-1.0-x86_64-1.txz"
+
+# dashy: needs libdash
+mkbin "$W/dashy/usr/bin/dashy" "$SYS/$LIB" dash
+mkpkg "$W/dashy" "$P/dashy-1.0-x86_64-1.txz"
 
 # incfoo: needs libinc
 mkbin "$W/incfoo/usr/bin/incfoo" "$SYS/$LIB" inc
@@ -479,6 +489,14 @@ check "LD_PRELOAD is ignored" "bar,glibc" "$OUT"
 # A library provided by more than one package
 rundf "$DB" "$SYS" "$P/qux-1.0-x86_64-1.txz"
 check "either-of dependency" "baz|baz-solibs,glibc" "$OUT"
+
+# Package names with several "-" in them
+rundf "$DB" "$SYS" "$P/dashy-1.0-x86_64-1.txz"
+check "package names with several -" "a-b-c-d|a-b-c-d-solibs,glibc" "$OUT"
+rundf "$DB" "$SYS" -s "$P/dashy-1.0-x86_64-1.txz"
+check "package names with several -, -s" \
+	"$(printf 'a-b-c-d >= 1.0-x86_64-1|a-b-c-d-solibs >= 1.0-x86_64-1\nglibc >= 2.33-x86_64-1')" \
+	"$OUT"
 
 # Output files
 rundf "$DB" "$SYS" -f "$P/foo-1.0-x86_64-1.txz"
