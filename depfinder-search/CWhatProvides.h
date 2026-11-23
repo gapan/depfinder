@@ -16,8 +16,8 @@ class CWhatProvides
 public:
 	CWhatProvides(const std::string& pkgdb, const std::string& pkglist,
 		const std::string& filelist);
-	// Prints, for each file in the list that some package provides, a
-	// line with those packages separated by "|"
+	// Prints a line for each file in the list, with the packages
+	// providing it separated by "|", or empty if no package does
 	void	print(std::ostream& out) const;
 protected:
 	void	search_package(const std::string& pkgdb, const std::string& package);

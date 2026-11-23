@@ -157,6 +157,12 @@ ln -s "$BARLIB" "$SYS/$LIB/libbar.so.1"; ln -s "$BARLIB" "$SYS/$LIB/libbar.so"
 BAZLIB=$(mklib "$SYS/$LIB" baz 2)
 ln -s "$BAZLIB" "$SYS/$LIB/libbaz.so.2"; ln -s "$BAZLIB" "$SYS/$LIB/libbaz.so"
 
+# A library that is installed but that no package provides (e.g. built
+# and installed by hand)
+UNOWNEDLIB=$(mklib "$SYS/$LIB" unowned 1)
+ln -s "$UNOWNEDLIB" "$SYS/$LIB/libunowned.so.1"
+ln -s "$UNOWNEDLIB" "$SYS/$LIB/libunowned.so"
+
 # A library that exists only at build time, so binaries linked against
 # it have a missing dependency
 mkdir -p "$W/gone"
@@ -221,6 +227,10 @@ mkpkg "$W/outside" "$P/outside-1.0-x86_64-1.txz"
 mkbin "$W/helpers/usr/lib/helpers/helper" "$SYS/$LIB" bar
 mkbin "$W/helpers/usr/games/game" "$SYS/$LIB" baz
 mkpkg "$W/helpers" "$P/helpers-1.0-x86_64-1.txz"
+
+# unowned: needs libbar and libunowned, which no package provides
+mkbin "$W/unowned/usr/bin/unowned" "$SYS/$LIB" bar unowned
+mkpkg "$W/unowned" "$P/unowned-1.0-x86_64-1.txz"
 
 # broken: needs a library that isn't installed anywhere
 mkbin "$W/broken/usr/bin/broken" "$W/gone:$SYS/$LIB" gone bar
@@ -424,6 +434,13 @@ check "missing library: exit status 1" "1" "$RC"
 check "missing library: no dependency list" "" "$OUT"
 check "missing library: reported" "1" \
 	"$(echo "$ERR" | grep -c "libgone\.so\.1")"
+
+# Libraries that no package provides
+rundf "$DB" "$SYS" "$P/unowned-1.0-x86_64-1.txz"
+check "unowned library: other deps listed" "bar,glibc" "$OUT"
+check "unowned library: exit status 0" "0" "$RC"
+check "unowned library: warning" \
+	"WARNING: no installed package provides $SYS/$LIB/libunowned.so.1" "$ERR"
 
 DEPFINDERNOEXIT=1 rundf "$DB" "$SYS" "$P/broken-1.0-x86_64-1.txz"
 check "DEPFINDERNOEXIT=1: lists the deps that were found" "bar,glibc" "$OUT"

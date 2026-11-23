@@ -11,8 +11,9 @@ int main(int argc, char* argv[])
 {
 	if ( argc != 4 ) {
 		std::cerr << "usage: depfinder-search <package-db-dir> <package-list> <file-list>\n"
-			"Prints, for each file in <file-list> (one per line) that an installed\n"
-			"package provides, a line with the providing packages separated by \"|\".\n"
+			"Prints a line for each file in <file-list> (one per line), with the\n"
+			"installed packages providing it separated by \"|\", or an empty line\n"
+			"if no package provides it.\n"
 			"<package-list> names the package records in <package-db-dir> to read.\n";
 		return 1;
 	}

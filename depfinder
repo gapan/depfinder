@@ -58,10 +58,14 @@ Run "depfinder -h" for help information"
 # Routine to find out which packages each library (or python module) in
 # a part of the list comes from. depfinder-search reads the package
 # database once for the whole list and prints a line per library, with
-# the packages providing it separated by "|" ("either of").
+# the packages providing it separated by "|" ("either of"), or an empty
+# line if no package provides it. Those libraries are listed in
+# UNOWNED<part>.
 depfind()
 {
 	$DEPFINDERSEARCH "$PKGDB" pkglist.log LIBS$1 > DEPS$1
+	awk 'FILENAME == ARGV[1] { lib[FNR] = $0; next }
+		$0 == "" { print lib[FNR] }' LIBS$1 DEPS$1 > UNOWNED$1
 }
 
 # Function that finds python files in the current directory, where the
@@ -454,6 +458,14 @@ wait
 touch DEPS
 for i in $( seq -f "%04.f" 0 $MAXFILENO ); do
 	cat DEPS$i >> DEPS
+done
+
+# Warn about libraries (and python modules) that no installed package
+# provides, e.g. ones installed by hand in /usr/local. They can't be
+# added to the list, but the packager should know.
+for i in $( seq -f "%04.f" 0 $MAXFILENO ); do
+	sed "s|^/*|/|; s|^|WARNING: no installed package provides |" \
+		UNOWNED$i >&2
 done
 
 # Exclude the present package from the dependency list, whatever

@@ -33,9 +33,8 @@ CWhatProvides::CWhatProvides(const std::string& pkgdb,
 
 	_in.open(filelist.c_str(), std::ios_base::in);
 	while ( getline(_in, _line) ) {
-		if ( _line.empty() )
-			continue;
-		_index[record_path(_line)].push_back(_files.size());
+		if ( !_line.empty() )
+			_index[record_path(_line)].push_back(_files.size());
 		_files.push_back(_line);
 	}
 	_in.close();
@@ -79,8 +78,6 @@ void CWhatProvides::search_package(const std::string& pkgdb, const std::string& 
 void CWhatProvides::print(std::ostream& out) const
 {
 	for ( const std::vector<std::string>& p : _providers ) {
-		if ( p.empty() )
-			continue;
 		for ( size_t i = 0; i < p.size(); i++ )
 			out << (i ? "|" : "") << p[i];
 		out << "\n";
