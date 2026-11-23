@@ -556,6 +556,18 @@ check "spaces: -f -s writes slack-required" \
 	"$(printf 'bar >= 2.0-x86_64-1\nglibc >= 2.33-x86_64-1')" \
 	"$(cat "$RUNDIR/slack-required" 2>&1)"
 
+# A package path starting with "-" (given after "--")
+mkdir "$W/dash"
+cp "$P/foo-1.0-x86_64-1.txz" "$W/dash/-foo-1.0-x86_64-1.txz"
+OUT=$(cd "$W/dash" && DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" \
+	"$DF" -- -foo-1.0-x86_64-1.txz 2>&1)
+ERR=""
+check "package path starting with -" "bar,glibc" "$OUT"
+OUT=$(cd "$W/dash" && DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" \
+	"$DF" -f -- -foo-1.0-x86_64-1.txz 2>&1)
+check "package path starting with -, -f" "bar,glibc" \
+	"$(cat "$W/dash/-foo-1.0-x86_64-1.dep" 2>&1)"
+
 # Options and errors
 rundf "$DB" "$SYS" "$P/does-not-exist.txz"
 check "missing package: exit status 1" "1" "$RC"

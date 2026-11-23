@@ -199,6 +199,12 @@ if [ $# -gt 1 ]; then
 	err
 fi
 
+# A path starting with "-" would be taken for an option by the tools
+# it's passed to
+case "$1" in
+	-*) set -- "./$1" ;;
+esac
+
 # test if the package file is there
 if [ ! -d "$1" ] && [ ! -f "$1" ] ; then
 	arg=$1
