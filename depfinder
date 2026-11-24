@@ -276,7 +276,12 @@ fi
 # The root of the package's files
 PKGROOT=${STARTDIR:-$DFTMP/pkg/}
 
-PKGNAME=`basename "$1" | sed "s/\.t[gblx]z$\|\.tbr$//"`
+# (for a directory, from its full path, so that "." is named too)
+if [ -z "$STARTDIR" ]; then
+	PKGNAME=`basename "$1" | sed "s/\.t[gblx]z$\|\.tbr$//"`
+else
+	PKGNAME=`basename "$STARTDIR"`
+fi
 
 # The name of the package without version, used to exclude the package
 # itself from the dependency list. For a package file it comes from the

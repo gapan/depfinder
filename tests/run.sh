@@ -896,6 +896,12 @@ check "spaces: -f writes a .dep file" "bar,glibc" \
 rundf "$DB" "$SYS" -f "$W/with space/package-spacey"
 check "spaces: -f on a directory without slack-desc" "bar,glibc" \
 	"$(cat "$RUNDIR/package-spacey.dep" 2>&1)"
+# (given as ".", from inside it)
+( cd "$W/with space/package-spacey" && DEPFINDERPKGDB="$DB" \
+	LD_LIBRARY_PATH="$SYS/$LIB" "$DF" -f . 2>/dev/null )
+check "-f on . is named after the directory" "bar,glibc" \
+	"$(cat "$W/with space/package-spacey/package-spacey.dep" 2>&1)"
+rm -f "$W/with space/package-spacey/"*.dep
 rundf "$DB" "$SYS" -f -s "$W/with space/spacey-1.0-x86_64-1.txz"
 check "spaces: -f -s writes slack-required" \
 	"$(printf 'bar >= 2.0-x86_64-1\nglibc >= 2.33-x86_64-1')" \

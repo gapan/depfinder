@@ -118,6 +118,8 @@ version 2.0 ()
     instead of the defaults for ARCH
   * make install with ARCH=aarch64 sets up depfinder for lib64, like
     x86_64
+  * With -f on "." (or ".."), name the .dep file after the directory,
+    instead of writing "..dep"
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a
