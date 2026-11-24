@@ -147,6 +147,10 @@ Windows) are never reported. So are test files
 tests, and so is documentation (in ///usr/doc// and ///usr/share/doc//), such as examples. Files that are not
 valid python 3 are reported and skipped.
 
+Python itself is reported too: the system's python 3 if any python 3
+file was checked, and the package of ///usr/bin/python2.7// for files
+for python 2, which are not checked.
+
 The list of reported python dependencies might still not be final.
 Some python packages might be reported as dependencies, while actually
 being optional dependencies, for example when an //import// is only

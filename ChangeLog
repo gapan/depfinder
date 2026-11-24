@@ -109,6 +109,9 @@ version 2.0 ()
   * With -p, exit with a clear error if depfinder-python is missing
   * With -p, don't skip the python metadata of a packaging directory
     when its own path contains a directory like python3.8
+  * With -p, python itself is a dependency: python3 for the python 3
+    files, and the package of /usr/bin/python2.7 (python) for the
+    python 2 files, which aren't checked
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a

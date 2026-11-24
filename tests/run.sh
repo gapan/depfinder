@@ -211,6 +211,12 @@ echo "x = 1" > "$SYS/py/timesheet.py"
 mkrecord "$DB" pyext-1.0-x86_64-1 "$(rel py/extmod.py)" \
 	"$(rel py/cext$PYEXT)" "$(rel py/oldcext.so)"
 mkrecord "$DB" timesheet-1.0-x86_64-1 "$(rel py/timesheet.py)"
+# The pythons that run python files: python 3 (the real one that runs
+# the tests) and python 2.7
+PY3EXE=$(python3 -c 'import os, sys
+print(os.path.realpath(sys.executable).lstrip("/"))' 2>/dev/null)
+mkrecord "$DB" python3-3.9.25-x86_64-1 "${PY3EXE:-usr/bin/python3}"
+mkrecord "$DB" python-2.7.18-x86_64-1 usr/bin/python2.7
 # A namespace package (no __init__.py), split between two packages
 mkdir -p "$SYS/py/nspkg"
 echo "x = 1" > "$SYS/py/nspkg/one.py"
@@ -497,6 +503,15 @@ printf 'from nspkg import two\nfrom extmod import one, two\n' \
 	> "$W/pyns/usr/share/pyns/main.py"
 mkpkg "$W/pyns" "$P/pyns-1.0-x86_64-1.txz"
 
+# pysys: a python 3 script that imports only a builtin module, and
+# pyold: a python 2 script
+mkdir -p "$W/pysys/usr/bin" "$W/pyold/usr/bin"
+printf '#!/usr/bin/python3\nimport sys\n' > "$W/pysys/usr/bin/pysys"
+printf '#!/usr/bin/python\nimport StringIO\n' > "$W/pyold/usr/bin/pyold"
+chmod 755 "$W/pysys/usr/bin/pysys" "$W/pyold/usr/bin/pyold"
+mkpkg "$W/pysys" "$P/pysys-1.0-x86_64-1.txz"
+mkpkg "$W/pyold" "$P/pyold-1.0-x86_64-1.txz"
+
 # pygen: generated code, nested deeper than python's recursion limit
 mkdir -p "$W/pygen/usr/share/pygen"
 {
@@ -745,15 +760,15 @@ if command -v python3 >/dev/null; then
 	check "-p warns only about missing modules" \
 		"WARNING: python module missingmod not found." "$ERR"
 	check "-p: modules containing a builtin module name" \
-		"pyext,timesheet" "$OUT"
+		"pyext,python3,timesheet" "$OUT"
 	rundf "$DB" "$SYS" "$P/pyapp-1.0-x86_64-1.txz"
 	check "without -p python is ignored" "" "$OUT"
 
 	rundf "$DB" "$SYS" -p "$P/pyapp2-1.0-x86_64-1.txz"
 	# (timesheet is installed, but only imported optionally, and json,
 	# from python's standard library, isn't listed as optional)
-	check "-p: imports, namespace packages and metadata" \
-		"nsone,nstwo,pyext,python-extdist,timesheet" "$OUT"
+	check "-p: imports, namespace packages, metadata and the pythons" \
+		"nsone,nstwo,pyext,python,python-extdist,python3,timesheet" "$OUT"
 	check "-p: warnings" "$(printf '%s\n' \
 		"WARNING: could not parse usr/share/pyapp2/old.py as python 3." \
 		"WARNING: not checking 2 python files, which are for python 2." \
@@ -764,27 +779,34 @@ if command -v python3 >/dev/null; then
 		"$ERR"
 
 	rundf "$DB" "$SYS" -p "$P/pyfall-1.0-x86_64-1.txz"
-	check "-p: fallback imports" "pyext,timesheet" "$OUT"
+	check "-p: fallback imports" "pyext,python3,timesheet" "$OUT"
 	check "-p: fallback imports: messages" "$(printf '%s\n' \
 		"WARNING: python module notfallback not found." \
 		"NOTE: optional python modules, not added as dependencies: newmissing, newmissing2")" \
 		"$ERR"
 
 	rundf "$DB" "$SYS" -p "$P/pyplat-1.0-x86_64-1.txz"
-	check "-p: other platforms" "pyext,timesheet" "$OUT"
+	check "-p: other platforms" "pyext,python3,timesheet" "$OUT"
 	check "-p: other platforms: no warnings" "" "$ERR"
 
 	rundf "$DB" "$SYS" -p "$P/pyshadow-1.0-x86_64-1.txz"
 	check "-p: modules inside a package don't hide installed ones" \
-		"pyext,timesheet" "$OUT"
+		"pyext,python3,timesheet" "$OUT"
 
 	rundf "$DB" "$SYS" -p "$P/pyns-1.0-x86_64-1.txz"
-	check "-p: from a namespace package import a module" "nstwo,pyext" "$OUT"
+	check "-p: from a namespace package import a module" "nstwo,pyext,python3" "$OUT"
 	check "-p: from a namespace package import a module: no warnings" \
 		"" "$ERR"
 
+	rundf "$DB" "$SYS" -p "$P/pysys-1.0-x86_64-1.txz"
+	check "-p: python 3 scripts need python 3" "python3" "$OUT"
+	rundf "$DB" "$SYS" -p "$P/pyold-1.0-x86_64-1.txz"
+	check "-p: python 2 scripts need python 2.7" "python" "$OUT"
+	check "-p: python 2 scripts need python 2.7: messages" \
+		"WARNING: not checking 1 python file, which is for python 2." "$ERR"
+
 	rundf "$DB" "$SYS" -p "$P/pygen-1.0-x86_64-1.txz"
-	check "-p: deeply nested code" "pyext" "$OUT"
+	check "-p: deeply nested code" "pyext,python3" "$OUT"
 	check "-p: deeply nested code: messages" \
 		"NOTE: optional python modules, not added as dependencies: optgen" "$ERR"
 
@@ -813,7 +835,7 @@ if command -v python3 >/dev/null; then
 		chmod 000 "$W/package-unread/usr/share/unread/secret.py" \
 			"$W/package-unread/$PYSITE/unread-1.0.dist-info/METADATA"
 		rundf "$DB" "$SYS" -p "$W/package-unread"
-		check "-p: unreadable files are skipped" "pyext" "$OUT"
+		check "-p: unreadable files are skipped" "pyext,python3" "$OUT"
 		check "-p: unreadable files are reported" "$(printf '%s\n' \
 			"WARNING: could not read usr/share/unread/secret.py." \
 			"WARNING: could not read $PYSITE/unread-1.0.dist-info/METADATA.")" \
@@ -860,7 +882,7 @@ rundf "$DB" "$SYS" "$W/with space/package-spacey"
 check "spaces: packaging directory" "bar,glibc" "$OUT"
 if command -v python3 >/dev/null; then
 	rundf "$DB" "$SYS" -p "$W/with space/spacey-1.0-x86_64-1.txz"
-	check "spaces: python script" "bar,glibc,pyext" "$OUT"
+	check "spaces: python script" "bar,glibc,pyext,python3" "$OUT"
 fi
 rundf "$DB" "$SYS" -f "$W/with space/spacey-1.0-x86_64-1.txz"
 check "spaces: -f writes a .dep file" "bar,glibc" \
@@ -926,7 +948,7 @@ chmod 755 "$W/df-space"
 OUT=$(DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" PYTHONPATH="$SYS/py" \
 	"$W/df-space" -p "$W/with space/spacey-1.0-x86_64-1.txz" 2>&1)
 ERR=""
-check "helpers in a directory with a space" "bar,glibc,pyext" "$OUT"
+check "helpers in a directory with a space" "bar,glibc,pyext,python3" "$OUT"
 
 # depfinder-search missing, or failing
 sed "s|^DEPFINDERSEARCH=.*|DEPFINDERSEARCH=\"$W/no-such-search\"|" "$DF" > "$W/df-nosearch"

@@ -690,6 +690,7 @@ def main():
 	# yaml)
 	uses = []		# (dotted name, optional, fallback for, dirs)
 	other_versions = {}	# python version -> number of files skipped
+	checked = False		# any python 3 file checked?
 	for f in files:
 		path = os.path.join(root, f)
 		if is_test_file(os.path.relpath(path, root)) or \
@@ -715,6 +716,7 @@ def main():
 		if found is None:
 			warn("could not parse %s as python 3." % os.path.relpath(path, root))
 			continue
+		checked = True
 		d = os.path.dirname(path)
 		dirs = () if os.path.isfile(os.path.join(d, "__init__.py")) else (d,)
 		uses += [(name, opt, conds, dirs) for name, opt, conds in found]
@@ -817,6 +819,14 @@ def main():
 			warn("python package %s, required by %s, not found." % requires[name])
 		else:
 			needed.add(meta)
+
+	# The python that runs the files: this one for python 3 files
+	# (python3), and python 2.7 (python) for the python 2 ones, which
+	# aren't checked
+	if checked and sys.executable:
+		needed.add(os.path.realpath(sys.executable))
+	if any(v.split(".")[0] == "2" for v in other_versions):
+		needed.add("/usr/bin/python2.7")
 
 	for path in sorted(needed):
 		print(path)
