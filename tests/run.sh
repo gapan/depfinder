@@ -692,9 +692,17 @@ check "package files named like depfinder's working files" "bar,glibc" "$OUT"
 mkdir "$W/tmp"
 TMPDIR="$W/tmp" rundf "$DB" "$SYS" "$P/foo-1.0-x86_64-1.txz"
 check "TMPDIR is used and cleaned up" "bar,glibc:" "$OUT:$(ls "$W/tmp")"
-TMPDIR="$W/tmp" DEBUG=1 rundf "$DB" "$SYS" "$P/foo-1.0-x86_64-1.txz"
-check "DEBUG=1 keeps the working directory" "1" \
+TMPDIR="$W/tmp" DEPFINDERDEBUG=1 rundf "$DB" "$SYS" "$P/foo-1.0-x86_64-1.txz"
+check "DEPFINDERDEBUG=1 keeps the working directory" "1" \
 	"$(ls "$W/tmp" | grep -c "^depfinder\.")"
+rm -rf "$W/tmp"
+mkdir "$W/tmp"
+# (DEBUG is used by other programs, e.g. DEBUG='*' for node's debug)
+TMPDIR="$W/tmp" DEBUG=1 rundf "$DB" "$SYS" "$P/foo-1.0-x86_64-1.txz"
+check "DEBUG is ignored" "bar,glibc::" "$OUT:$ERR:$(ls "$W/tmp")"
+TMPDIR="$W/tmp" DEPFINDERDEBUG='*' rundf "$DB" "$SYS" "$P/foo-1.0-x86_64-1.txz"
+check "DEPFINDERDEBUG other than 1 is ignored" "bar,glibc::" \
+	"$OUT:$ERR:$(ls "$W/tmp")"
 rm -rf "$W/tmp"
 
 # Killed while depfinder-search runs: the working directory is removed.

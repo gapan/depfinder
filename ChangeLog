@@ -120,6 +120,10 @@ version 2.0 ()
     x86_64
   * With -f on "." (or ".."), name the .dep file after the directory,
     instead of writing "..dep"
+  * The debug mode, which keeps the working directory, is set with
+    DEPFINDERDEBUG=1 instead of DEBUG, a name other programs use too
+    (a DEBUG that wasn't a number gave errors and left the working
+    directory behind)
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a

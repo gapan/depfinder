@@ -18,7 +18,8 @@ VERSIONINFO=0
 PYTHONDEPS=0
 JOBS=1
 STARTDIR=""
-DEBUG=${DEBUG:-0}
+# DEPFINDERDEBUG=1 keeps the working directory, for inspection
+DFDEBUG=${DEPFINDERDEBUG:-0}
 DEPFINDERSEARCH="/usr/libexec/depfinder-search"
 DEPFINDERPYTHON="/usr/libexec/depfinder-python"
 LIBDIRSUFFIX=""
@@ -89,7 +90,7 @@ findpython()
 # Function that cleans up temp files
 cleanup()
 {
-	if [ $DEBUG -eq 0 ] && [ -n "$DFTMP" ]; then
+	if [ "$DFDEBUG" != 1 ] && [ -n "$DFTMP" ]; then
 		rm -rf "$DFTMP"
 	fi
 }
@@ -240,7 +241,7 @@ fi
 trap "interrupted 1" HUP
 trap "interrupted 2" INT
 trap "interrupted 15" TERM
-[ $DEBUG -eq 0 ] || echo "DEBUG: working directory is $DFTMP" >&2
+[ "$DFDEBUG" != 1 ] || echo "DEBUG: working directory is $DFTMP" >&2
 mkdir "$DFTMP/pkg"
 ls "$PKGDB" > "$DFTMP/pkglist.log"
 
