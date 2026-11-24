@@ -1,7 +1,5 @@
 ARCH ?= x86_64
 
-CCEXTRAS="-Wall -Wextra"
-
 ifeq ($(ARCH),x86_64)
 	LIBDIRSUFFIX = 64
 else
