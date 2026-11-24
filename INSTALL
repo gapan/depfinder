@@ -13,11 +13,20 @@ as root. You can set DESTDIR to change the installation target:
 
  make install DESTDIR=/my/custom/installation/target
 
-You can set the CPU arch to use with an ARCH variable, like this:
+You can set the CPU arch with an ARCH variable. It sets the compiler
+flags used by make, and whether make install sets up depfinder for
+lib64 directories (x86_64 and aarch64), so give it to both:
 
+ make ARCH=i586
  make install ARCH=i586
 
-The default value is ARCH=x86_64.
+The default value is ARCH=x86_64. CXXFLAGS and LDFLAGS from the
+environment are used instead of the default compiler flags for ARCH,
+if they are set.
+
+To run the test suite (it doesn't need depfinder to be installed):
+
+ make check
 
 
 Uninstallation
@@ -26,4 +35,5 @@ To remove, you can just:
 
  rm /usr/bin/depfinder
  rm /usr/libexec/depfinder-search
- rm /usr/share/locale/*/LC_MESSAGES/depfinder.mo
+ rm /usr/libexec/depfinder-python
+ rm /usr/man/man1/depfinder.1
