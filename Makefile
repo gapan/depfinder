@@ -1,6 +1,7 @@
 ARCH ?= x86_64
 
-ifeq ($(ARCH),x86_64)
+# 64-bit Slackware (x86_64 and aarch64) has its libraries in lib64
+ifneq ($(filter x86_64 aarch64,$(ARCH)),)
 	LIBDIRSUFFIX = 64
 else
 	LIBDIRSUFFIX = ""
