@@ -110,7 +110,7 @@ version 2.0 ()
   * With -p, don't skip the python metadata of a packaging directory
     when its own path contains a directory like python3.8
   * With -p, python itself is a dependency: python3 for the python 3
-    files, and the package of /usr/bin/python2.7 (python) for the
+    files, and the package of /usr/bin/python2.7 (python2) for the
     python 2 files, which aren't checked
   * With -p, modules in PYTHONPATH (e.g. a source tree) aren't used,
     like the ones in the user's home

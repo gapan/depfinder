@@ -224,7 +224,7 @@ mkrecord "$DB" timesheet-1.0-x86_64-1 "$(rel py/timesheet.py)"
 PY3EXE=$(python3 -c 'import os, sys
 print(os.path.realpath(sys.executable).lstrip("/"))' 2>/dev/null)
 mkrecord "$DB" python3-3.9.25-x86_64-1 "${PY3EXE:-usr/bin/python3}"
-mkrecord "$DB" python-2.7.18-x86_64-1 usr/bin/python2.7
+mkrecord "$DB" python2-2.7.18-x86_64-1 usr/bin/python2.7
 # A namespace package (no __init__.py), split between two packages
 mkdir -p "$SYS/py/nspkg"
 echo "x = 1" > "$SYS/py/nspkg/one.py"
@@ -792,13 +792,13 @@ if command -v python3 >/dev/null; then
 	# (timesheet is installed, but only imported optionally, and json,
 	# from python's standard library, isn't listed as optional)
 	check "-p: imports, namespace packages, metadata and the pythons" \
-		"nsone,nstwo,pyext,python,python-extdist,python3,timesheet" "$OUT"
+		"nsone,nstwo,pyext,python-extdist,python2,python3,timesheet" "$OUT"
 	# (in the same order whatever the locale's collation)
 	ENLOCALE=$(locale -a 2>/dev/null | grep -i -m 1 '^en_US\.utf-\?8$')
 	if [ -n "$ENLOCALE" ]; then
 		LC_ALL=$ENLOCALE rundf "$DB" "$SYS" -p "$P/pyapp2-1.0-x86_64-1.txz"
 		check "-p: the same order with LC_ALL=$ENLOCALE" \
-			"nsone,nstwo,pyext,python,python-extdist,python3,timesheet" "$OUT"
+			"nsone,nstwo,pyext,python-extdist,python2,python3,timesheet" "$OUT"
 		rundf "$DB" "$SYS" -p "$P/pyapp2-1.0-x86_64-1.txz"
 	else
 		skip "-p: the same order in another locale (no en_US.utf8 locale)"
@@ -835,7 +835,7 @@ if command -v python3 >/dev/null; then
 	rundf "$DB" "$SYS" -p "$P/pysys-1.0-x86_64-1.txz"
 	check "-p: python 3 scripts need python 3" "python3" "$OUT"
 	rundf "$DB" "$SYS" -p "$P/pyold-1.0-x86_64-1.txz"
-	check "-p: python 2 scripts need python 2.7" "python" "$OUT"
+	check "-p: python 2 scripts need python 2.7" "python2" "$OUT"
 	check "-p: python 2 scripts need python 2.7: messages" \
 		"WARNING: not checking 1 python file, which is for python 2." "$ERR"
 

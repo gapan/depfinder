@@ -826,7 +826,7 @@ def main():
 			needed.add(meta)
 
 	# The python that runs the files: this one for python 3 files
-	# (python3), and python 2.7 (python) for the python 2 ones, which
+	# (python3), and python 2.7 (python2) for the python 2 ones, which
 	# aren't checked
 	if checked and sys.executable:
 		needed.add(os.path.realpath(sys.executable))
