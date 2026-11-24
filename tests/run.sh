@@ -1014,6 +1014,14 @@ check "-h exit status" "0" "$RC"
 check "-h shows the usage" "1" "$(echo "$OUT" | grep -c "^usage:")"
 rundf "$DB" "$SYS" -x "$P/foo-1.0-x86_64-1.txz"
 check "unknown option: exit status 1" "1" "$RC"
+check "unknown option: reported" "ERROR: unknown option -x" "$ERR"
+rundf "$DB" "$SYS" -j
+check "-j without a number: exit status 1" "1" "$RC"
+check "-j without a number: reported" "ERROR: -j needs a number of jobs" "$ERR"
+rundf "$DB" "$SYS" -p
+check "options without a package: exit status 1" "1" "$RC"
+check "options without a package: reported" \
+	"ERROR: No package or packaging directory given" "$ERR"
 
 echo
 echo "$PASS passed, $FAIL failed, $XFAIL expected failures," \

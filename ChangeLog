@@ -125,6 +125,9 @@ version 2.0 ()
     (a DEBUG that wasn't a number gave errors and left the working
     directory behind)
   * Document DEPFINDERNOEXIT and DEPFINDERDEBUG in the manpage
+  * Report unknown options, -j without a number, and options without a
+    package, instead of only showing the usage, ignoring -j, or
+    reporting "ERROR:  not found"
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a

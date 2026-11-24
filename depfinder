@@ -131,6 +131,13 @@ do
 	# if switch is unknown show help and fail
 	if [ $flag = "?" ]; then
 		help_msg
+		echo "ERROR: unknown option -$OPTARG" >&2
+		err
+	fi
+	# an option without its argument (only -j has one)
+	if [ $flag = ":" ]; then
+		help_msg
+		echo "ERROR: -$OPTARG needs a number of jobs" >&2
 		err
 	fi
 	if [ $flag = "h" ]; then
@@ -175,6 +182,13 @@ done
 # we shift positions in $@ so that we discard all previous switches
 # and leave only files as additional arguments
 shift $((OPTIND-1))
+
+# There must be a package left after the options
+if [ $# -eq 0 ]; then
+	help_msg
+	echo "ERROR: No package or packaging directory given" >&2
+	err
+fi
 
 # Only one package at a time!
 if [ $# -gt 1 ]; then
