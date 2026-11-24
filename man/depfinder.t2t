@@ -51,7 +51,8 @@ You need to have all required dependencies for any package you run
 the case when you are building your own packages. In case there is a
 library that is required by a package you run **depfinder** on that is
 missing from your system, **depfinder** will report the missing library
-and will not generate a dependency list.
+and will not generate a dependency list, unless **DEPFINDERNOEXIT** is
+set (see ENVIRONMENT).
 
 If a library that a package needs is found in the system, but no
 installed package provides it (for example, it was installed by hand
@@ -184,6 +185,15 @@ and exits.
 The directory holding the database of installed packages, which is used
 to find which package provides each library. The default is
 ///var/lib/pkgtools/packages//.
+
+: **DEPFINDERNOEXIT**
+If set to 1, **depfinder** reports the libraries that are missing from
+the system and still generates the dependency list, from the libraries
+that were found.
+
+: **DEPFINDERDEBUG**
+If set to 1, the temporary working directory is kept after
+**depfinder** exits, for inspection, and its path is displayed.
 
 : **TMPDIR**
 The directory where **depfinder** creates its temporary working

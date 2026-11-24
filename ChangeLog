@@ -124,6 +124,7 @@ version 2.0 ()
     DEPFINDERDEBUG=1 instead of DEBUG, a name other programs use too
     (a DEBUG that wasn't a number gave errors and left the working
     directory behind)
+  * Document DEPFINDERNOEXIT and DEPFINDERDEBUG in the manpage
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a
