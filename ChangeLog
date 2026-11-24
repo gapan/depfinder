@@ -132,6 +132,8 @@ version 2.0 ()
     LC_ALL overrides: with e.g. LC_ALL=fr_FR.utf8, readelf's output was
     in French, so the libraries in the package weren't recognized and
     depfinder failed if the package wasn't installed
+  * Sort the dependency list byte by byte (LC_ALL=C), so it's in the
+    same order whatever the locale
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a

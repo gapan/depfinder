@@ -369,7 +369,7 @@ touch LIBSM
 cat LIBSM[0-9]* >> LIBSM 2> /dev/null
 
 # linux-gate.so.1 is always a dead-end so we don't look for that at all
-sort LIBSM | uniq | grep -v "linux-gate\.so" > LIBS
+LC_ALL=C sort LIBSM | uniq | grep -v "linux-gate\.so" > LIBS
 
 # Find which libraries are included in the package. Binaries refer to
 # libraries by their soname (e.g. libfoo.so.1), which is usually a
@@ -479,8 +479,9 @@ mv DEPS.new DEPS
 
 # Split each package into its name and version-arch-build (the last
 # three parts separated by "-"; names may contain "-" too), and keep the
-# name, or "name >= version-arch-build" with -s
-sort DEPS | uniq | \
+# name, or "name >= version-arch-build" with -s. (The list is sorted
+# byte by byte, so it's in the same order whatever the locale.)
+LC_ALL=C sort DEPS | uniq | \
 awk -v versions=$VERSIONINFO '{
 		n = split($0, alt, "|")
 		line = ""

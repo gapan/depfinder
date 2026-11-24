@@ -785,6 +785,16 @@ if command -v python3 >/dev/null; then
 	# from python's standard library, isn't listed as optional)
 	check "-p: imports, namespace packages, metadata and the pythons" \
 		"nsone,nstwo,pyext,python,python-extdist,python3,timesheet" "$OUT"
+	# (in the same order whatever the locale's collation)
+	ENLOCALE=$(locale -a 2>/dev/null | grep -i -m 1 '^en_US\.utf-\?8$')
+	if [ -n "$ENLOCALE" ]; then
+		LC_ALL=$ENLOCALE rundf "$DB" "$SYS" -p "$P/pyapp2-1.0-x86_64-1.txz"
+		check "-p: the same order with LC_ALL=$ENLOCALE" \
+			"nsone,nstwo,pyext,python,python-extdist,python3,timesheet" "$OUT"
+		rundf "$DB" "$SYS" -p "$P/pyapp2-1.0-x86_64-1.txz"
+	else
+		skip "-p: the same order in another locale (no en_US.utf8 locale)"
+	fi
 	check "-p: warnings" "$(printf '%s\n' \
 		"WARNING: could not parse usr/share/pyapp2/old.py as python 3." \
 		"WARNING: not checking 2 python files, which are for python 2." \
