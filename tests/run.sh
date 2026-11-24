@@ -548,7 +548,7 @@ rundf()
 	# (a directory with a space, to check that -f handles that)
 	RUNDIR=$(mktemp -d "$W/run dir.XXXXXX")
 	OUT=$(cd "$RUNDIR" && DEPFINDERPKGDB="$db" \
-		LD_LIBRARY_PATH="$sys/$LIB" PYTHONPATH="$sys/py" \
+		LD_LIBRARY_PATH="$sys/$LIB" DEPFINDERPYTHONPATH="$sys/py" \
 		"$DF" "$@" 2>"$RUNDIR/.stderr")
 	RC=$?
 	ERR=$(cat "$RUNDIR/.stderr"); rm -f "$RUNDIR/.stderr"
@@ -860,6 +860,12 @@ if command -v python3 >/dev/null; then
 			skip "-p: modules in the user's home (no user site directory)"
 			;;
 	esac
+	# ... and neither are the ones in PYTHONPATH
+	mkdir -p "$W/pythonpath"
+	echo "x = 1" > "$W/pythonpath/missingmod.py"
+	PYTHONPATH="$W/pythonpath" rundf "$DB" "$SYS" -p "$P/pyapp-1.0-x86_64-1.txz"
+	check "-p: modules in PYTHONPATH are ignored" \
+		"WARNING: python module missingmod not found." "$ERR"
 
 	# Without python3 (a PATH with everything else)
 	mkdir -p "$W/nopython"
@@ -945,7 +951,7 @@ sed -e "s|^DEPFINDERSEARCH=.*|DEPFINDERSEARCH=\"$W/lib exec/depfinder-search\"|"
     -e "s|^DEPFINDERPYTHON=.*|DEPFINDERPYTHON=\"$W/lib exec/depfinder-python\"|" \
 	"$DF" > "$W/df-space"
 chmod 755 "$W/df-space"
-OUT=$(DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" PYTHONPATH="$SYS/py" \
+OUT=$(DEPFINDERPKGDB="$DB" LD_LIBRARY_PATH="$SYS/$LIB" DEPFINDERPYTHONPATH="$SYS/py" \
 	"$W/df-space" -p "$W/with space/spacey-1.0-x86_64-1.txz" 2>&1)
 ERR=""
 check "helpers in a directory with a space" "bar,glibc,pyext,python3" "$OUT"

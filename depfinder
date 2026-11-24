@@ -312,8 +312,9 @@ awk -F '\0' '$2 ~ /^: ELF / { print $1 }' > "$DFTMP/FILES"
 # provide them. It warns about the ones it can't find.
 if [ $PYTHONDEPS -eq 1 ]; then
 	findpython > "$DFTMP/PYTHONFILES"
-	# (-s: modules installed in the user's home don't count)
-	python3 -s "$DEPFINDERPYTHON" "$PKGROOT" "$DFTMP/PYTHONFILES" \
+	# (-s: modules installed in the user's home don't count, -E: nor do
+	# the ones in PYTHONPATH, e.g. a source tree)
+	python3 -s -E "$DEPFINDERPYTHON" "$PKGROOT" "$DFTMP/PYTHONFILES" \
 		> "$DFTMP/PYTHONNEEDEDMODULES"
 	if [ $? -ne 0 ]; then
 		echo "ERROR: could not detect the python dependencies" >&2

@@ -671,7 +671,12 @@ def main():
 		files = [l for l in f.read().decode("utf-8", "surrogateescape").split("\n") if l]
 
 	# Where python looks for modules on this system (without this
-	# script's own directory)
+	# script's own directory). depfinder runs this with python3 -E, so
+	# PYTHONPATH isn't used; the tests put their fake installed modules
+	# in DEPFINDERPYTHONPATH instead.
+	extra = os.environ.get("DEPFINDERPYTHONPATH")
+	if extra:
+		sys.path[1:1] = extra.split(os.pathsep)
 	here = os.path.dirname(os.path.realpath(__file__))
 	syspaths = [p for p in sys.path
 		    if p and os.path.realpath(p) != here and os.path.isdir(p)]

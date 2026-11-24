@@ -110,8 +110,8 @@ searches for all files that can be recognized as python scripts
 They are parsed with python's own parser (nothing in the package is
 run) for the modules they import, and each module that is not in the
 package itself is looked up the way python finds it, in the python
-3 module path of the system (modules in the user's home directory are
-not used). depfinder then reports which packages these modules
+3 module path of the system (modules in the user's home directory or
+in //PYTHONPATH// are not used). depfinder then reports which packages these modules
 belong to along with all other detected dependencies. Python
 distributions required in the package's python metadata
 (//Requires-Dist// in *.dist-info/METADATA, or *.egg-info/requires.txt)
