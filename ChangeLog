@@ -145,8 +145,8 @@ version 2.0 ()
   * Sort the dependency list byte by byte (LC_ALL=C), so it's in the
     same order whatever the locale
   * The test suite ignores depfinder's settings in the environment
-    (DEPFINDERNOEXIT, DEPFINDERDEBUG...), and keeps all its temporary
-    files in its own directory
+    (DEPFINDERNOEXIT, DEPFINDERDEBUG...), keeps all its temporary
+    files in its own directory, and works with a TMPDIR with spaces
 
 version 1.4.4 (2016-09-28):
   * Improve self-exclusion from dependency list

@@ -125,7 +125,7 @@ mkrecord()
 # which pkgtools can't make.
 mkpkg()
 {
-	local dir=$1 out=$2 copy tool=/sbin/makepkg rc
+	local dir=$1 out=$2 copy built tool=/sbin/makepkg rc
 	if [ "$3" = slkbuild ] || [ "${out##*.}" = tbr ]; then
 		[ -f /usr/bin/slkbuild ] || return 1
 		[ "${out##*.}" = tbr ] && ! command -v brotli >/dev/null && return 1
@@ -133,13 +133,17 @@ mkpkg()
 	fi
 	copy=$(mktemp -d "$W/mkpkg.XXXXXX")
 	cp -a "$dir/." "$copy/"
+	# makepkg can't handle a space in the path of the package (e.g. in
+	# TMPDIR), so it's built next to the copy, with a relative name
+	# without spaces, and moved into place
+	built="${copy##*/}.${out##*.}"
 	(
 		cd "$copy" || exit 1
 		if [ $tool = makepkg_internal ]; then
 			eval "$(sed -n '/^makepkg_internal() {$/,/^}$/p' /usr/bin/slkbuild)"
 			type makepkg_internal >/dev/null 2>&1 || exit 1
 		fi
-		$tool -l y -c n "$out"
+		$tool -l y -c n "../$built" && mv "../$built" "$out"
 	) > "$copy.log" 2>&1
 	rc=$?
 	if [ $rc -ne 0 ] || [ ! -s "$out" ]; then
