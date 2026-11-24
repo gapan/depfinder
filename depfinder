@@ -323,7 +323,7 @@ else
 	# or anywhere in the package if -a is specified
 	SEARCHDIRS="./"
 fi
-LANG=C find $SEARCHDIRS -type f -exec file -N -0 {} + 2> /dev/null | \
+LC_ALL=C find $SEARCHDIRS -type f -exec file -N -0 {} + 2> /dev/null | \
 awk -F '\0' '$2 ~ /^: ELF / { print $1 }' > "$DFTMP/FILES"
 
 # Look for python dependencies: depfinder-python parses the python
@@ -357,7 +357,7 @@ for i in $( seq -f "%04.f" 0 $(($LDDJOBS-1)) ); do
 	# (LD_PRELOAD is unset, or ldd would list the preloaded libraries
 	# and their dependencies for every file)
 	( cd "$PKGROOT" && \
-		LANG=C env -u LD_PRELOAD xargs -r -d '\n' ldd \
+		LC_ALL=C env -u LD_PRELOAD xargs -r -d '\n' ldd \
 		< "$DFTMP/FILES$i" 2> /dev/null ) \
 	| grep "=>" \
 	| sed "s/\(.*\) => \/\(.*\) \(.*\)/\2/" \
@@ -378,7 +378,9 @@ sort LIBSM | uniq | grep -v "linux-gate\.so" > LIBS
 # name itself for libraries without one.
 touch INCLUDED
 find "$PKGROOT" -name "*.so*" | sed "s|.*/||" >> INCLUDED
-LANG=C find "$PKGROOT" -type f -name "*.so*" -exec readelf -d {} + 2> /dev/null | \
+# (LC_ALL, not LANG, since LC_ALL overrides LANG, and readelf's output is
+# translated, e.g. "Bibliothèque soname" in French)
+LC_ALL=C find "$PKGROOT" -type f -name "*.so*" -exec readelf -d {} + 2> /dev/null | \
 sed -n "s/.*Library soname: \[\(.*\)\].*/\1/p" >> INCLUDED
 
 # Exclude the included libs from the search list. ldd reports each

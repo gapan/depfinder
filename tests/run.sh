@@ -741,6 +741,14 @@ check "DEPFINDERNOEXIT=1: lists the deps that were found" "bar,glibc" "$OUT"
 # A package shipping its own library
 rundf "$DB" "$SYS" "$P/selfy-1.0-x86_64-1.txz"
 check "own library, package not installed" "glibc" "$OUT"
+# (in a locale whose readelf output is translated)
+FRLOCALE=$(locale -a 2>/dev/null | grep -i -m 1 '^fr_FR\.utf-\?8$')
+if [ -n "$FRLOCALE" ]; then
+	LC_ALL=$FRLOCALE rundf "$DB" "$SYS" "$P/selfy-1.0-x86_64-1.txz"
+	check "own library, package not installed, LC_ALL=$FRLOCALE" "glibc" "$OUT"
+else
+	skip "own library in a translated locale (no fr_FR.utf8 locale)"
+fi
 
 rundf "$DB2" "$SYS2" "$P/selfy-1.0-x86_64-1.txz"
 check "own library, same version installed" "glibc" "$OUT"

@@ -128,6 +128,10 @@ version 2.0 ()
   * Report unknown options, -j without a number, and options without a
     package, instead of only showing the usage, ignoring -j, or
     reporting "ERROR:  not found"
+  * Run file, ldd and readelf with LC_ALL=C instead of LANG=C, which
+    LC_ALL overrides: with e.g. LC_ALL=fr_FR.utf8, readelf's output was
+    in French, so the libraries in the package weren't recognized and
+    depfinder failed if the package wasn't installed
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a
