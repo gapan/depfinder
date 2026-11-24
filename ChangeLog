@@ -107,6 +107,8 @@ version 2.0 ()
     between packages depends on the package providing mod, not on
     either of the packages providing a part of nspkg
   * With -p, exit with a clear error if depfinder-python is missing
+  * With -p, don't skip the python metadata of a packaging directory
+    when its own path contains a directory like python3.8
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a

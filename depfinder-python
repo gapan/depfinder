@@ -593,7 +593,7 @@ def declared_requirements(root):
 	own = set()
 	for dirpath, dirnames, filenames in sorted(os.walk(root)):
 		base = os.path.basename(dirpath)
-		other = other_python_version(dirpath + "/")
+		other = other_python_version(os.path.relpath(dirpath, root) + "/")
 		if other and base.endswith((".dist-info", ".egg-info")):
 			warn("not checking the requirements of %s, which is for python %s."
 			     % (dist_name(base), other))

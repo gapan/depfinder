@@ -791,6 +791,15 @@ if command -v python3 >/dev/null; then
 	rundf "$DB" "$SYS" -p "$P/eggy-1.0-x86_64-1.txz"
 	check "-p: egg-info metadata" "python-plainegg" "$OUT"
 	check "-p: egg-info metadata: no warnings" "" "$ERR"
+	# (in a packaging directory that is itself in a directory named
+	# like one for another python version)
+	mkdir -p "$W/python3.1"
+	cp -a "$W/eggy" "$W/python3.1/"
+	rundf "$DB" "$SYS" -p "$W/python3.1/eggy"
+	check "-p: metadata in a directory inside python3.1/" \
+		"python-plainegg" "$OUT"
+	check "-p: metadata in a directory inside python3.1/: no warnings" \
+		"" "$ERR"
 
 	# Files that can't be read (a packaging directory owned by someone
 	# else; root can read anything)
