@@ -41,6 +41,14 @@ LIB=usr/lib$SUF
 W=$(mktemp -d "${TMPDIR:-/tmp}/depfinder-tests.XXXXXX") || exit 2
 trap 'rm -rf "$W"' EXIT
 
+# depfinder's settings from the environment would change the results
+unset DEPFINDERNOEXIT DEPFINDERDEBUG DEPFINDERPYTHONPATH DEPFINDERPKGDB
+# Everything depfinder (and anything else) creates in TMPDIR goes into
+# the test directory, so nothing is left behind, and it's checked at the
+# end that depfinder removed its working directories
+export TMPDIR="$W/tmpdir"
+mkdir "$TMPDIR"
+
 PASS=0; FAIL=0; XFAIL=0; XPASS=0; SKIP=0
 
 # A copy of depfinder set up the same way "make install" sets it up,
@@ -1040,6 +1048,8 @@ rundf "$DB" "$SYS" -p
 check "options without a package: exit status 1" "1" "$RC"
 check "options without a package: reported" \
 	"ERROR: No package or packaging directory given" "$ERR"
+
+check "no working directories left behind" "" "$(ls "$TMPDIR" | grep "^depfinder\.")"
 
 echo
 echo "$PASS passed, $FAIL failed, $XFAIL expected failures," \

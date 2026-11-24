@@ -134,6 +134,9 @@ version 2.0 ()
     depfinder failed if the package wasn't installed
   * Sort the dependency list byte by byte (LC_ALL=C), so it's in the
     same order whatever the locale
+  * The test suite ignores depfinder's settings in the environment
+    (DEPFINDERNOEXIT, DEPFINDERDEBUG...), and keeps all its temporary
+    files in its own directory
   * Fix -p failing on python files with deeply nested code, such as a
     long chain of "+" in generated code
   * Fix -p failing on python files that can't be read (e.g. in a
