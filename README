@@ -65,10 +65,13 @@ but it's not really that bad in terms of speed. Support for
 detecting perl dependencies might be a possibility for the future.
 
 Apart from basic shell commands, like ls, sed, touch etc, depfinder
-requires readelf (from binutils), and python 3 in order to detect python
+requires awk, file, ldd (from glibc), readelf (from binutils), and tar
+with the compression tool for the package format: gzip, bzip2, xz, lzip
+(or plzip) or brotli. It needs python 3 in order to detect python
 dependencies (with the depfinder-python script, installed in
-/usr/libexec). You also need to
-have the gcc-g++ compiler, so that depfinder-search can be compiled.
+/usr/libexec). You also need to have the gcc-g++ compiler, so that
+depfinder-search can be compiled, and txt2tags to create the manpage
+(optional).
 
 A huge thanks goes to Nigel Bosch for creating the original code for his
 zpm package manager and making it available in the first place.
